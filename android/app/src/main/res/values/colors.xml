@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#020617</color>    <!-- Slate-950 -->
+    <color name="colorPrimaryDark">#020617</color>
+    <color name="colorAccent">#0f766e</color>    <!-- Teal-700 -->
+    <color name="windowBackground">#020617</color>
+</resources>

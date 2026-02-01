@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;700&family=Scheherazade+New:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #111827;
+    /* gray-900 */
+    --text-primary: #f1f5f9;
+    /* slate-100 */
+    --accent-teal: #14b8a6;
+    /* teal-500 */
+    --accent-gold: #d4af37;
+  }
+
+  .light {
+    --bg-primary: #f8fafc;
+    /* slate-50 */
+    --text-primary: #1e293b;
+    /* slate-800 */
+  }
+
+  body {
+    @apply bg-slate-950 text-slate-50 font-sans antialiased overflow-x-hidden selection:bg-teal-500/30 selection:text-teal-200;
+
+    /* Dynamic Background based on mode */
+    @apply transition-colors duration-500;
+  }
+
+  body.light-mode {
+    @apply bg-slate-50 text-slate-900;
+  }
+}
+
+@layer components {
+
+  /* Temel Cam Efekti */
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl rounded-2xl;
+  }
+
+  /* Standart Input Alanı */
+  .input-field {
+    @apply w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/50 transition-all duration-300;
+  }
+
+  /* Butonlar */
+  .btn-primary {
+    @apply bg-gradient-to-r from-teal-700 to-teal-600 text-white font-medium py-3 px-6 rounded-xl shadow-lg hover:shadow-teal-500/20 active:scale-[0.98] transition-all duration-200;
+  }
+
+  .btn-gold {
+    @apply bg-gradient-to-r from-yellow-600 to-yellow-500 text-white font-medium py-3 px-6 rounded-xl shadow-lg hover:shadow-yellow-500/20 active:scale-[0.98] transition-all duration-200;
+  }
+}
+
+/* Animasyonlar */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Safe Area (iPhone X+) */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+/* Arapça Font - Mevcut yapıda kullanılmasa da stil bütünlüğü için tutuyoruz */
+.font-arabic {
+  font-family: 'Scheherazade New', serif;
+}
+
+/* Custom Scrollbar - Minimal */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full;
+}
