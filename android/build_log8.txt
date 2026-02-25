@@ -1,0 +1,473 @@
+﻿Starting a Gradle Daemon, 3 stopped Daemons could not be reused, use --status for details
+
+> Configure project :app
+WARNING: The option setting 'android.overridePathCheck=true' is experimental.
+The current default is 'false'.
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Configure project :capacitor-cordova-android-plugins
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:generateReleaseFeatureMetadata UP-TO-DATE
+> Task :capacitor-android:preBuild UP-TO-DATE
+> Task :capacitor-android:preReleaseBuild UP-TO-DATE
+> Task :capacitor-android:generateReleaseResValues UP-TO-DATE
+> Task :capacitor-android:generateReleaseResources UP-TO-DATE
+> Task :capacitor-android:packageReleaseResources UP-TO-DATE
+> Task :capacitor-android:parseReleaseLocalResources UP-TO-DATE
+> Task :capacitor-android:generateReleaseRFile UP-TO-DATE
+> Task :capacitor-android:javaPreCompileRelease UP-TO-DATE
+
+> Task :capacitor-android:compileReleaseJavaWithJavac
+.\gradlew.bat : Note: D:\S
+ONS─░TELER─░M\16-SukurEt\s
+ukurolsun\node_modules\@ca
+pacitor\android\capacitor\
+src\main\java\com\getcapac
+itor\Bridge.java uses or o
+verrides a deprecated API.
+At line:1 char:1
++ .\gradlew.bat bundleRele
+ase assembleRelease 2>&1 |
+ Out-File -FilePath ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (N  
+  ote: D:\SONS─░...depr   
+ ecated API.:String) [    
+], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+Note: Recompile with -Xlin
+t:deprecation for details.
+Note: Some input files use
+ unchecked or unsafe opera
+tions.
+Note: Recompile with -Xlin
+t:unchecked for details.
+
+> Task :capacitor-community-admob:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :capacitor-community-admob:preBuild UP-TO-DATE
+> Task :capacitor-community-admob:preReleaseBuild UP-TO-DATE
+> Task :capacitor-community-admob:generateReleaseResValues UP-TO-DATE
+> Task :capacitor-community-admob:generateReleaseResources UP-TO-DATE
+> Task :capacitor-android:bundleLibCompileToJarRelease
+> Task :capacitor-community-admob:packageReleaseResources
+> Task :capacitor-app:preBuild UP-TO-DATE
+> Task :capacitor-app:preReleaseBuild UP-TO-DATE
+> Task :capacitor-app:generateReleaseResValues
+> Task :capacitor-community-admob:javaPreCompileRelease
+> Task :capacitor-app:generateReleaseResources
+> Task :capacitor-community-admob:parseReleaseLocalResources
+> Task :capacitor-app:packageReleaseResources
+> Task :capacitor-haptics:preBuild UP-TO-DATE
+> Task :capacitor-haptics:preReleaseBuild UP-TO-DATE
+> Task :capacitor-app:javaPreCompileRelease
+> Task :capacitor-app:parseReleaseLocalResources
+> Task :capacitor-haptics:generateReleaseResValues
+> Task :capacitor-community-admob:generateReleaseRFile
+> Task :capacitor-app:generateReleaseRFile
+> Task :capacitor-app:compileReleaseJavaWithJavac
+> Task :capacitor-app:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :capacitor-app:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :capacitor-haptics:generateReleaseResources
+> Task :capacitor-haptics:packageReleaseResources
+> Task :capacitor-keyboard:preBuild UP-TO-DATE
+> Task :capacitor-keyboard:preReleaseBuild UP-TO-DATE
+> Task :capacitor-haptics:javaPreCompileRelease
+> Task :capacitor-haptics:parseReleaseLocalResources
+> Task :capacitor-keyboard:generateReleaseResValues
+> Task :capacitor-keyboard:generateReleaseResources
+> Task :capacitor-haptics:generateReleaseRFile
+> Task :capacitor-keyboard:packageReleaseResources
+> Task :capacitor-haptics:compileReleaseJavaWithJavac
+> Task :capacitor-haptics:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :capacitor-haptics:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :capacitor-status-bar:preBuild UP-TO-DATE
+> Task :capacitor-status-bar:preReleaseBuild UP-TO-DATE
+> Task :capacitor-keyboard:javaPreCompileRelease
+> Task :capacitor-keyboard:parseReleaseLocalResources
+> Task :capacitor-status-bar:generateReleaseResValues
+> Task :capacitor-status-bar:generateReleaseResources
+> Task :capacitor-keyboard:generateReleaseRFile
+> Task :capacitor-keyboard:compileReleaseJavaWithJavac
+> Task :capacitor-keyboard:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :capacitor-keyboard:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :capacitor-status-bar:packageReleaseResources
+> Task :capacitor-status-bar:javaPreCompileRelease
+> Task :capacitor-android:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :capacitor-status-bar:parseReleaseLocalResources
+> Task :capacitor-cordova-android-plugins:preBuild UP-TO-DATE
+> Task :capacitor-android:exportReleaseConsumerProguardFiles
+> Task :capacitor-cordova-android-plugins:preReleaseBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:generateReleaseResValues
+> Task :capacitor-status-bar:generateReleaseRFile
+> Task :capacitor-cordova-android-plugins:generateReleaseResources
+
+> Task :capacitor-status-bar:compileReleaseJavaWithJavac
+Note: D:\SONS─░TELER─░M\16
+-SukurEt\sukurolsun\node_m
+odules\@capacitor\status-b
+ar\android\src\main\java\c
+om\capacitorjs\plugins\sta
+tusbar\StatusBar.java uses
+ or overrides a deprecated
+ API.
+Note: Recompile with -Xlin
+t:deprecation for details.
+
+> Task :capacitor-status-bar:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :capacitor-status-bar:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:packageReleaseResources
+> Task :capacitor-cordova-android-plugins:parseReleaseLocalResources
+> Task :capacitor-cordova-android-plugins:javaPreCompileRelease
+> Task :capacitor-cordova-android-plugins:generateReleaseRFile
+> Task :capacitor-cordova-android-plugins:compileReleaseJavaWithJavac NO-SOURCE
+> Task :capacitor-cordova-android-plugins:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :app:javaPreCompileRelease
+> Task :capacitor-app:writeReleaseAarMetadata
+> Task :app:checkReleaseDuplicateClasses
+> Task :capacitor-android:writeReleaseAarMetadata
+> Task :capacitor-community-admob:writeReleaseAarMetadata
+> Task :capacitor-cordova-android-plugins:writeReleaseAarMetadata
+> Task :capacitor-haptics:writeReleaseAarMetadata
+> Task :capacitor-keyboard:writeReleaseAarMetadata
+> Task :capacitor-status-bar:writeReleaseAarMetadata
+> Task :app:generateReleaseResValues
+> Task :app:checkReleaseAarMetadata
+
+> Task :capacitor-community-admob:compileReleaseKotlin
+e: The daemon has terminat
+ed unexpectedly on startup
+ attempt #1 with error cod
+e: 0. The daemon process o
+utput:
+    1. Kotlin compile daem
+on is ready
+
+> Task :app:mapReleaseSourceSetPaths
+> Task :app:generateReleaseResources
+
+> Task :capacitor-community-admob:compileReleaseKotlin
+w: file:///D:/SONS─░TELER─░M/16-SukurEt/sukurolsun/node_modules/@capacitor-community/admob/android/src/main/java/com/getcapacitor/community/admob/banner/BannerAdSizeEnum.kt:15:25 'static field SMART_BANNER: AdSize' is deprecated. Deprecated in Java.
+
+> Task :app:packageReleaseResources
+> Task :app:createReleaseCompatibleScreenManifests
+> Task :app:extractDeepLinksRelease
+> Task :capacitor-android:extractDeepLinksRelease
+> Task :capacitor-app:extractDeepLinksRelease
+> Task :app:parseReleaseLocalResources
+> Task :capacitor-community-admob:extractDeepLinksRelease
+> Task :capacitor-cordova-android-plugins:extractDeepLinksRelease
+> Task :capacitor-haptics:extractDeepLinksRelease
+> Task :capacitor-keyboard:extractDeepLinksRelease
+> Task :capacitor-android:processReleaseManifest
+> Task :capacitor-status-bar:extractDeepLinksRelease
+
+> Task :capacitor-community-admob:compileReleaseJavaWithJavac
+Note: D:\SONS─░TELER─░M\16
+-SukurEt\sukurolsun\node_m
+odules\@capacitor-communit
+y\admob\android\src\main\j
+ava\com\getcapacitor\commu
+nity\admob\banner\BannerEx
+ecutor.java uses or overri
+des a deprecated API.
+Note: Recompile with -Xlin
+t:deprecation for details.
+
+> Task :capacitor-status-bar:processReleaseManifest
+> Task :capacitor-keyboard:processReleaseManifest
+> Task :capacitor-haptics:processReleaseManifest
+> Task :capacitor-cordova-android-plugins:processReleaseManifest
+> Task :capacitor-community-admob:processReleaseManifest
+> Task :capacitor-app:processReleaseManifest
+> Task :capacitor-community-admob:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :capacitor-community-admob:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :app:processReleaseMainManifest
+> Task :app:processReleaseManifest
+> Task :app:processReleaseManifestForPackage
+> Task :capacitor-android:prepareReleaseArtProfile UP-TO-DATE
+> Task :capacitor-app:prepareReleaseArtProfile UP-TO-DATE
+> Task :capacitor-community-admob:prepareReleaseArtProfile UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:prepareReleaseArtProfile UP-TO-DATE
+> Task :capacitor-haptics:prepareReleaseArtProfile UP-TO-DATE
+> Task :capacitor-keyboard:prepareReleaseArtProfile UP-TO-DATE
+> Task :capacitor-status-bar:prepareReleaseArtProfile UP-TO-DATE
+> Task :capacitor-keyboard:bundleLibCompileToJarRelease
+> Task :capacitor-community-admob:bundleLibCompileToJarRelease
+> Task :capacitor-status-bar:bundleLibCompileToJarRelease
+> Task :capacitor-haptics:bundleLibCompileToJarRelease
+> Task :capacitor-app:bundleLibCompileToJarRelease
+> Task :capacitor-cordova-android-plugins:bundleLibCompileToJarRelease
+> Task :app:mergeReleaseArtProfile
+> Task :capacitor-keyboard:bundleLibRuntimeToJarRelease
+> Task :app:extractProguardFiles
+> Task :app:processReleaseJavaRes NO-SOURCE
+> Task :capacitor-android:processReleaseJavaRes NO-SOURCE
+> Task :capacitor-app:processReleaseJavaRes NO-SOURCE
+> Task :capacitor-community-admob:processReleaseJavaRes
+> Task :capacitor-cordova-android-plugins:processReleaseJavaRes NO-SOURCE
+> Task :capacitor-haptics:processReleaseJavaRes NO-SOURCE
+> Task :capacitor-keyboard:processReleaseJavaRes NO-SOURCE
+> Task :capacitor-status-bar:processReleaseJavaRes NO-SOURCE
+> Task :capacitor-cordova-android-plugins:bundleLibRuntimeToJarRelease
+> Task :capacitor-status-bar:bundleLibRuntimeToJarRelease
+> Task :capacitor-community-admob:bundleLibRuntimeToJarRelease
+> Task :capacitor-app:bundleLibRuntimeToJarRelease
+> Task :capacitor-android:bundleLibRuntimeToJarRelease
+> Task :app:mergeReleaseStartupProfile UP-TO-DATE
+> Task :app:processApplicationManifestReleaseForBundle
+> Task :capacitor-haptics:bundleLibRuntimeToJarRelease
+> Task :app:extractReleaseVersionControlInfo
+> Task :app:mergeReleaseShaders
+> Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :capacitor-android:mergeReleaseShaders
+> Task :capacitor-android:compileReleaseShaders NO-SOURCE
+> Task :capacitor-android:generateReleaseAssets UP-TO-DATE
+> Task :capacitor-android:packageReleaseAssets
+> Task :capacitor-app:mergeReleaseShaders
+> Task :capacitor-app:compileReleaseShaders NO-SOURCE
+> Task :capacitor-app:generateReleaseAssets UP-TO-DATE
+> Task :capacitor-app:packageReleaseAssets
+> Task :capacitor-community-admob:mergeReleaseShaders
+> Task :capacitor-community-admob:compileReleaseShaders NO-SOURCE
+> Task :capacitor-community-admob:generateReleaseAssets UP-TO-DATE
+> Task :capacitor-community-admob:packageReleaseAssets
+> Task :capacitor-cordova-android-plugins:mergeReleaseShaders
+> Task :capacitor-cordova-android-plugins:compileReleaseShaders NO-SOURCE
+> Task :capacitor-cordova-android-plugins:generateReleaseAssets UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:packageReleaseAssets
+> Task :capacitor-haptics:mergeReleaseShaders
+> Task :capacitor-haptics:compileReleaseShaders NO-SOURCE
+> Task :capacitor-haptics:generateReleaseAssets UP-TO-DATE
+> Task :capacitor-haptics:packageReleaseAssets
+> Task :capacitor-keyboard:mergeReleaseShaders
+> Task :capacitor-keyboard:compileReleaseShaders NO-SOURCE
+> Task :capacitor-keyboard:generateReleaseAssets UP-TO-DATE
+> Task :capacitor-keyboard:packageReleaseAssets
+> Task :capacitor-status-bar:mergeReleaseShaders
+> Task :capacitor-status-bar:compileReleaseShaders NO-SOURCE
+> Task :capacitor-status-bar:generateReleaseAssets UP-TO-DATE
+> Task :capacitor-status-bar:packageReleaseAssets
+> Task :app:mergeReleaseAssets
+> Task :app:mergeReleaseJniLibFolders
+> Task :capacitor-android:mergeReleaseJniLibFolders
+> Task :capacitor-android:mergeReleaseNativeLibs NO-SOURCE
+> Task :capacitor-android:copyReleaseJniLibsProjectOnly
+> Task :capacitor-app:mergeReleaseJniLibFolders
+> Task :capacitor-app:mergeReleaseNativeLibs NO-SOURCE
+> Task :capacitor-app:copyReleaseJniLibsProjectOnly
+> Task :capacitor-community-admob:mergeReleaseJniLibFolders
+> Task :capacitor-community-admob:mergeReleaseNativeLibs NO-SOURCE
+> Task :capacitor-community-admob:copyReleaseJniLibsProjectOnly
+> Task :capacitor-cordova-android-plugins:mergeReleaseJniLibFolders
+> Task :capacitor-cordova-android-plugins:mergeReleaseNativeLibs NO-SOURCE
+> Task :capacitor-cordova-android-plugins:copyReleaseJniLibsProjectOnly
+> Task :capacitor-haptics:mergeReleaseJniLibFolders
+> Task :capacitor-haptics:mergeReleaseNativeLibs NO-SOURCE
+> Task :capacitor-haptics:copyReleaseJniLibsProjectOnly
+> Task :capacitor-keyboard:mergeReleaseJniLibFolders
+> Task :capacitor-keyboard:mergeReleaseNativeLibs NO-SOURCE
+> Task :capacitor-keyboard:copyReleaseJniLibsProjectOnly
+> Task :capacitor-status-bar:mergeReleaseJniLibFolders
+> Task :capacitor-status-bar:mergeReleaseNativeLibs NO-SOURCE
+> Task :capacitor-status-bar:copyReleaseJniLibsProjectOnly
+> Task :app:writeReleaseAppMetadata
+> Task :app:mergeReleaseJavaResource
+> Task :app:mergeReleaseNativeLibs NO-SOURCE
+> Task :app:stripReleaseDebugSymbols NO-SOURCE
+> Task :app:collectReleaseDependencies
+> Task :app:configureReleaseDependencies
+> Task :app:extractReleaseNativeSymbolTables NO-SOURCE
+> Task :app:parseReleaseIntegrityConfig UP-TO-DATE
+> Task :app:validateSigningRelease
+> Task :capacitor-android:createFullJarRelease
+> Task :capacitor-android:extractProguardFiles
+> Task :capacitor-android:generateReleaseLintModel
+> Task :capacitor-android:prepareLintJarForPublish UP-TO-DATE
+> Task :capacitor-app:createFullJarRelease
+> Task :capacitor-app:extractProguardFiles
+> Task :capacitor-app:generateReleaseLintModel
+> Task :capacitor-app:prepareLintJarForPublish UP-TO-DATE
+> Task :capacitor-community-admob:createFullJarRelease
+> Task :capacitor-community-admob:extractProguardFiles
+> Task :capacitor-community-admob:generateReleaseLintModel
+> Task :capacitor-community-admob:prepareLintJarForPublish UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:createFullJarRelease
+> Task :capacitor-cordova-android-plugins:extractProguardFiles
+> Task :capacitor-cordova-android-plugins:generateReleaseLintModel
+> Task :capacitor-cordova-android-plugins:prepareLintJarForPublish UP-TO-DATE
+> Task :capacitor-haptics:createFullJarRelease
+> Task :capacitor-haptics:extractProguardFiles
+> Task :capacitor-haptics:generateReleaseLintModel
+> Task :capacitor-haptics:prepareLintJarForPublish UP-TO-DATE
+> Task :capacitor-keyboard:createFullJarRelease
+> Task :capacitor-keyboard:extractProguardFiles
+> Task :capacitor-keyboard:generateReleaseLintModel
+> Task :capacitor-keyboard:prepareLintJarForPublish UP-TO-DATE
+> Task :capacitor-status-bar:createFullJarRelease
+> Task :capacitor-status-bar:extractProguardFiles
+> Task :capacitor-status-bar:generateReleaseLintModel
+> Task :capacitor-status-bar:prepareLintJarForPublish UP-TO-DATE
+> Task :capacitor-community-admob:stripReleaseDebugSymbols NO-SOURCE
+> Task :capacitor-community-admob:copyReleaseJniLibsProjectAndLocalJars
+> Task :capacitor-community-admob:extractDeepLinksForAarRelease
+> Task :app:mergeReleaseResources
+> Task :capacitor-community-admob:extractReleaseAnnotations
+> Task :capacitor-community-admob:mergeReleaseConsumerProguardFiles
+> Task :capacitor-app:stripReleaseDebugSymbols NO-SOURCE
+> Task :capacitor-app:copyReleaseJniLibsProjectAndLocalJars
+> Task :capacitor-app:extractDeepLinksForAarRelease
+> Task :capacitor-community-admob:mergeReleaseJavaResource
+> Task :capacitor-app:extractReleaseAnnotations
+> Task :capacitor-community-admob:syncReleaseLibJars
+> Task :capacitor-community-admob:bundleReleaseLocalLintAar
+> Task :capacitor-app:mergeReleaseConsumerProguardFiles
+> Task :capacitor-haptics:stripReleaseDebugSymbols NO-SOURCE
+> Task :capacitor-app:mergeReleaseJavaResource
+> Task :capacitor-haptics:copyReleaseJniLibsProjectAndLocalJars
+> Task :capacitor-app:syncReleaseLibJars
+> Task :capacitor-app:bundleReleaseLocalLintAar
+> Task :capacitor-haptics:extractDeepLinksForAarRelease
+> Task :capacitor-haptics:extractReleaseAnnotations
+> Task :capacitor-haptics:mergeReleaseConsumerProguardFiles
+> Task :capacitor-keyboard:stripReleaseDebugSymbols NO-SOURCE
+> Task :capacitor-haptics:mergeReleaseJavaResource
+> Task :capacitor-keyboard:copyReleaseJniLibsProjectAndLocalJars
+> Task :capacitor-haptics:syncReleaseLibJars
+> Task :capacitor-haptics:bundleReleaseLocalLintAar
+> Task :capacitor-keyboard:extractDeepLinksForAarRelease
+> Task :capacitor-keyboard:extractReleaseAnnotations
+> Task :capacitor-keyboard:mergeReleaseConsumerProguardFiles
+> Task :capacitor-status-bar:stripReleaseDebugSymbols NO-SOURCE
+> Task :capacitor-keyboard:mergeReleaseJavaResource
+> Task :capacitor-status-bar:copyReleaseJniLibsProjectAndLocalJars
+> Task :capacitor-keyboard:syncReleaseLibJars
+> Task :capacitor-keyboard:bundleReleaseLocalLintAar
+> Task :capacitor-status-bar:extractDeepLinksForAarRelease
+> Task :capacitor-status-bar:extractReleaseAnnotations
+> Task :capacitor-status-bar:mergeReleaseConsumerProguardFiles
+> Task :capacitor-android:stripReleaseDebugSymbols NO-SOURCE
+> Task :capacitor-status-bar:mergeReleaseJavaResource
+> Task :capacitor-android:copyReleaseJniLibsProjectAndLocalJars
+> Task :capacitor-status-bar:syncReleaseLibJars
+> Task :capacitor-status-bar:bundleReleaseLocalLintAar
+> Task :capacitor-android:extractDeepLinksForAarRelease
+> Task :capacitor-android:extractReleaseAnnotations
+> Task :capacitor-android:mergeReleaseConsumerProguardFiles
+> Task :capacitor-cordova-android-plugins:stripReleaseDebugSymbols NO-SOURCE
+> Task :capacitor-android:mergeReleaseJavaResource
+> Task :capacitor-cordova-android-plugins:copyReleaseJniLibsProjectAndLocalJars
+> Task :capacitor-android:syncReleaseLibJars
+> Task :capacitor-android:bundleReleaseLocalLintAar
+> Task :capacitor-cordova-android-plugins:extractDeepLinksForAarRelease
+> Task :capacitor-cordova-android-plugins:extractReleaseAnnotations
+> Task :capacitor-cordova-android-plugins:mergeReleaseConsumerProguardFiles
+> Task :capacitor-cordova-android-plugins:mergeReleaseJavaResource
+> Task :capacitor-cordova-android-plugins:syncReleaseLibJars
+> Task :capacitor-cordova-android-plugins:bundleReleaseLocalLintAar
+> Task :capacitor-android:writeReleaseLintModelMetadata
+> Task :capacitor-app:writeReleaseLintModelMetadata
+> Task :capacitor-community-admob:writeReleaseLintModelMetadata
+> Task :capacitor-cordova-android-plugins:writeReleaseLintModelMetadata
+> Task :capacitor-haptics:writeReleaseLintModelMetadata
+> Task :capacitor-keyboard:writeReleaseLintModelMetadata
+> Task :capacitor-status-bar:writeReleaseLintModelMetadata
+> Task :capacitor-android:generateReleaseLintVitalModel
+> Task :capacitor-app:generateReleaseLintVitalModel
+> Task :capacitor-community-admob:generateReleaseLintVitalModel
+> Task :capacitor-cordova-android-plugins:generateReleaseLintVitalModel
+> Task :capacitor-haptics:generateReleaseLintVitalModel
+> Task :capacitor-keyboard:generateReleaseLintVitalModel
+> Task :capacitor-status-bar:generateReleaseLintVitalModel
+> Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:compressReleaseAssets
+> Task :app:sdkReleaseDependencyData
+> Task :app:writeReleaseSigningConfigVersions
+> Task :capacitor-android:bundleReleaseAar
+> Task :capacitor-android:mapReleaseSourceSetPaths
+> Task :app:processReleaseResources
+> Task :capacitor-android:mergeReleaseResources
+> Task :app:compileReleaseJavaWithJavac
+> Task :app:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :app:generateReleaseLintVitalReportModel
+> Task :app:expandReleaseArtProfileWildcards
+> Task :app:convertLinkedResourcesToProtoRelease
+> Task :app:bundleReleaseResources
+> Task :capacitor-app:bundleReleaseAar
+> Task :capacitor-app:mapReleaseSourceSetPaths
+> Task :capacitor-android:compileReleaseLibraryResources
+> Task :capacitor-app:mergeReleaseResources
+> Task :capacitor-community-admob:bundleReleaseAar
+> Task :capacitor-community-admob:mapReleaseSourceSetPaths
+> Task :capacitor-android:verifyReleaseResources
+> Task :capacitor-app:lintVitalAnalyzeRelease
+> Task :capacitor-app:verifyReleaseResources
+> Task :capacitor-community-admob:mergeReleaseResources
+> Task :capacitor-android:assembleRelease
+> Task :capacitor-app:assembleRelease
+> Task :capacitor-cordova-android-plugins:bundleReleaseAar
+> Task :capacitor-cordova-android-plugins:mapReleaseSourceSetPaths
+> Task :capacitor-cordova-android-plugins:mergeReleaseResources
+> Task :capacitor-haptics:bundleReleaseAar
+> Task :capacitor-haptics:mapReleaseSourceSetPaths
+> Task :capacitor-community-admob:verifyReleaseResources
+> Task :capacitor-haptics:mergeReleaseResources
+> Task :capacitor-community-admob:assembleRelease
+> Task :capacitor-keyboard:bundleReleaseAar
+> Task :capacitor-keyboard:mapReleaseSourceSetPaths
+> Task :capacitor-android:lintVitalAnalyzeRelease
+> Task :capacitor-cordova-android-plugins:verifyReleaseResources
+> Task :capacitor-keyboard:mergeReleaseResources
+> Task :capacitor-cordova-android-plugins:assembleRelease
+> Task :capacitor-status-bar:bundleReleaseAar
+> Task :capacitor-status-bar:mapReleaseSourceSetPaths
+> Task :capacitor-haptics:verifyReleaseResources
+> Task :capacitor-cordova-android-plugins:lintVitalAnalyzeRelease
+> Task :capacitor-status-bar:mergeReleaseResources
+> Task :capacitor-haptics:assembleRelease
+> Task :capacitor-keyboard:verifyReleaseResources
+> Task :capacitor-keyboard:assembleRelease
+> Task :capacitor-status-bar:verifyReleaseResources
+> Task :capacitor-status-bar:assembleRelease
+> Task :capacitor-haptics:lintVitalAnalyzeRelease
+> Task :capacitor-keyboard:lintVitalAnalyzeRelease
+> Task :app:minifyReleaseWithR8
+> Task :capacitor-status-bar:lintVitalAnalyzeRelease
+> Task :capacitor-community-admob:lintVitalAnalyzeRelease
+> Task :app:lintVitalAnalyzeRelease
+> Task :app:lintVitalReportRelease
+> Task :app:lintVitalRelease
+> Task :app:buildReleasePreBundle
+> Task :app:compileReleaseArtProfile
+> Task :app:packageReleaseBundle
+> Task :app:shrinkReleaseRes
+> Task :app:convertShrunkResourcesToBinaryRelease
+> Task :app:shrinkBundleReleaseResources
+> Task :app:optimizeReleaseResources
+> Task :app:packageRelease
+> Task :app:createReleaseApkListingFileRedirect
+> Task :app:assembleRelease
+> Task :app:signReleaseBundle
+> Task :app:produceReleaseBundleIdeListingFile
+> Task :app:createReleaseBundleListingFileRedirect
+> Task :app:bundleRelease
+
+[Incubating] Problems report is available at: file:///D:/SONS%C4%B0TELER%C4%B0M/16-SukurEt/sukurolsun/android/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.13/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 3m 7s
+316 actionable tasks: 277 executed, 39 up-to-date

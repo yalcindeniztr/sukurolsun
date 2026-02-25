@@ -1,0 +1,85 @@
+﻿
+> Configure project :app
+WARNING: The option setting 'android.overridePathCheck=true' is experimental.
+The current default is 'false'.
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Configure project :capacitor-cordova-android-plugins
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :capacitor-android:preBuild UP-TO-DATE
+> Task :capacitor-android:preReleaseBuild UP-TO-DATE
+> Task :app:generateReleaseFeatureMetadata
+> Task :capacitor-android:generateReleaseResValues
+> Task :capacitor-android:generateReleaseResources
+> Task :capacitor-android:packageReleaseResources
+> Task :capacitor-community-admob:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :capacitor-community-admob:preBuild UP-TO-DATE
+> Task :capacitor-community-admob:preReleaseBuild UP-TO-DATE
+> Task :capacitor-android:javaPreCompileRelease
+> Task :capacitor-android:parseReleaseLocalResources
+> Task :capacitor-community-admob:generateReleaseResValues
+> Task :capacitor-community-admob:generateReleaseResources
+> Task :capacitor-android:generateReleaseRFile
+
+> Task :capacitor-android:compileReleaseJavaWithJavac FAILED
+.\gradlew.bat : error list
+ing module locations for S
+YSTEM_MODULES: java.io.IOE
+xception: can't find syste
+m classes
+At line:1 char:195
++ ... tlyContinue; .\gradl
+ew.bat bundleRelease assem
+bleRelease 2>&1 | Out-F ..
+.
++                  ~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (e  
+  rror listing m... sys   
+ tem classes:String) [    
+], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+error: Unable to find pack
+age java.lang in platform 
+classes
+1 error
+
+[Incubating] Problems report is available at: file:///D:/SONS%C4%B0TELER%C4%B0M/16-SukurEt/sukurolsun/android/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with
+ an exception.
+
+* What went wrong:
+Execution failed for task 
+':capacitor-android:compil
+eReleaseJavaWithJavac'.
+> Compilation failed; see 
+the compiler output below.
+  error: Unable to find pa
+ckage java.lang in platfor
+m classes
+  1 error
+
+* Try:
+> Check your code and depe
+ndencies to fix the compil
+ation error(s)
+> Run with --scan to get f
+ull insights.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.13/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 2s
+10 actionable tasks: 10 executed

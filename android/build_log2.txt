@@ -5,7 +5,7 @@ ed
 At line:1 char:1
 + .\gradlew.bat bundleRele
 ase 2>&1 | Out-File -FileP
-ath build_log.txt - ...
+ath build_log2.txt  ...
 + ~~~~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~
     + CategoryInfo        
@@ -24,10 +24,10 @@ et.rubygrapefruit.platform
 der in an unnamed module (
 file:/C:/Users/yalci/.grad
 le/wrapper/dists/gradle-8.
-10-bin/deqhafrv1ntovfmgh0n
-h3npr9/gradle-8.10/lib/nat
+12-bin/cetblhg4pflnnks72fx
+wobvgv/gradle-8.12/lib/nat
 ive-platform-0.22-mileston
-e-26.jar)
+e-27.jar)
 WARNING: Use --enable-nati
 ve-access=ALL-UNNAMED to a
 void a warning for callers
@@ -37,18 +37,25 @@ s will be blocked in a fut
 ure release unless native 
 access is enabled
 
+Starting a Gradle Daemon, 2 incompatible Daemons could not be reused, use --status for details
 
 FAILURE: Build failed with
  an exception.
 
+* Where:
+Settings file 'D:\SONS─░TE
+LER─░M\16-SukurEt\sukurols
+un\android\settings.gradle
+' line: 5
+
 * What went wrong:
-BUG! exception in phase 's
-emantic analysis' in sourc
-e unit '_BuildScript_' Uns
-upported class file major 
-version 69
-> Unsupported class file m
-ajor version 69
+A problem occurred evaluat
+ing settings 'android'.
+> BUG! exception in phase 
+'semantic analysis' in sou
+rce unit '_BuildScript_' U
+nsupported class file majo
+r version 69
 
 * Try:
 > Run with --stacktrace op
@@ -62,4 +69,4 @@ ull insights.
 > Get more help at https:/
 /help.gradle.org.
 
-BU─░LD FAILED in 699ms
+BUILD FAILED in 4s

@@ -1,52 +1,38 @@
 import React from 'react';
-import { PenSquare, Archive, BookHeart, User } from 'lucide-react';
+import { Home, BookOpen, Heart, Gift, User } from 'lucide-react';
 
 interface BottomNavProps {
     activeTab: string;
     onTabChange: (tab: string) => void;
 }
 
-interface NavItem {
-    id: string;
-    label: string;
-    icon: React.ElementType;
-}
-
-const NAV_ITEMS: NavItem[] = [
-    { id: 'home', label: 'Yaz', icon: PenSquare },
-    { id: 'history', label: 'Arşiv', icon: Archive },
-    { id: 'dua', label: 'Dua', icon: BookHeart },
+const tabs = [
+    { id: 'home', label: 'Yaz', icon: Home },
+    { id: 'history', label: 'Arşiv', icon: BookOpen },
+    { id: 'dua', label: 'Dua', icon: Heart },
+    { id: 'extras', label: 'Ekstra', icon: Gift },
     { id: 'profile', label: 'Profil', icon: User },
 ];
 
 const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange }) => {
     return (
-        <nav className="fixed bottom-28 left-4 right-4 z-50 bg-slate-950/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl safe-area-bottom transition-all duration-300">
-            <div className="max-w-lg mx-auto flex items-center justify-around py-2 px-4">
-                {NAV_ITEMS.map((item) => {
-                    const isActive = activeTab === item.id;
-                    const Icon = item.icon;
-
+        <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-emerald-100/60 bg-white/90 backdrop-blur-xl">
+            <div className="max-w-md mx-auto flex items-center justify-around py-2">
+                {tabs.map(({ id, label, icon: Icon }) => {
+                    const isActive = activeTab === id;
                     return (
                         <button
-                            key={item.id}
-                            onClick={() => onTabChange(item.id)}
-                            className={`flex flex-col items-center justify-center py-2 px-4 rounded-2xl transition-all duration-300 min-w-[70px]
+                            key={id}
+                            onClick={() => onTabChange(id)}
+                            className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all active:scale-90
                                 ${isActive
-                                    ? 'bg-teal-500/20 text-teal-400 scale-105'
-                                    : 'text-slate-500 hover:text-slate-300'
+                                    ? 'text-emerald-600'
+                                    : 'text-slate-400 hover:text-slate-600'
                                 }`}
                         >
-                            <div className={`relative ${isActive ? 'animate-pulse' : ''}`}>
-                                <Icon className={`w-6 h-6 transition-all ${isActive ? 'stroke-[2.5]' : 'stroke-[1.5]'}`} />
-                                {/* Aktif Gösterge */}
-                                {isActive && (
-                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-teal-400 rounded-full animate-ping" />
-                                )}
-                            </div>
-                            <span className={`text-xs mt-1 font-medium transition-all ${isActive ? 'opacity-100' : 'opacity-70'}`}>
-                                {item.label}
-                            </span>
+                            <Icon className={`w-5 h-5 ${isActive ? 'fill-emerald-100' : ''}`} />
+                            <span className={`text-[10px] font-bold ${isActive ? 'text-emerald-700' : 'text-slate-400'}`}>{label}</span>
+                            {isActive && <div className="w-4 h-0.5 bg-emerald-500 rounded-full" />}
                         </button>
                     );
                 })}

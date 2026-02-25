@@ -1,34 +1,21 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext } from 'react';
 
-type Theme = 'dark' | 'light';
+type Theme = 'light' | 'dark';
 
 interface ThemeContextType {
     theme: Theme;
     toggleTheme: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextType>({
+    theme: 'light',
+    toggleTheme: () => { },
+});
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [theme, setTheme] = useState<Theme>(() => {
-        const saved = localStorage.getItem('sukurolsun_theme');
-        return (saved as Theme) || 'dark';
-    });
-
-    useEffect(() => {
-        localStorage.setItem('sukurolsun_theme', theme);
-        const body = document.body;
-        if (theme === 'light') {
-            body.classList.add('light-mode');
-            // Light mode için background güncellemesi gerekebilir CSS'te
-        } else {
-            body.classList.remove('light-mode');
-        }
-    }, [theme]);
-
-    const toggleTheme = () => {
-        setTheme(prev => prev === 'dark' ? 'light' : 'dark');
-    };
+    // Sabit açık tema — koyu tema kaldırıldı
+    const theme: Theme = 'light';
+    const toggleTheme = () => { }; // Artık kullanılmıyor
 
     return (
         <ThemeContext.Provider value={{ theme, toggleTheme }}>
@@ -37,10 +24,4 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     );
 };
 
-export const useTheme = () => {
-    const context = useContext(ThemeContext);
-    if (context === undefined) {
-        throw new Error('useTheme must be used within a ThemeProvider');
-    }
-    return context;
-};
+export const useTheme = () => useContext(ThemeContext);

@@ -36,6 +36,7 @@ export interface JournalEntry {
   category: string;
   timestamp: string; // ISO String
   isArchived?: boolean;
+  isFavorite?: boolean;
 }
 
 export interface UserProfile {
@@ -58,4 +59,11 @@ export interface AppState {
   entries: JournalEntry[];
   profile: UserProfile | null;
   settings: AppSettings;
+}
+
+export interface UserMessage {
+  id: string;
+  text: string;
+  category?: string;
+  timestamp: string;
 }

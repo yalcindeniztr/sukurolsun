@@ -1,58 +1,37 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;700&family=Scheherazade+New:wght@400;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Scheherazade+New:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+
 @layer base {
   :root {
-    --bg-primary: #111827;
-    /* gray-900 */
-    --text-primary: #f1f5f9;
-    /* slate-100 */
-    --accent-teal: #14b8a6;
-    /* teal-500 */
-    --accent-gold: #d4af37;
-  }
-
-  .light {
-    --bg-primary: #f8fafc;
-    /* slate-50 */
+    --bg-primary: #f0fdf4;
     --text-primary: #1e293b;
-    /* slate-800 */
+    --accent-teal: #10b981;
+    --accent-gold: #f59e0b;
   }
 
   body {
-    @apply bg-slate-950 text-slate-50 font-sans antialiased overflow-x-hidden selection:bg-teal-500/30 selection:text-teal-200;
-
-    /* Dynamic Background based on mode */
-    @apply transition-colors duration-500;
-  }
-
-  body.light-mode {
-    @apply bg-slate-50 text-slate-900;
+    @apply bg-[#f0fdf4] text-slate-800 font-sans antialiased overflow-x-hidden selection:bg-emerald-400/30 selection:text-emerald-800;
+    @apply transition-colors duration-300;
   }
 }
 
 @layer components {
-
-  /* Temel Cam Efekti */
   .glass-card {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl rounded-2xl;
+    @apply bg-white/80 backdrop-blur-xl border border-emerald-100/60 rounded-3xl;
+    box-shadow:
+      0 4px 6px -1px rgba(16, 185, 129, 0.06),
+      0 10px 30px -4px rgba(16, 185, 129, 0.08);
   }
 
-  /* Standart Input Alanı */
   .input-field {
-    @apply w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/50 transition-all duration-300;
-  }
-
-  /* Butonlar */
-  .btn-primary {
-    @apply bg-gradient-to-r from-teal-700 to-teal-600 text-white font-medium py-3 px-6 rounded-xl shadow-lg hover:shadow-teal-500/20 active:scale-[0.98] transition-all duration-200;
+    @apply w-full px-4 py-3 rounded-xl border bg-white border-slate-200 text-slate-800 placeholder-slate-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/20 transition-all duration-200 shadow-sm;
   }
 
   .btn-gold {
-    @apply bg-gradient-to-r from-yellow-600 to-yellow-500 text-white font-medium py-3 px-6 rounded-xl shadow-lg hover:shadow-yellow-500/20 active:scale-[0.98] transition-all duration-200;
+    @apply bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold py-3 px-6 rounded-2xl hover:shadow-lg hover:shadow-emerald-500/20 active:scale-[0.97] transition-all duration-300;
   }
 }
 
@@ -69,23 +48,78 @@
   }
 }
 
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
 .animate-fadeIn {
-  animation: fadeIn 0.4s ease-out forwards;
+  animation: fadeIn 0.5s ease-out;
 }
 
-/* Safe Area (iPhone X+) */
-.safe-area-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 20px);
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
 }
 
-/* Arapça Font - Mevcut yapıda kullanılmasa da stil bütünlüğü için tutuyoruz */
-.font-arabic {
-  font-family: 'Scheherazade New', serif;
+.animate-slide-up {
+  animation: fadeIn 0.6s ease-out;
 }
 
-/* Custom Scrollbar - Minimal */
+.animate-slide-in-left {
+  animation: slideInLeft 0.4s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -93,5 +127,16 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-white/10 rounded-full;
+  background: rgba(16, 185, 129, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.4);
+}
+
+/* Light theme depth shadow utility */
+.shadow-depth-light {
+  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.06),
+    0 10px 30px -4px rgba(16, 185, 129, 0.08);
 }

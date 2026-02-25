@@ -26,11 +26,12 @@ export const DEFAULT_PROFILE: UserProfile = {
   badges: [],
 };
 
+// Vite base URL'i ile uyumlu avatar yolları
+const BASE = import.meta.env.BASE_URL || '/';
 export const AVATARS = [
-  '/avatars/avatar_1.png',
-  '/avatars/avatar_2.png',
-  '/avatars/avatar_3.png',
-  '/avatars/avatar_4.png',
-  '/avatars/avatar_5.png',
-  '/avatars/avatar_6.png',
+  `${BASE}avatars/avatar_1.png`,
+  `${BASE}avatars/avatar_2.png`,
+  `${BASE}avatars/avatar_3.png`,
+  `${BASE}avatars/avatar_4.png`,
+  `${BASE}avatars/avatar_5.png`,
 ];

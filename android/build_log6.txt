@@ -1,0 +1,361 @@
+﻿Starting a Gradle Daemon, 2 stopped Daemons could not be reused, use --status for details
+.\gradlew.bat : 
+At line:1 char:23
++ ... .bat --stop; .\gradl
+ew.bat bundleRelease assem
+bleRelease 2>&1 | Out-F ..
+.
++                  ~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (:  
+  String) [], RemoteExc   
+ eption
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+FAILURE: Build failed with
+ an exception.
+
+* What went wrong:
+A problem occurred configu
+ring root project 'android
+'.
+> Multiple build operation
+s failed.
+      Could not read works
+pace metadata from C:\User
+s\yalci\.gradle\caches\8.1
+3\transforms\f0a756523c79f
+2f638d0125cc8a6f41f\metada
+ta.bin
+      Could not read works
+pace metadata from C:\User
+s\yalci\.gradle\caches\8.1
+3\transforms\79e9a7346ca59
+d515f64efaf50c36f2c\metada
+ta.bin
+      Could not read works
+pace metadata from C:\User
+s\yalci\.gradle\caches\8.1
+3\transforms\ddbcc95240b52
+c6e3d609ac7c2ebd2ee\metada
+ta.bin
+      Could not read works
+pace metadata from C:\User
+s\yalci\.gradle\caches\8.1
+3\transforms\d1c15b36fdbe8
+d0a363562e6007cb461\metada
+ta.bin
+      Could not read works
+pace metadata from C:\User
+s\yalci\.gradle\caches\8.1
+3\transforms\56575e7af61e5
+6eb0e92f4a84fc29998\metada
+ta.bin
+      Could not read works
+pace metadata from C:\User
+s\yalci\.gradle\caches\8.1
+3\transforms\5ded680929e9b
+45090167b60273d3781\metada
+ta.bin
+      Could not read works
+pace metadata from C:\User
+s\yalci\.gradle\caches\8.1
+3\transforms\2f42e3fba33b0
+9a0fd6aca9146059768\metada
+ta.bin
+      Could not read works
+pace metadata from C:\User
+s\yalci\.gradle\caches\8.1
+3\transforms\6145f02dee165
+c49555e641f88caa604\metada
+ta.bin
+      Could not read works
+pace metadata from C:\User
+s\yalci\.gradle\caches\8.1
+3\transforms\c3cfdb806b895
+997d8725732730d0728\metada
+ta.bin
+      Could not read works
+pace metadata from C:\User
+s\yalci\.gradle\caches\8.1
+3\transforms\aea8632cc50f6
+b6577626c146e3a2deb\metada
+ta.bin
+      ...and 33 more failu
+res.
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\f0a756523c79f2
+f638d0125cc8a6f41f\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\79e9a7346ca59d
+515f64efaf50c36f2c\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\ddbcc95240b52c
+6e3d609ac7c2ebd2ee\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\d1c15b36fdbe8d
+0a363562e6007cb461\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\56575e7af61e56
+eb0e92f4a84fc29998\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\5ded680929e9b4
+5090167b60273d3781\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\2f42e3fba33b09
+a0fd6aca9146059768\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\6145f02dee165c
+49555e641f88caa604\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\c3cfdb806b8959
+97d8725732730d0728\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\aea8632cc50f6b
+6577626c146e3a2deb\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\d592057cd56d27
+2918f5fce0f0b66b92\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\af4f3843ed5928
+e54c07930cc58ea274\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\d8d7d3a6242d94
+1afd8f190230dc05e8\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\9d98e1ebca0ec3
+dac3ee46240f560fb2\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\95f5db58c09d8a
+431c6c34002d66acf5\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\3b2312a7235d2d
+642545756c99081961\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\0a3d6c8d553dfe
+55c8ac8015e9848a8d\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\b4970f82b43b71
+21bcbd5c2d86576ff7\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\64362191236973
+56a53290ac8bdae102\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\ca7951d4efdae3
+9bbe3f659b26cf839a\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\a237359022f059
+80da1b9d58c486f718\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\1c1bcc5166ab9f
+343527ae42e12b86bf\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\5a166b1ecf4c8e
+2ef4b0fc0faaa50056\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\c07a93c2160004
+e4cfe7c9a0f0a3516e\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\0afa14255151d0
+e55476b2eb079a5484\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\ec82a6f7b1932d
+8a237526b878931902\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\5a8b4210045354
+0071ac6303be66354f\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\3fdbd06e74b884
+4ba88a4f0b4c7d5d14\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\360c104c79a8af
+830c3da6aeb53cf8ef\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\15fd9af2a86d9f
+c58995b8f3a7bf621e\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\681d75d9439c10
+17c8126d4c938dc858\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\b92259916cfa8d
+3453e72345084b0abf\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\ac4cde932698e7
+8796dde757a47688b5\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\4515da6671b69f
+b128505938dbdb32ed\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\ea62f88f3d2525
+9b2ce417b9b9cf1b54\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\11516c8975f108
+92b147df21257e6944\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\872ef935850ba2
+034429abb18c78c995\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\e18ad86523489c
+bcfb7a080bb1473418\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\68283338adbf47
+3c8349d255f6865313\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\161bbef99ba6c1
+3f50d79c662481d28f\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\51cd6c986146de
+a5b5da7cb68a8a99a0\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\6a74fff8916b59
+8a2b85daf6c8333605\metadat
+a.bin
+   > Could not read worksp
+ace metadata from C:\Users
+\yalci\.gradle\caches\8.13
+\transforms\215d42d4d20448
+ec7b1f5fdbbc6a7575\metadat
+a.bin
+
+* Try:
+> Run with --stacktrace op
+tion to get the stack trac
+e.
+> Run with --info or --deb
+ug option to get more log 
+output.
+> Run with --scan to get f
+ull insights.
+> Get more help at https:/
+/help.gradle.org.
+
+BUILD FAILED in 13s
