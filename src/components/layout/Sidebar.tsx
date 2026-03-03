@@ -104,7 +104,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                 {/* Footer */}
                 <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-emerald-100/50 text-center">
                     <p className="text-sm font-medium text-emerald-600 mb-1">by ziberkan</p>
-                    <p className="text-xs text-slate-400">v1.3.0</p>
+                    <p className="text-xs text-slate-400">v1.4.0</p>
                 </div>
             </div>
         </>
