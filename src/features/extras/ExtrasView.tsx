@@ -12,6 +12,7 @@ const ExtrasView: React.FC = () => {
     const [userMessages, setUserMessages] = useState<UserMessage[]>([]);
     const [showAddMessage, setShowAddMessage] = useState(false);
     const [newMessageText, setNewMessageText] = useState('');
+    const [newMessageCategory, setNewMessageCategory] = useState<string>('Genel');
 
     useEffect(() => {
         const loadMessages = async () => {
@@ -37,11 +38,12 @@ const ExtrasView: React.FC = () => {
 
     const handleAddMessage = useCallback(async () => {
         if (!newMessageText.trim()) return;
-        const updated = await storageService.addUserMessage(newMessageText.trim());
+        const updated = await storageService.addUserMessage(newMessageText.trim(), newMessageCategory);
         setUserMessages(updated);
         setNewMessageText('');
+        setNewMessageCategory('Genel');
         setShowAddMessage(false);
-    }, [newMessageText]);
+    }, [newMessageText, newMessageCategory]);
 
     const handleDeleteMessage = useCallback(async (id: string) => {
         if (window.confirm('Bu mesajı silmek istediğinden emin misin?')) {
@@ -103,9 +105,20 @@ const ExtrasView: React.FC = () => {
                             onChange={(e) => setNewMessageText(e.target.value)}
                             placeholder="Mesajınızı yazın..."
                             rows={3}
-                            className="input-field resize-none"
+                            className={`input-field resize-none w-full p-3 rounded-xl border transition-all ${theme === 'light' ? 'bg-white border-slate-200' : 'bg-black/20 border-white/10 text-white'}`}
                             maxLength={500}
                         />
+                        <select
+                            value={newMessageCategory}
+                            onChange={(e) => setNewMessageCategory(e.target.value)}
+                            className={`w-full p-3 rounded-xl border transition-all ${theme === 'light' ? 'bg-white border-slate-200 text-slate-700' : 'bg-black/20 border-white/10 text-slate-200'}`}
+                        >
+                            <option value="Genel">Genel</option>
+                            <option value="Cuma">Cuma Mesajı</option>
+                            <option value="Kandil">Kandil Mesajı</option>
+                            <option value="Ramazan">Ramazan Mesajı</option>
+                            <option value="Kurban">Kurban Bayramı</option>
+                        </select>
                         <div className="flex gap-3">
                             <button
                                 onClick={() => { setShowAddMessage(false); setNewMessageText(''); }}
@@ -136,10 +149,17 @@ const ExtrasView: React.FC = () => {
                                 className={`p-4 rounded-2xl flex items-start gap-3 group transition-all
                                     ${theme === 'light' ? 'bg-emerald-50/50 hover:bg-emerald-50' : 'bg-emerald-500/5'}`}
                             >
-                                <p className={`flex-1 text-sm leading-relaxed
-                                    ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
-                                    {msg.text}
-                                </p>
+                                <div className="flex-1">
+                                    {msg.category && msg.category !== 'Genel' && (
+                                        <span className={`inline-block mb-1 text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md ${theme === 'light' ? 'bg-emerald-100/50 text-emerald-600' : 'bg-emerald-500/20 text-emerald-400'}`}>
+                                            {msg.category}
+                                        </span>
+                                    )}
+                                    <p className={`text-sm leading-relaxed
+                                        ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
+                                        {msg.text}
+                                    </p>
+                                </div>
                                 <div className="flex gap-1 shrink-0">
                                     <button
                                         onClick={() => copyToClipboard(msg.text, msg.id)}

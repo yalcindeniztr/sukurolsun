@@ -65,6 +65,26 @@ export class AdMobService {
         }
     }
 
+    static async showSquareBanner(): Promise<void> {
+        if (!this.initialised) {
+            await this.initialize();
+        }
+
+        const options: BannerAdOptions = {
+            adId: this.BANNER_ID,
+            adSize: BannerAdSize.MEDIUM_RECTANGLE,
+            position: BannerAdPosition.BOTTOM_CENTER,
+            margin: 0,
+            isTesting: !this.IS_PRODUCTION
+        };
+
+        try {
+            await AdMob.showBanner(options);
+        } catch {
+            // Sessiz hata
+        }
+    }
+
     static async prepareInterstitial(): Promise<void> {
         const options: AdOptions = {
             adId: this.INTERSTITIAL_ID,
@@ -79,7 +99,7 @@ export class AdMobService {
     }
 
     private static interstitialCounter = 0;
-    private static readonly FREQUENCY_CAP = 3;
+    private static readonly FREQUENCY_CAP = 2;
 
     static async showInterstitial(): Promise<void> {
         this.interstitialCounter++;

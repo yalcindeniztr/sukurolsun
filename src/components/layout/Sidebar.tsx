@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Home, BookOpen, Heart, Gift, User } from 'lucide-react';
+import { Home, BookOpen, Heart, Gift, User, Share2 } from 'lucide-react';
 
 interface SidebarProps {
     isOpen: boolean;
@@ -9,10 +9,10 @@ interface SidebarProps {
 }
 
 const navItems = [
-    { id: 'home', label: 'Ana Sayfa', icon: Home },
-    { id: 'history', label: 'Arşiv', icon: BookOpen },
+    { id: 'home', label: 'Anasayfa', icon: Home },
     { id: 'dua', label: 'Dualar', icon: Heart },
     { id: 'extras', label: 'Ek Özellikler', icon: Gift },
+    { id: 'history', label: 'Arşiv', icon: BookOpen },
     { id: 'profile', label: 'Profilim', icon: User },
 ];
 
@@ -78,11 +78,33 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                             </button>
                         );
                     })}
+
+                    {/* Share Button (Special item) */}
+                    <button
+                        onClick={async () => {
+                            try {
+                                if (navigator.share) {
+                                    await navigator.share({
+                                        title: 'Şükür Olsun',
+                                        text: 'Harika bir manevi günlük uygulaması keşfettim! Sen de Şükür Olsun uygulamasını dene.',
+                                        url: 'https://play.google.com/store/apps/details?id=com.yalcin.sukurolsun'
+                                    });
+                                }
+                            } catch (error) {
+                                console.log('Error sharing', error);
+                            }
+                        }}
+                        className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-200 group active:scale-[0.97] text-slate-600 hover:bg-slate-50 hover:text-slate-800"
+                    >
+                        <Share2 className="w-5 h-5 transition-colors text-slate-400 group-hover:text-emerald-500" />
+                        <span className="text-sm">Uygulamayı paylaş</span>
+                    </button>
                 </nav>
 
                 {/* Footer */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-emerald-100/50">
-                    <p className="text-xs text-slate-400 text-center">v1.2.0</p>
+                <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-emerald-100/50 text-center">
+                    <p className="text-sm font-medium text-emerald-600 mb-1">by ziberkan</p>
+                    <p className="text-xs text-slate-400">v1.3.0</p>
                 </div>
             </div>
         </>

@@ -21,6 +21,19 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     useEffect(() => {
+        // Show Square Banner when component mounts
+        const initAd = async () => {
+            await AdMobService.showSquareBanner();
+        };
+        initAd();
+
+        // Cleanup on unmount
+        return () => {
+            AdMobService.removeBanner();
+        };
+    }, []);
+
+    useEffect(() => {
         if (selectedEntry) {
             setTitle(selectedEntry.title);
             setContent(selectedEntry.content);
@@ -97,7 +110,7 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
                     className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 active:scale-95 ${promptType === 'allah_action' ? activeTabClass : inactiveTabClass}`}
                 >
                     <Hand className={`w-4 h-4 ${promptType === 'allah_action' ? 'fill-current' : ''}`} />
-                    <span>Allah İçin Yaptım</span>
+                    <span>Allah için ne yaptın?</span>
                 </button>
             </div>
 
@@ -216,6 +229,11 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
                     </button>
                 </div>
             </form>
+
+            {/* AdMob Space placeholder */}
+            <div className="w-full mt-6 h-12 flex justify-center text-slate-300/50 text-[10px] items-end pb-2 font-medium">
+                Sponsorlu Bağlantı
+            </div>
         </div>
     );
 };

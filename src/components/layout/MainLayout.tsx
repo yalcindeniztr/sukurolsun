@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Menu } from 'lucide-react';
-import BottomNav from './BottomNav';
 import Sidebar from './Sidebar';
 
 interface MainLayoutProps {
@@ -32,36 +31,37 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
                 <div className="absolute top-1/2 left-1/2 w-[200px] h-[200px] rounded-full blur-[80px] bg-amber-200/10" />
             </div>
 
-            {/* Tarih & Saat */}
-            <div className="relative z-10 text-center pt-8 pb-2">
-                <p className="text-sm font-bold tracking-widest text-emerald-600 uppercase">
-                    {new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' }).toUpperCase()}
-                </p>
-                <p className="text-5xl font-light text-slate-700 mt-1 tracking-tight font-mono">
-                    {new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
-                </p>
+            {/* Üst Kısım Yapışkan - Tarih, Saat ve Header */}
+            <div className="sticky top-0 z-30 bg-white/70 backdrop-blur-xl border-b border-emerald-100/50 pt-safe-top">
+                {/* Tarih & Saat */}
+                <div className="text-center pt-8 pb-2">
+                    <p className="text-sm font-bold tracking-widest text-emerald-600 uppercase">
+                        {new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' }).toUpperCase()}
+                    </p>
+                    <p className="text-5xl font-light text-slate-700 mt-1 tracking-tight font-mono">
+                        {new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                </div>
+
+                {/* Header */}
+                <header className="px-5 pt-4 pb-3 flex justify-between items-center">
+                    {/* Menu Button */}
+                    <button
+                        onClick={() => setIsSidebarOpen(true)}
+                        className="p-2.5 rounded-2xl hover:bg-emerald-50 text-slate-500 hover:text-emerald-600 active:scale-90 transition-all"
+                    >
+                        <Menu className="w-6 h-6" />
+                    </button>
+
+                    {/* Logo */}
+                    <h1 className="text-lg font-serif font-bold text-emerald-700 tracking-wide">
+                        Şükür Olsun
+                    </h1>
+
+                    {/* Sağ taraf boşluk */}
+                    <div className="w-10" />
+                </header>
             </div>
-
-            {/* Header */}
-            <header className="sticky top-0 z-30 px-5 pt-4 pb-3 flex justify-between items-center
-                bg-white/70 backdrop-blur-xl border-b border-emerald-100/50">
-
-                {/* Menu Button */}
-                <button
-                    onClick={() => setIsSidebarOpen(true)}
-                    className="p-2.5 rounded-2xl hover:bg-emerald-50 text-slate-500 hover:text-emerald-600 active:scale-90 transition-all"
-                >
-                    <Menu className="w-6 h-6" />
-                </button>
-
-                {/* Logo */}
-                <h1 className="text-lg font-serif font-bold text-emerald-700 tracking-wide">
-                    Şükür Olsun
-                </h1>
-
-                {/* Sağ taraf boşluk */}
-                <div className="w-10" />
-            </header>
 
             {/* Sidebar */}
             <Sidebar
@@ -72,12 +72,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
             />
 
             {/* İçerik */}
-            <main className="relative z-10 px-4 md:px-8 lg:px-12 py-6 max-w-4xl mx-auto pb-32">
+            <main className="relative z-10 px-4 md:px-8 lg:px-12 py-6 max-w-4xl mx-auto pb-12">
                 {children}
             </main>
-
-            {/* Bottom Navigation */}
-            <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
         </div>
     );
 };
