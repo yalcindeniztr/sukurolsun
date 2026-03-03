@@ -73,8 +73,8 @@ export class AdMobService {
         const options: BannerAdOptions = {
             adId: this.BANNER_ID,
             adSize: BannerAdSize.MEDIUM_RECTANGLE,
-            position: BannerAdPosition.BOTTOM_CENTER,
-            margin: 0,
+            position: BannerAdPosition.TOP_CENTER,
+            margin: 400, // Pushes it down below the entry form
             isTesting: !this.IS_PRODUCTION
         };
 
