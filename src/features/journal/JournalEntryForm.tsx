@@ -21,16 +21,8 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     useEffect(() => {
-        // Show Square Banner when component mounts
-        const initAd = async () => {
-            await AdMobService.showSquareBanner();
-        };
-        initAd();
-
-        // Cleanup on unmount
-        return () => {
-            AdMobService.removeBanner();
-        };
+        // Pre-cache Interstitial on mount
+        AdMobService.prepareInterstitial();
     }, []);
 
     useEffect(() => {
@@ -62,6 +54,12 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
 
         const btn = document.activeElement as HTMLButtonElement;
         if (btn) btn.blur();
+
+        // AdMob interstitial trigger on form submit!
+        setTimeout(async () => {
+            await AdMobService.showInterstitial();
+            AdMobService.prepareInterstitial();
+        }, 500);
     };
 
     const activeMood = MOODS.find(m => m.type === mood);
@@ -230,10 +228,6 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
                 </div>
             </form>
 
-            {/* AdMob Space placeholder */}
-            <div className="w-full mt-6 h-12 flex justify-center text-slate-300/50 text-[10px] items-end pb-2 font-medium">
-                Sponsorlu Bağlantı
-            </div>
         </div>
     );
 };

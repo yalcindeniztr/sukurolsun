@@ -32,7 +32,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
             </div>
 
             {/* Üst Kısım Yapışkan - Tarih, Saat ve Header */}
-            <div className="sticky top-0 z-30 bg-white/70 backdrop-blur-xl border-b border-emerald-100/50 pt-safe-top">
+            <div className="fixed top-0 left-0 right-0 z-50 bg-[#f0fdf4]/90 backdrop-blur-xl border-b border-emerald-100/80 pt-safe-top">
                 {/* Tarih & Saat */}
                 <div className="text-center pt-8 pb-2">
                     <p className="text-sm font-bold tracking-widest text-emerald-600 uppercase">
@@ -72,7 +72,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
             />
 
             {/* İçerik */}
-            <main className="relative z-10 px-4 md:px-8 lg:px-12 py-6 max-w-4xl mx-auto pb-12">
+            <main className="relative z-10 px-4 md:px-8 lg:px-12 pt-[140px] pb-12 max-w-4xl mx-auto">
                 {children}
             </main>
         </div>
