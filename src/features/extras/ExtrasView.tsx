@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Gift, ChevronDown, ChevronUp, Copy, Check, MessageCircle, Plus, Trash2, X } from 'lucide-react';
+import { Gift, ChevronDown, ChevronUp, Copy, Check, Plus, Trash2 } from 'lucide-react';
 import { useTheme } from '../../core/ThemeContext';
 import { RELIGIOUS_MESSAGES, ReligiousCategory } from './religiousMessages';
 import { storageService } from '../../services/storage.service';
@@ -10,9 +10,7 @@ const ExtrasView: React.FC = () => {
     const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [userMessages, setUserMessages] = useState<UserMessage[]>([]);
-    const [showAddMessage, setShowAddMessage] = useState(false);
     const [newMessageText, setNewMessageText] = useState('');
-    const [newMessageCategory, setNewMessageCategory] = useState<string>('Genel');
 
     useEffect(() => {
         const loadMessages = async () => {
@@ -36,14 +34,12 @@ const ExtrasView: React.FC = () => {
         }
     };
 
-    const handleAddMessage = useCallback(async () => {
+    const handleAddMessage = useCallback(async (categoryTitle: string) => {
         if (!newMessageText.trim()) return;
-        const updated = await storageService.addUserMessage(newMessageText.trim(), newMessageCategory);
+        const updated = await storageService.addUserMessage(newMessageText.trim(), categoryTitle);
         setUserMessages(updated);
         setNewMessageText('');
-        setNewMessageCategory('Genel');
-        setShowAddMessage(false);
-    }, [newMessageText, newMessageCategory]);
+    }, [newMessageText]);
 
     const handleDeleteMessage = useCallback(async (id: string) => {
         if (window.confirm('Bu mesajı silmek istediğinden emin misin?')) {
@@ -69,127 +65,7 @@ const ExtrasView: React.FC = () => {
                 </p>
             </div>
 
-            {/* Mesajlarım Bölümü */}
-            <div className={`rounded-3xl overflow-hidden border transition-all duration-300
-                ${theme === 'light'
-                    ? 'bg-white/80 border-emerald-200/60 shadow-sm'
-                    : 'bg-white/[0.03] border-emerald-500/20'}`}>
 
-                <div className="flex items-center justify-between p-5">
-                    <div className="flex items-center gap-3">
-                        <MessageCircle className="w-6 h-6 text-emerald-500" />
-                        <span className={`font-bold ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>
-                            Mesajlarım
-                        </span>
-                        <span className={`text-xs px-2.5 py-1 rounded-full font-bold
-                            ${theme === 'light' ? 'bg-emerald-50 text-emerald-600' : 'bg-emerald-500/10 text-emerald-400'}`}>
-                            {userMessages.length}
-                        </span>
-                    </div>
-                    <button
-                        onClick={() => setShowAddMessage(true)}
-                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold
-                            bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100
-                            active:scale-95 transition-all"
-                    >
-                        <Plus className="w-4 h-4" />
-                        Ekle
-                    </button>
-                </div>
-
-                {/* Mesaj Ekleme Formu */}
-                {showAddMessage && (
-                    <div className="p-4 pt-0 space-y-3 animate-fadeIn">
-                        <textarea
-                            value={newMessageText}
-                            onChange={(e) => setNewMessageText(e.target.value)}
-                            placeholder="Mesajınızı yazın..."
-                            rows={3}
-                            className={`input-field resize-none w-full p-3 rounded-xl border transition-all ${theme === 'light' ? 'bg-white border-slate-200' : 'bg-black/20 border-white/10 text-white'}`}
-                            maxLength={500}
-                        />
-                        <select
-                            value={newMessageCategory}
-                            onChange={(e) => setNewMessageCategory(e.target.value)}
-                            className={`w-full p-3 rounded-xl border transition-all ${theme === 'light' ? 'bg-white border-slate-200 text-slate-700' : 'bg-black/20 border-white/10 text-slate-200'}`}
-                        >
-                            <option value="Genel">Genel</option>
-                            <option value="Cuma">Cuma Mesajı</option>
-                            <option value="Kandil">Kandil Mesajı</option>
-                            <option value="Ramazan">Ramazan Mesajı</option>
-                            <option value="Kurban">Kurban Bayramı</option>
-                        </select>
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => { setShowAddMessage(false); setNewMessageText(''); }}
-                                className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 transition-all"
-                            >
-                                <X className="w-4 h-4 inline mr-1" /> İptal
-                            </button>
-                            <button
-                                onClick={handleAddMessage}
-                                disabled={!newMessageText.trim()}
-                                className={`flex-1 py-3 rounded-xl font-bold transition-all
-                                    ${newMessageText.trim()
-                                        ? 'bg-emerald-500 text-white hover:bg-emerald-400 shadow-sm'
-                                        : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
-                            >
-                                Kaydet
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                {/* Mesaj Listesi */}
-                {userMessages.length > 0 && (
-                    <div className="p-4 pt-0 space-y-2">
-                        {userMessages.map((msg) => (
-                            <div
-                                key={msg.id}
-                                className={`p-4 rounded-2xl flex items-start gap-3 group transition-all
-                                    ${theme === 'light' ? 'bg-emerald-50/50 hover:bg-emerald-50' : 'bg-emerald-500/5'}`}
-                            >
-                                <div className="flex-1">
-                                    {msg.category && msg.category !== 'Genel' && (
-                                        <span className={`inline-block mb-1 text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md ${theme === 'light' ? 'bg-emerald-100/50 text-emerald-600' : 'bg-emerald-500/20 text-emerald-400'}`}>
-                                            {msg.category}
-                                        </span>
-                                    )}
-                                    <p className={`text-sm leading-relaxed
-                                        ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
-                                        {msg.text}
-                                    </p>
-                                </div>
-                                <div className="flex gap-1 shrink-0">
-                                    <button
-                                        onClick={() => copyToClipboard(msg.text, msg.id)}
-                                        className={`p-2 rounded-xl transition-all active:scale-95
-                                            ${copiedId === msg.id
-                                                ? 'bg-green-100 text-green-500'
-                                                : 'bg-white text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 shadow-sm'}`}
-                                    >
-                                        {copiedId === msg.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                                    </button>
-                                    <button
-                                        onClick={() => handleDeleteMessage(msg.id)}
-                                        className="p-2 rounded-xl bg-white text-slate-400 hover:text-red-500 hover:bg-red-50 shadow-sm transition-all active:scale-95"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                {userMessages.length === 0 && !showAddMessage && (
-                    <div className="p-6 pt-0 text-center">
-                        <p className={`text-sm ${theme === 'light' ? 'text-slate-400' : 'text-slate-500'}`}>
-                            Henüz mesaj eklemediniz. Kendi özel mesajlarınızı kaydedin!
-                        </p>
-                    </div>
-                )}
-            </div>
 
             {/* Kategori Listesi - 3D Kartlar */}
             <div className="space-y-3">
@@ -223,9 +99,74 @@ const ExtrasView: React.FC = () => {
                             }
                         </button>
 
-                        {/* Mesaj Listesi */}
+                        {/* Mesaj Listesi ve Ekleme */}
                         {expandedCategory === category.id && (
                             <div className="p-4 pt-0 space-y-3 animate-fadeIn">
+                                {/* Yeni Mesaj Ekleme */}
+                                <div className="flex gap-2">
+                                    <textarea
+                                        value={newMessageText}
+                                        onChange={(e) => setNewMessageText(e.target.value)}
+                                        placeholder="Kendi mesajınızı ekleyin..."
+                                        rows={1}
+                                        className={`flex-1 resize-none p-3 rounded-xl border transition-all ${theme === 'light' ? 'bg-white border-slate-200 text-slate-800' : 'bg-black/20 border-white/10 text-white'}`}
+                                        maxLength={500}
+                                    />
+                                    <button
+                                        onClick={() => handleAddMessage(category.title)}
+                                        disabled={!newMessageText.trim()}
+                                        className={`px-4 py-2 rounded-xl font-bold transition-all flex items-center gap-1
+                                            ${newMessageText.trim()
+                                                ? 'bg-emerald-500 text-white hover:bg-emerald-400 shadow-sm'
+                                                : 'bg-slate-200 text-slate-400 cursor-not-allowed hidden'}`}
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                        Ekle
+                                    </button>
+                                </div>
+
+                                {/* Kullanıcının Eklediği Mesajlar */}
+                                {userMessages.filter(m => m.category === category.title).map(msg => (
+                                    <div
+                                        key={msg.id}
+                                        className={`p-4 rounded-2xl flex items-start gap-3 group transition-all border
+                                            ${theme === 'light'
+                                                ? 'bg-emerald-50 border-emerald-100 hover:bg-emerald-100'
+                                                : 'bg-emerald-500/10 border-emerald-500/20 hover:bg-emerald-500/20'}`}
+                                    >
+                                        <p className={`flex-1 text-sm leading-relaxed
+                                            ${theme === 'light' ? 'text-emerald-800' : 'text-emerald-100'}`}>
+                                            {msg.text}
+                                        </p>
+                                        <div className="flex gap-1 shrink-0">
+                                            <button
+                                                onClick={() => copyToClipboard(msg.text, msg.id)}
+                                                className={`p-2 rounded-xl transition-all active:scale-95
+                                                    ${copiedId === msg.id
+                                                        ? 'bg-green-500/20 text-green-500'
+                                                        : theme === 'light'
+                                                            ? 'bg-white text-slate-400 hover:text-emerald-600 shadow-sm'
+                                                            : 'bg-black/20 text-slate-400 hover:text-emerald-400'
+                                                    }`}
+                                                title="Kopyala"
+                                            >
+                                                {copiedId === msg.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteMessage(msg.id)}
+                                                className={`p-2 rounded-xl transition-all active:scale-95
+                                                    ${theme === 'light'
+                                                        ? 'bg-white text-slate-400 hover:text-red-500 hover:bg-red-50 shadow-sm'
+                                                        : 'bg-black/20 text-slate-400 hover:text-red-400 hover:bg-red-500/10'
+                                                    }`}
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+
+                                {/* Sabit Mesajlar */}
                                 {category.messages.map((message) => (
                                     <div
                                         key={message.id}

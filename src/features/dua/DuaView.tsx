@@ -46,7 +46,7 @@ const DuaView: React.FC = () => {
     }, []);
 
     const handleAddCustomPrayerClick = async () => {
-        await AdMobService.showInterstitial();
+        await AdMobService.trackPageViewAndShowInterstitial();
         AdMobService.prepareInterstitial();
         setIsAddModalOpen(true);
     };
@@ -57,6 +57,7 @@ const DuaView: React.FC = () => {
         setCustomPrayers(updated);
         setNewPrayerText('');
         setIsAddModalOpen(false);
+        AdMobService.trackSaveAndShowInterstitial();
     };
 
     const handleDeleteCustomPrayer = async (id: string) => {

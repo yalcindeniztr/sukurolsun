@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import MainLayout from './components/layout/MainLayout';
 import VerseBanner from './features/journal/VerseBanner';
 import JournalEntryForm from './features/journal/JournalEntryForm';
@@ -6,19 +6,26 @@ import JournalHistory from './features/journal/JournalHistory';
 import ProfileView from './features/profile/ProfileView';
 import DuaView from './features/dua/DuaView';
 import ExtrasView from './features/extras/ExtrasView';
+import ReligiousDaysView from './features/religious_days/ReligiousDaysView';
+import PrayerTimesView from './features/prayer_times/PrayerTimesView';
+import TesbihatView from './features/tesbihat/TesbihatView';
+import ReligiousPlacesView from './features/places/ReligiousPlacesView';
 import PinLockScreen from './components/PinLockScreen';
 import UserAgreement from './components/UserAgreement';
 import Toast from './components/ui/Toast';
+import UpdateChecker from './components/UpdateChecker';
 import { storageService } from './services/storage.service';
 import { gamificationService } from './services/gamification.service';
 import { AdMobService } from './services/AdMobService';
 import { ReviewService } from './services/ReviewService';
-import { UserProfile, JournalEntry } from './core/types';
+import { UserProfile, JournalEntry, CustomPrayer, UserMessage } from './core/types';
 import { DEFAULT_PROFILE } from './constants';
 
 function App() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [entries, setEntries] = useState<JournalEntry[]>([]);
+  const [customPrayers, setCustomPrayers] = useState<CustomPrayer[]>([]);
+  const [userMessages, setUserMessages] = useState<UserMessage[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | undefined>(undefined);
   const [activeTab, setActiveTab] = useState('home');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -46,16 +53,40 @@ function App() {
         }
 
         // Verileri yükle
-        const [loadedProfile, loadedEntries] = await Promise.all([
+        let [loadedProfile, loadedEntries, loadedPrayers, loadedMessages] = await Promise.all([
           storageService.getProfile(),
           storageService.getEntries(),
+          storageService.getCustomPrayers(),
+          storageService.getUserMessages(),
         ]);
+
+        // Otomatik geri yükleme (Uygulama çökerse veya silinirse)
+        if (!loadedProfile && loadedEntries.length === 0) {
+          const hasBackup = await storageService.hasNativeBackup();
+          if (hasBackup) {
+            if (confirm("Telefonunuzda önceki bir yedek bulundu. Geri yüklemek ister misiniz?")) {
+              await storageService.retrieveNativeBackup();
+              // verileri tekrar çek
+              [loadedProfile, loadedEntries, loadedPrayers, loadedMessages] = await Promise.all([
+                storageService.getProfile(),
+                storageService.getEntries(),
+                storageService.getCustomPrayers(),
+                storageService.getUserMessages(),
+              ]);
+            }
+          }
+        }
 
         setProfile(loadedProfile || DEFAULT_PROFILE);
         setEntries(loadedEntries);
+        setCustomPrayers(loadedPrayers);
+        setUserMessages(loadedMessages);
 
-        // AdMob başlat
-        AdMobService.initialize();
+        // AdMob başlat ve Ana Sayfadaysa Banner göster
+        await AdMobService.initialize();
+        if (activeTab === 'home') {
+          AdMobService.showBanner();
+        }
 
         // İlk kullanım tarihini kaydet (Review için)
         ReviewService.trackFirstOpen();
@@ -69,7 +100,7 @@ function App() {
     };
 
     initApp();
-  }, []);
+  }, [activeTab]);
 
   const showToast = useCallback((message: string, type: 'success' | 'error') => {
     setToast({ message, type });
@@ -122,30 +153,70 @@ function App() {
         await ReviewService.markPromptShown();
       }
     }
+
+    // AdMob Kaydetme Tetikleyicisi
+    AdMobService.trackSaveAndShowInterstitial();
   }, [selectedEntry, profile, showToast]);
 
   const handleDeleteEntry = useCallback(async (id: string) => {
-    if (confirm('Bu günlüğü silmek istediğinden emin misin?')) {
-      const updatedEntries = await storageService.deleteEntry(id);
-      setEntries(updatedEntries);
-      if (selectedEntry?.id === id) {
-        setSelectedEntry(undefined);
-      }
-      showToast('Kayıt silindi.', 'success');
+    if (confirm('Bu kaydı silmek istediğinden emin misin?')) {
+      if (customPrayers.some(p => p.id === id)) {
+        const up = await storageService.deleteCustomPrayer(id);
+        setCustomPrayers(up);
+        showToast('Dua silindi.', 'success');
+      } else if (userMessages.some(m => m.id === id)) {
+        const um = await storageService.deleteUserMessage(id);
+        setUserMessages(um);
+        showToast('Mesaj silindi.', 'success');
+      } else {
+        const updatedEntries = await storageService.deleteEntry(id);
+        setEntries(updatedEntries);
+        if (selectedEntry?.id === id) setSelectedEntry(undefined);
+        showToast('Kayıt silindi.', 'success');
 
-      const currentStreak = gamificationService.calculateStreak(updatedEntries);
-      if (profile) {
-        const updatedProfile = { ...profile, streak: currentStreak };
-        setProfile(updatedProfile);
-        await storageService.saveProfile(updatedProfile);
+        const currentStreak = gamificationService.calculateStreak(updatedEntries);
+        if (profile) {
+          const updatedProfile = { ...profile, streak: currentStreak };
+          setProfile(updatedProfile);
+          await storageService.saveProfile(updatedProfile);
+        }
       }
     }
-  }, [selectedEntry, profile, showToast]);
+  }, [selectedEntry, profile, showToast, customPrayers, userMessages]);
 
   const handleToggleFavorite = useCallback(async (id: string) => {
-    const updatedEntries = await storageService.toggleFavorite(id);
-    setEntries(updatedEntries);
-  }, []);
+    // Mesaj veya dua favorilemesi için özellik yoksa sadece entry'leri güncelle
+    if (!customPrayers.some(p => p.id === id) && !userMessages.some(m => m.id === id)) {
+      const updatedEntries = await storageService.toggleFavorite(id);
+      setEntries(updatedEntries);
+    }
+  }, [customPrayers, userMessages]);
+
+  const combinedHistory = useMemo(() => {
+    const prayersAsEntries: JournalEntry[] = customPrayers.map(p => ({
+      id: p.id,
+      title: 'Özel Dua',
+      content: p.text,
+      mood: 'peaceful',
+      promptType: 'allah_action',
+      category: 'dua',
+      timestamp: p.timestamp,
+    }));
+
+    const messagesAsEntries: JournalEntry[] = userMessages.map(m => ({
+      id: m.id,
+      title: m.category || 'Mesaj',
+      content: m.text,
+      mood: 'grateful',
+      promptType: 'gratitude',
+      category: 'mesaj',
+      timestamp: m.timestamp,
+    }));
+
+    return [...entries, ...prayersAsEntries, ...messagesAsEntries].sort((a, b) =>
+      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
+  }, [entries, customPrayers, userMessages]);
 
   const handleSelectEntry = useCallback((entry: JournalEntry) => {
     setSelectedEntry(entry);
@@ -205,11 +276,24 @@ function App() {
     );
   }
 
+  const handleTabChange = useCallback((tab: string) => {
+    setActiveTab(tab);
+    AdMobService.trackPageViewAndShowInterstitial();
+
+    if (tab === 'home') {
+      AdMobService.showBanner();
+    } else {
+      AdMobService.hideBanner();
+    }
+  }, []);
+
   return (
     <MainLayout
       activeTab={activeTab}
-      onTabChange={setActiveTab}
+      onTabChange={handleTabChange}
+      profile={profile}
     >
+      <UpdateChecker />
       {toast && (
         <Toast
           message={toast.message}
@@ -253,7 +337,7 @@ function App() {
           <div className="animate-fadeIn">
             <h2 className="text-2xl font-serif text-white mb-6">Arşiv</h2>
             <JournalHistory
-              entries={entries}
+              entries={combinedHistory}
               onDelete={handleDeleteEntry}
               onEdit={handleSelectEntry}
               onToggleFavorite={handleToggleFavorite}
@@ -264,10 +348,14 @@ function App() {
 
         {activeTab === 'dua' && <DuaView />}
         {activeTab === 'extras' && <ExtrasView />}
+        {activeTab === 'religious_days' && <ReligiousDaysView />}
+        {activeTab === 'prayer_times' && <PrayerTimesView profile={profile} />}
+        {activeTab === 'tesbihat' && <TesbihatView />}
+        {activeTab === 'places' && <ReligiousPlacesView />}
 
         {activeTab === 'profile' && (
           <div className="animate-fadeIn">
-            <ProfileView profile={profile} onUpdateProfile={handleUpdateProfile} />
+            <ProfileView profile={profile} entries={entries} onUpdateProfile={handleUpdateProfile} />
           </div>
         )}
       </div>

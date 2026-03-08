@@ -98,20 +98,41 @@ export class AdMobService {
         }
     }
 
-    private static interstitialCounter = 0;
-    private static readonly FREQUENCY_CAP = 2;
+    private static pageViewCounter = 0;
+    private static saveActionCounter = 0;
 
-    static async showInterstitial(): Promise<void> {
-        this.interstitialCounter++;
+    private static readonly PAGE_VIEW_CAP = 3;
+    private static readonly SAVE_ACTION_CAP = 2;
 
-        if (this.interstitialCounter % this.FREQUENCY_CAP !== 0) {
-            return;
+    static async trackPageViewAndShowInterstitial(): Promise<void> {
+        this.pageViewCounter++;
+
+        if (this.pageViewCounter % this.PAGE_VIEW_CAP === 0) {
+            try {
+                await AdMob.prepareInterstitial({
+                    adId: this.INTERSTITIAL_ID,
+                    isTesting: !this.IS_PRODUCTION
+                });
+                await AdMob.showInterstitial();
+            } catch {
+                // Sessiz hata
+            }
         }
+    }
 
-        try {
-            await AdMob.showInterstitial();
-        } catch {
-            // Sessiz hata
+    static async trackSaveAndShowInterstitial(): Promise<void> {
+        this.saveActionCounter++;
+
+        if (this.saveActionCounter % this.SAVE_ACTION_CAP === 0) {
+            try {
+                await AdMob.prepareInterstitial({
+                    adId: this.INTERSTITIAL_ID,
+                    isTesting: !this.IS_PRODUCTION
+                });
+                await AdMob.showInterstitial();
+            } catch {
+                // Sessiz hata
+            }
         }
     }
 

@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
-import { Menu } from 'lucide-react';
+import { Menu, Home, ArrowLeft } from 'lucide-react';
 import Sidebar from './Sidebar';
+import { UserProfile } from '../../core/types';
+import { AVATARS } from '../../constants';
+import { useTheme } from '../../core/ThemeContext';
 
 interface MainLayoutProps {
     children: React.ReactNode;
     activeTab: string;
     onTabChange: (tab: string) => void;
+    profile: UserProfile | null;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChange }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChange, profile }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const isCustomAvatar = profile?.avatarId?.startsWith('data:image') || false;
+    const avatarUrl = isCustomAvatar
+        ? profile!.avatarId
+        : (AVATARS.find(url => url.includes(profile?.avatarId || 'avatar_1')) || AVATARS[0]);
 
     const handleTabChange = (tab: string) => {
         onTabChange(tab);
@@ -21,18 +30,35 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
         setIsSidebarOpen(false);
     };
 
-    return (
-        <div className="min-h-screen w-full relative overflow-x-hidden bg-[#f0fdf4] text-slate-800">
+    const { bgImage } = useTheme();
 
-            {/* Dekoratif Arka Plan */}
-            <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-20 right-[-50px] w-[300px] h-[300px] rounded-full blur-[120px] bg-emerald-300/20" />
-                <div className="absolute bottom-40 left-[-80px] w-[350px] h-[350px] rounded-full blur-[120px] bg-emerald-200/15" />
-                <div className="absolute top-1/2 left-1/2 w-[200px] h-[200px] rounded-full blur-[80px] bg-amber-200/10" />
-            </div>
+    const getBackgroundStyle = () => {
+        if (bgImage === 'kabe') return { backgroundImage: 'url(/assets/themes/kabe.png)', backgroundSize: 'cover', backgroundAttachment: 'fixed', backgroundPosition: 'center' };
+        if (bgImage === 'nebevi') return { backgroundImage: 'url(/assets/themes/nebevi.png)', backgroundSize: 'cover', backgroundAttachment: 'fixed', backgroundPosition: 'center' };
+        if (bgImage === 'nature') return { backgroundImage: 'url(/assets/themes/nature.png)', backgroundSize: 'cover', backgroundAttachment: 'fixed', backgroundPosition: 'center' };
+        return {}; // default
+    };
+
+    return (
+        <div className="min-h-screen w-full relative overflow-x-hidden bg-[#f0fdf4] text-slate-800" style={getBackgroundStyle()}>
+
+            {/* Dekoratif Arka Plan (Sadece Default temada belirgin) */}
+            {bgImage === 'default' && (
+                <div className="fixed inset-0 pointer-events-none">
+                    <div className="absolute top-20 right-[-50px] w-[300px] h-[300px] rounded-full blur-[120px] bg-emerald-300/20" />
+                    <div className="absolute bottom-40 left-[-80px] w-[350px] h-[350px] rounded-full blur-[120px] bg-emerald-200/15" />
+                    <div className="absolute top-1/2 left-1/2 w-[200px] h-[200px] rounded-full blur-[80px] bg-amber-200/10" />
+                </div>
+            )}
+
+            {/* Koyulaştırıcı / Karartıcı Overlay (Resim seçiliyse yazılar okunsun diye) */}
+            {bgImage !== 'default' && (
+                <div className="fixed inset-0 pointer-events-none bg-white/60 backdrop-blur-[2px]" />
+            )}
 
             {/* Üst Kısım Yapışkan - Tarih, Saat ve Header */}
-            <div className="fixed top-0 left-0 right-0 z-50 bg-[#f0fdf4]/90 backdrop-blur-xl border-b border-emerald-100/80 pt-safe-top">
+            <div className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b pt-safe-top
+                ${bgImage === 'default' ? 'bg-[#f0fdf4]/90 border-emerald-100/80' : 'bg-white/80 border-slate-200/50'}`}>
                 {/* Tarih & Saat */}
                 <div className="text-center pt-8 pb-2">
                     <p className="text-sm font-bold tracking-widest text-emerald-600 uppercase">
@@ -58,8 +84,27 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
                         Şükür Olsun
                     </h1>
 
-                    {/* Sağ taraf boşluk */}
-                    <div className="w-10" />
+                    {/* Sağ Taraf - Aksiyonlar */}
+                    <div className="flex items-center gap-1">
+                        <button
+                            onClick={() => window.history.length > 2 ? window.history.back() : onTabChange('home')}
+                            className="p-1.5 rounded-xl hover:bg-emerald-50 text-emerald-600 active:scale-90 transition-all font-bold"
+                        >
+                            <ArrowLeft className="w-6 h-6" />
+                        </button>
+                        <button
+                            onClick={() => onTabChange('home')}
+                            className="p-1.5 rounded-xl hover:bg-emerald-50 text-emerald-600 active:scale-90 transition-all font-bold"
+                        >
+                            <Home className="w-6 h-6" />
+                        </button>
+                        <button
+                            onClick={() => handleSidebarTabChange('profile')}
+                            className="w-9 h-9 ml-1 rounded-full overflow-hidden border-2 border-emerald-200 active:scale-90 transition-all shadow-sm"
+                        >
+                            <img src={avatarUrl} alt="Profile" className="w-full h-full object-cover bg-white" />
+                        </button>
+                    </div>
                 </header>
             </div>
 
@@ -72,7 +117,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
             />
 
             {/* İçerik */}
-            <main className="relative z-10 px-4 md:px-8 lg:px-12 pt-[140px] pb-12 max-w-4xl mx-auto">
+            <main className="relative z-10 px-4 md:px-8 lg:px-12 pt-[180px] pb-12 max-w-4xl mx-auto">
                 {children}
             </main>
         </div>

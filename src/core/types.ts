@@ -47,6 +47,8 @@ export interface UserProfile {
   joinedDate: string;
   streak: number;
   badges: string[]; // List of badge IDs
+  notificationsEnabled?: boolean;
+  locationEnabled?: boolean;
 }
 
 export interface AppSettings {
@@ -65,5 +67,20 @@ export interface UserMessage {
   id: string;
   text: string;
   category?: string;
+  timestamp: string;
+}
+
+export interface ReligiousDay {
+  id: string;
+  title: string;
+  date?: string;
+  timestamp: string;
+}
+
+export interface ReligiousDayItem {
+  id: string;
+  dayId: string;
+  type: 'dua' | 'mesaj';
+  text: string;
   timestamp: string;
 }

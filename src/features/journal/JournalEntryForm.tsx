@@ -55,11 +55,7 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
         const btn = document.activeElement as HTMLButtonElement;
         if (btn) btn.blur();
 
-        // AdMob interstitial trigger on form submit!
-        setTimeout(async () => {
-            await AdMobService.showInterstitial();
-            AdMobService.prepareInterstitial();
-        }, 500);
+        // App.tsx tarafında kaydedilme işlemi sırasında reklam tetiklendiği için buradan kaldırıldı.
     };
 
     const activeMood = MOODS.find(m => m.type === mood);
@@ -101,7 +97,7 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
                 </button>
                 <button
                     onClick={async () => {
-                        await AdMobService.showInterstitial();
+                        await AdMobService.trackPageViewAndShowInterstitial();
                         AdMobService.prepareInterstitial();
                         setPromptType('allah_action');
                     }}

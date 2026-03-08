@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react';
-import { Home, BookOpen, Heart, Gift, User, Share2 } from 'lucide-react';
+import { Home, BookOpen, Heart, Gift, User, Share2, Calendar, Star, Clock, Activity, Map, DownloadCloud, LogOut } from 'lucide-react';
+import { Share } from '@capacitor/share';
+import { ReviewService } from '../../services/ReviewService';
+import { App as CapacitorApp } from '@capacitor/app';
 
 interface SidebarProps {
     isOpen: boolean;
@@ -11,7 +14,11 @@ interface SidebarProps {
 const navItems = [
     { id: 'home', label: 'Anasayfa', icon: Home },
     { id: 'dua', label: 'Dualar', icon: Heart },
-    { id: 'extras', label: 'Ek Özellikler', icon: Gift },
+    { id: 'tesbihat', label: 'Tesbihat', icon: Activity },
+    { id: 'prayer_times', label: 'Vakitler', icon: Clock },
+    { id: 'places', label: 'Mekanlar', icon: Map },
+    { id: 'extras', label: 'Mesajlar', icon: Gift },
+    { id: 'religious_days', label: 'Dini Günler', icon: Calendar },
     { id: 'history', label: 'Arşiv', icon: BookOpen },
     { id: 'profile', label: 'Profilim', icon: User },
 ];
@@ -39,23 +46,27 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
 
             {/* Panel */}
             <div
-                className={`fixed inset-y-0 left-0 z-50 w-72 transition-transform duration-300 ease-out
+                className={`fixed inset-y-0 left-0 z-50 w-[260px] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]
                     ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-                    bg-white/95 backdrop-blur-2xl border-r border-emerald-100/60`}
+                    bg-white/90 dark:bg-slate-900/90 backdrop-blur-3xl border-r border-slate-200/50 dark:border-white/10`}
                 style={{
                     boxShadow: isOpen
-                        ? '10px 0 40px -10px rgba(16,185,129,0.1), 20px 0 60px -15px rgba(0,0,0,0.05)'
+                        ? '10px 0 40px -10px rgba(0,0,0,0.1), 20px 0 60px -15px rgba(0,0,0,0.05)'
                         : 'none'
                 }}
             >
                 {/* Header */}
-                <div className="p-6 pb-4 border-b border-emerald-100/50">
-                    <h2 className="text-xl font-serif font-bold text-emerald-700">Şükür Olsun</h2>
-                    <p className="text-xs text-slate-500 mt-1">Manevi Günlüğün</p>
+                <div className="pt-10 pb-6 px-6">
+                    <h2 className="text-2xl font-serif font-black bg-gradient-to-br from-emerald-600 to-teal-800 dark:from-emerald-400 dark:to-teal-600 bg-clip-text text-transparent">
+                        Şükür Olsun
+                    </h2>
+                    <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest">
+                        Manevi Günlüğün
+                    </p>
                 </div>
 
                 {/* Navigation */}
-                <nav className="p-4 space-y-1">
+                <nav className="px-3 flex-1 overflow-y-auto space-y-1 pb-24">
                     {navItems.map((item) => {
                         const isActive = activeTab === item.id;
                         const Icon = item.icon;
@@ -64,47 +75,98 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                             <button
                                 key={item.id}
                                 onClick={() => onTabChange(item.id)}
-                                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-200 group active:scale-[0.97]
+                                className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group
                                     ${isActive
-                                        ? 'bg-emerald-50 text-emerald-700 font-bold shadow-sm border border-emerald-200/50'
-                                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-800'
+                                        ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20 active:scale-95'
+                                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 active:bg-slate-200 dark:active:bg-white/10'
                                     }`}
                             >
-                                <Icon className={`w-5 h-5 transition-colors ${isActive ? 'text-emerald-600' : 'text-slate-400 group-hover:text-emerald-500'}`} />
-                                <span className="text-sm">{item.label}</span>
-                                {isActive && (
-                                    <div className="ml-auto w-2 h-2 rounded-full bg-emerald-500" />
-                                )}
+                                <Icon className={`w-5 h-5 transition-colors 
+                                    ${isActive ? 'text-white' : 'text-slate-400 dark:text-slate-500 group-hover:text-emerald-500 dark:group-hover:text-emerald-400'}`}
+                                />
+                                <span className={`text-sm font-medium ${isActive ? 'font-bold' : ''}`}>
+                                    {item.label}
+                                </span>
                             </button>
                         );
                     })}
+
+                    <div className="h-4" /> {/* Spacer */}
 
                     {/* Share Button (Special item) */}
                     <button
                         onClick={async () => {
                             try {
+                                await Share.share({
+                                    title: 'Şükür Olsun',
+                                    text: 'Harika bir manevi günlük uygulaması keşfettim! Sen de Şükür Olsun uygulamasını dene.',
+                                    url: 'https://play.google.com/store/apps/details?id=com.yalcin.sukurolsun',
+                                    dialogTitle: 'Şükür Olsun Uygulamasını Paylaş',
+                                });
+                            } catch (error) {
+                                console.log('Error sharing', error);
+                                // Fallback for Web
                                 if (navigator.share) {
-                                    await navigator.share({
+                                    navigator.share({
                                         title: 'Şükür Olsun',
                                         text: 'Harika bir manevi günlük uygulaması keşfettim! Sen de Şükür Olsun uygulamasını dene.',
                                         url: 'https://play.google.com/store/apps/details?id=com.yalcin.sukurolsun'
-                                    });
+                                    }).catch(() => { });
                                 }
-                            } catch (error) {
-                                console.log('Error sharing', error);
                             }
                         }}
-                        className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-200 group active:scale-[0.97] text-slate-600 hover:bg-slate-50 hover:text-slate-800"
+                        className="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 active:bg-slate-200"
                     >
-                        <Share2 className="w-5 h-5 transition-colors text-slate-400 group-hover:text-emerald-500" />
-                        <span className="text-sm">Uygulamayı paylaş</span>
+                        <Share2 className="w-5 h-5 text-slate-400 dark:text-slate-500 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors" />
+                        <span className="text-sm font-medium">Uygulamayı paylaş</span>
+                    </button>
+
+                    {/* Rate Us Button */}
+                    <button
+                        onClick={() => ReviewService.openPlayStore()}
+                        className="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 active:bg-slate-200"
+                    >
+                        <Star className="w-5 h-5 text-slate-400 dark:text-slate-500 group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors" />
+                        <span className="text-sm font-medium">Bizi Değerlendirin</span>
+                    </button>
+
+                    {/* Update Check Button */}
+                    <button
+                        onClick={() => {
+                            // Burada manuel bir alert/toast veya UpdateChecker'ı tetikleyecek bir Event emit edilebilir.
+                            // Şimdilik sadece toast gösterelim
+                            alert("Şu an en güncel sürümü kullanıyorsunuz.");
+                        }}
+                        className="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 active:bg-slate-200"
+                    >
+                        <DownloadCloud className="w-5 h-5 text-slate-400 dark:text-slate-500 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors" />
+                        <span className="text-sm font-medium">Güncellemeleri Kontrol Et</span>
+                    </button>
+                    {/* Exit App Button */}
+                    <button
+                        onClick={async () => {
+                            if (window.confirm("Uygulamadan çıkmak istediğinize emin misiniz?")) {
+                                try {
+                                    await CapacitorApp.exitApp();
+                                } catch (e) {
+                                    console.log("Çıkış desteklenmiyor (Web ortamı vb.)", e);
+                                    window.close();
+                                }
+                            }
+                        }}
+                        className="w-full mt-4 flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 active:bg-red-100"
+                    >
+                        <LogOut className="w-5 h-5 text-red-400 group-hover:text-red-600 transition-colors" />
+                        <span className="text-sm font-bold">Çıkış Yap</span>
                     </button>
                 </nav>
 
                 {/* Footer */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-emerald-100/50 text-center">
-                    <p className="text-sm font-medium text-emerald-600 mb-1">by ziberkan</p>
-                    <p className="text-xs text-slate-400">v1.4.0</p>
+                <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-white via-white dark:from-slate-900 dark:via-slate-900 to-transparent">
+                    <div className="flex flex-col items-center justify-center">
+                        <p className="text-[10px] font-bold tracking-widest uppercase text-emerald-600 dark:text-emerald-500 mb-0.5">by ziberkan</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.4.0</p>
+                    </div>
                 </div>
             </div>
         </>

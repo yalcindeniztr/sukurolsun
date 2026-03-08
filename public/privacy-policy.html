@@ -3,74 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gizlilik Politikası - Şükür Olsun</title>
+    <title>Şükür Olsun - Gizlilik Politikası</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; padding: 20px; max-width: 800px; margin: auto; color: #333; background: #f9f9f9; }
-        h1 { color: #10b981; }
-        h2 { color: #059669; margin-top: 25px; }
-        .update { background: #ecfdf5; padding: 10px; border-radius: 5px; border-left: 4px solid #10b981; margin-bottom: 20px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 2rem; }
+        h1, h2, h3 { color: #10b981; }
+        .container { background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
     </style>
 </head>
-<body>
-    <h1>Gizlilik Politikası</h1>
-    <div class="update">
-        <strong>Son Güncelleme:</strong> 27 Şubat 2026 (v1.3)
+<body style="background-color: #f0fdf4;">
+    <div class="container">
+        <h1>Gizlilik Politikası</h1>
+        <p><strong>Son güncellenme:</strong> Mart 2026</p>
+        
+        <h2>1. Bilgilerinizin Toplanması ve Kullanımı</h2>
+        <p>"Şükür Olsun" uygulaması, cihazınıza girdiğiniz hiçbir kişisel notu, şükür ifadesini veya özel duaları uzak sunuculara göndermez. Tüm veriler (@capacitor/preferences, @capacitor/filesystem) kullanılarak şifrelenmiş veya doğrudan yerel cihazınızın hafızasında saklanmaktadır.</p>
+        
+        <h2>2. Konum İzinleri</h2>
+        <p>Uygulama, size doğru Namaz/Oruç vakitlerini gösterebilmek için cihazınızın Konum servisine ihtiyaç duyabilir (sadece aktif kullanım veya onayınız doğrultusunda). Konum bilginiz kesinlikle kayıt altına alınmaz, saklanmaz veya üçüncü şahıslarla paylaşılmaz. <strong>Ayrıca konum izinleri uygulamanın Profil menüsünden (Ayarlar arasından) dilediğiniz an kapatılıp açılabilir.</strong></p>
+        
+        <h2>3. Bildirim İzinleri</h2>
+        <p>Şükür Olsun, size günlük hatırlatmalar ve ilham verici ayetler göndermek için yerel bildirim altyapısını kullanır. <strong>Bu bildirimleri dilediğiniz an Profil / Ayarlar sekmesi altından tamamen kapatabilir veya tekrar aktif hâle getirebilirsiniz.</strong></p>
+
+        <h2>4. Reklam ve AdMob Entegrasyonu</h2>
+        <p>Uygulamamız, hizmetin ücretsiz olarak sürdürülebilmesi adına Google AdMob reklamlarını kullanmaktadır. Google AdMob, cihaz bilgilerini ve reklam kişiselleştirmesini optimize eden çerezleri/tanımlayıcıları kullanabilir. Konu hakkında detaylı bilgi için <a href="https://policies.google.com/privacy">Google Gizlilik Politikası</a> sayfasını ziyaret edebilirsiniz.</p>
+
+        <h2>4. Yedekleme (Dışa/İçe Aktar)</h2>
+        <p>Uygulama üzerinden alınan manuel yedekler, ".json" dosyası formatında doğrudan sizin kendi cihazınıza veya belirttiğiniz bulut ortamına (Google Drive vb.) kaydedilir. Geliştirici bu yedeklere hiçbir şekilde erişim sağlayamaz.</p>
+        
+        <h2>5. Değişiklikler</h2>
+        <p>Gizlilik politikasında yapılabilecek değişiklikler bu sayfada güncellenecektir. Değişiklikler yayınlandığı andan itibaren geçerlilik kazanır.</p>
+
+        <h2>6. İletişim</h2>
+        <p>Gizlilik veya poliçeler ile ilgili her türlü soru, öneri ve data silme talepleriniz için uygulama içerisinden veya geliştirici e-posta adresi üzerinden bize ulaşabilirsiniz.</p>
     </div>
-    
-    <p><strong>Şükür Olsun</strong> uygulamasını kullandığınız için teşekkür ederiz. Bu Gizlilik Politikası, uygulamamızı kullanırken verilerinizin nasıl toplandığını, kullanıldığını ve korunduğunu açıklar.</p>
-
-    <h2>1. Toplanan Veriler</h2>
-    <p>Uygulamamız aşağıdaki verileri cihazınızda saklar:</p>
-    <ul>
-        <li><strong>Şükür Günlüğü Notları:</strong> Kullanıcıların girdiği şükür notları ve günlük yazıları</li>
-        <li><strong>Profil Bilgileri:</strong> Kullanıcı adı, avatar seçimi, streak (arkadaşlık zinciri) bilgileri</li>
-        <li><strong>Kişisel Dualar:</strong> Kullanıcıların eklediği özel dualar</li>
-        <li><strong>Uygulama Ayarları:</strong> Dil tercihi, bildirim ayarları</li>
-    </ul>
-    <p><strong>ÖNEMLİ:</strong> Tüm bu veriler yalnızca cihazınızda saklanır ve hiçbir şekilde sunucularımıza aktarılmaz. Uygulama kaldırıldığında tüm veriler silinir.</p>
-
-    <h2>2. Veri Saklama</h2>
-    <p>Verileriniz yerel cihaz depolamasında (Android Preferences API) saklanmaktadır. Bu veriler:</p>
-    <ul>
-        <li>Başka hiçbir uygulamayla paylaşılmaz</li>
-        <li>Üçüncü taraflara satılmaz</li>
-        <li>Reklam amaçlı kullanılmaz</li>
-        <li>Sunucularımıza yüklenmez</li>
-    </ul>
-
-    <h2>3. Reklamlar</h2>
-    <p>Uygulamamızda Google AdMob reklamları gösterilmektedir. Google, reklamları kişiselleştirmek için:</p>
-    <ul>
-        <li>Cihaz tanımlayıcıları kullanabilir</li>
-        <li>Konum bilgisi kullanabilir (izin verilirse)</li>
-        <li>Uygulama kullanım geçmişini değerlendirebilir</li>
-    </ul>
-    <p>Bu veri işlemleri Google'ın Gizlilik Politikası'na tabidir. Daha fazla bilgi için: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a></p>
-
-    <h2>4. Çocukların Gizliliği</h2>
-    <p>Uygulamamız 13 yaş altı çocuklar için tasarlanmamıştır. Bilinçli olarak çocuklardan kişisel bilgi toplamıyoruz.</p>
-
-    <h2>5. İzinler</h2>
-    <p>Uygulamamız aşağıdaki izinleri isteyebilir:</p>
-    <ul>
-        <li><strong>İnternet Erişimi:</strong> Reklamların görüntülenmesi için gereklidir</li>
-        <li><strong>Ağ Durumu:</strong> İnternet bağlantısı kontrolü için</li>
-    </ul>
-
-    <h2>6. Veri Güvenliği</h2>
-    <p>Verileriniz cihazınızda şifrelenmiş olarak saklanır. Ancak, hiçbir güvenlik önlemi %100 güvenlik sağlamaz.</p>
-
-    <h2>7. Üçüncü Taraf Bağlantıları</h2>
-    <p>Uygulamamızda Play Store değerlendirmesi için harici bağlantılar bulunmaktadır. Bu bağlantıların gizlilik uygulamalarından sorumlu değiliz.</p>
-
-    <h2>8. Politika Değişiklikleri</h2>
-    <p>Bu politikayı zaman zaman güncelleyebiliriz. Önemli değişikliklerde uygulama içi bildirim göstereceğiz.</p>
-
-    <h2>9. İletişim</h2>
-    <p>Bu gizlilik politikası hakkında sorularınız için:</p>
-    <p><strong>E-posta:</strong> yalcindeniztr@gmail.com</p>
-    
-    <hr>
-    <p><small>Şükür Olsun v1.3 - Manevi Günlük Uygulaması</small></p>
 </body>
 </html>

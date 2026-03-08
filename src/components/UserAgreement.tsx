@@ -80,19 +80,17 @@ const UserAgreement: React.FC<UserAgreementProps> = ({ onAccept }) => {
                             İzinsiz kopyalanması, dağıtılması veya tersine mühendislik yapılması yasaktır.
                         </p>
 
-                        <h3 className="font-bold text-slate-700">5. SORUMLULUK SINIRLAMASI</h3>
+                        <h3 className="font-bold text-slate-700">5. SORUMLULUK SINIRLAMASI VE FERAGATNAME</h3>
                         <p>
                             <strong>5.1.</strong> Uygulama "olduğu gibi" sunulmaktadır. Geliştirici, uygulamanın
-                            kesintisiz veya hatasız çalışacağını garanti etmez.
+                            kesintisiz veya hatasız çalışacağını, veya cihaz donanımlarıyla tam uyumlu olacağını garanti etmez.
                         </p>
                         <p>
-                            <strong>5.2.</strong> Cihazınızdaki veri kaybından (cihaz arızası, uygulama kaldırma,
-                            önbellek temizleme vb.) geliştirici sorumlu tutulamaz. Verilerinizi düzenli olarak
-                            yedeklemeniz önerilir.
+                            <strong>5.2.</strong> <strong>Tüm verileriniz yalnızca sizin cihazınızda (lokalde) şifreli olarak tutulur.</strong> Uygulamanın silinmesi, cihazınızın arızalanması, güncellemeler sırasındaki hatalar veya işletim sisteminin önbellek temizlemesi sonucu oluşabilecek <strong>hiçbir veri kaybından geliştirici hukuki veya maddi olarak sorumlu tutulamaz.</strong> Verileri "Dışa Aktar" seçeneği ile düzenli olarak yedeklemek tamamen kullanıcının kendi sorumluluğundadır.
                         </p>
                         <p>
-                            <strong>5.3.</strong> Uygulama içindeki dini içerikler (hadisler, dualar) genel kaynaklardan
-                            derlenmiştir. İçeriklerin doğruluğu konusunda geliştirici garanti vermez.
+                            <strong>5.3.</strong> Uygulama içindeki dini içerikler (hadisler, dualar, namaz vakitleri) genel kaynaklardan
+                            ve API'lerden (Aladhan vb.) derlenmiştir. Bu içeriklerin doğruluğu veya güncelliği konusunda geliştirici hiçbir şekilde mesuliyet kabul etmez, kullanıcı her zaman nihai teyidi kendi sağlamalıdır.
                         </p>
 
                         <h3 className="font-bold text-slate-700">6. KVKK UYUMU</h3>
@@ -132,10 +130,10 @@ const UserAgreement: React.FC<UserAgreementProps> = ({ onAccept }) => {
                             type="checkbox"
                             checked={accepted}
                             onChange={(e) => setAccepted(e.target.checked)}
-                            className="mt-1 w-5 h-5 rounded border-2 border-emerald-300 text-emerald-600 focus:ring-emerald-400 accent-emerald-500"
+                            className="mt-1 w-5 h-5 rounded border-2 border-emerald-300 text-emerald-600 focus:ring-emerald-400 accent-emerald-500 shrink-0"
                         />
                         <span className="text-sm text-slate-600 leading-snug">
-                            Kullanım koşullarını ve gizlilik politikasını okudum, anladım ve <strong className="text-slate-800">kabul ediyorum</strong>.
+                            Kullanım koşullarını ve gizlilik politikasını okudum, anladım. Uygulamanın bulut kaydı yapmadığını, her türlü veri kaybı ve kullanım sorumluluğunun tarafıma ait olduğunu bilerek geliştiriciyi tüm hukuki yükümlülüklerden muaf tuttuğumu <strong>kabul ve beyan ediyorum</strong>.
                         </span>
                     </label>
 

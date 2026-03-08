@@ -4,6 +4,8 @@ import { UserProfile } from '../../core/types';
 import { AVATARS } from '../../constants';
 import { storageService } from '../../services/storage.service';
 import { useTheme } from '../../core/ThemeContext';
+import { Capacitor } from '@capacitor/core';
+import { notificationService } from '../../services/NotificationService';
 
 // Rozet Tanımları
 const BADGE_INFO: Record<string, { label: string, color: string }> = {
@@ -15,14 +17,17 @@ const BADGE_INFO: Record<string, { label: string, color: string }> = {
 
 interface ProfileViewProps {
     profile: UserProfile | null;
+    entries: any[]; // JournalEntry türünde
     onUpdateProfile: (profile: UserProfile) => void;
 }
 
-const ProfileView: React.FC<ProfileViewProps> = ({ profile, onUpdateProfile }) => {
-    const { theme } = useTheme();
+const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdateProfile }) => {
+    const { theme, bgImage, setBgImage } = useTheme();
     const [isEditing, setIsEditing] = useState(false);
     const [name, setName] = useState(profile?.name || '');
     const [title, setTitle] = useState(profile?.title || '');
+    const [notificationsEnabled, setNotificationsEnabled] = useState(profile?.notificationsEnabled !== false);
+    const [locationEnabled, setLocationEnabled] = useState(profile?.locationEnabled !== false);
     const [backupStatus, setBackupStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -37,47 +42,79 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, onUpdateProfile }) =
         storageService.hasPin().then(setHasPinSet);
     }, []);
 
-    const currentAvatarUrl = AVATARS.find(url => url.includes(profile?.avatarId || 'avatar_1')) || AVATARS[0];
-    const [selectedAvatarUrl, setSelectedAvatarUrl] = useState(currentAvatarUrl);
+    const isCustomAvatar = profile?.avatarId?.startsWith('data:image') || false;
+    const initialAvatarUrl = isCustomAvatar
+        ? profile!.avatarId
+        : (AVATARS.find(url => url.includes(profile?.avatarId || 'avatar_1')) || AVATARS[0]);
+
+    const [selectedAvatarUrl, setSelectedAvatarUrl] = useState(initialAvatarUrl);
 
     React.useEffect(() => {
         if (profile?.avatarId) {
-            const url = AVATARS.find(u => u.includes(profile.avatarId)) || AVATARS[0];
+            const isCust = profile.avatarId.startsWith('data:image');
+            const url = isCust
+                ? profile.avatarId
+                : (AVATARS.find(u => u.includes(profile.avatarId)) || AVATARS[0]);
             setSelectedAvatarUrl(url);
         }
     }, [profile?.avatarId]);
 
+    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const base64 = e.target?.result as string;
+                setSelectedAvatarUrl(base64);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
         if (profile) {
-            const avatarId = selectedAvatarUrl.split('/').pop()?.split('.')[0] || 'avatar_1';
+            let avatarIdToSave = 'avatar_1';
+            if (selectedAvatarUrl.startsWith('data:image')) {
+                avatarIdToSave = selectedAvatarUrl;
+            } else {
+                avatarIdToSave = selectedAvatarUrl.split('/').pop()?.split('.')[0] || 'avatar_1';
+            }
 
             onUpdateProfile({
                 ...profile,
                 name,
                 title,
-                avatarId: avatarId,
+                avatarId: avatarIdToSave,
+                notificationsEnabled,
+                locationEnabled
             });
             setIsEditing(false);
         }
     };
 
     const handleExport = async () => {
-        try {
-            const data = await storageService.exportAllData();
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `sukur_olsun_yedek_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            setBackupStatus({ type: 'success', message: 'Yedek dosyası indirildi!' });
-            setTimeout(() => setBackupStatus(null), 3000);
-        } catch {
-            setBackupStatus({ type: 'error', message: 'Yedekleme başarısız oldu.' });
+        if (Capacitor.isNativePlatform()) {
+            const result = await storageService.createNativeBackup();
+            setBackupStatus({ type: result.success ? 'success' : 'error', message: result.message });
+            setTimeout(() => setBackupStatus(null), 3500);
+        } else {
+            try {
+                const data = await storageService.exportAllData();
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `sukur_olsun_yedek_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                setBackupStatus({ type: 'success', message: 'Yedek dosyası indirildi!' });
+                setTimeout(() => setBackupStatus(null), 3000);
+            } catch {
+                setBackupStatus({ type: 'error', message: 'Yedekleme başarısız oldu.' });
+            }
         }
     };
 
@@ -121,6 +158,23 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, onUpdateProfile }) =
         if (window.confirm('PIN korumasını kaldırmak istediğinize emin misiniz?')) {
             await storageService.removePin();
             setHasPinSet(false);
+        }
+    };
+
+    // Bildirim İşlemleri
+    const handleToggleNotifications = async (checked: boolean) => {
+        setNotificationsEnabled(checked);
+        if (profile) {
+            onUpdateProfile({ ...profile, notificationsEnabled: checked });
+        }
+        await notificationService.toggleNotifications(checked);
+    };
+
+    // Konum İzni İşlemleri
+    const handleToggleLocation = async (checked: boolean) => {
+        setLocationEnabled(checked);
+        if (profile) {
+            onUpdateProfile({ ...profile, locationEnabled: checked });
         }
     };
 
@@ -185,8 +239,20 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, onUpdateProfile }) =
                                     ? 'bg-slate-50 border-slate-200'
                                     : 'bg-black/20 border-white/[0.06]'}`}>
                                 <p className={`text-xs font-bold uppercase text-center mb-3 tracking-wider
-                                    ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>Avatar Seç</p>
-                                <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide justify-center">
+                                    ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>Avatar Seç Veya Yükle</p>
+                                <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide items-center justify-start md:justify-center">
+                                    {/* Özel Resim Yükle Butonu */}
+                                    <label className="flex flex-col items-center justify-center w-16 h-16 shrink-0 rounded-full border-2 border-dashed border-emerald-300 hover:border-emerald-500 hover:bg-emerald-50 transition-all cursor-pointer overflow-hidden p-1 shadow-sm">
+                                        <div className="w-full h-full rounded-full flex flex-col items-center justify-center bg-white/50 relative">
+                                            <Upload className="w-5 h-5 text-emerald-600 mb-0.5" />
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                className="hidden"
+                                                onChange={handleImageUpload}
+                                            />
+                                        </div>
+                                    </label>
                                     {AVATARS.map((url, index) => (
                                         <button
                                             key={index}
@@ -258,6 +324,93 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, onUpdateProfile }) =
                 </form>
             </div>
 
+            {/* İstatistikler ve Grafikler - 3D Card */}
+            <div className={`glass-card p-8
+                ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
+                <div className="flex items-center gap-3 mb-6">
+                    <div className={`w-6 h-6 rounded flex items-center justify-center bg-gradient-to-r from-blue-400 to-blue-600 text-white`}>
+                        <Award className="w-4 h-4" />
+                    </div>
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>İstatistiklerim</h3>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    {/* Toplam Not Kartı */}
+                    <div className={`p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 text-center
+                        ${theme === 'light' ? 'bg-slate-50 border-slate-100' : 'bg-white/5 border-white/10'}`}>
+                        <div className="text-3xl font-black text-amber-500">{entries?.length || 0}</div>
+                        <div className={`text-xs font-bold uppercase ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>Toplam Kayıt</div>
+                    </div>
+                    {/* İstikrar Kartı */}
+                    <div className={`p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 text-center
+                        ${theme === 'light' ? 'bg-slate-50 border-slate-100' : 'bg-white/5 border-white/10'}`}>
+                        <div className="text-3xl font-black text-emerald-500">{profile?.streak || 0}</div>
+                        <div className={`text-xs font-bold uppercase ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>Günlük Seri</div>
+                    </div>
+                    {/* Rozet Sayısı */}
+                    <div className={`p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 text-center
+                        ${theme === 'light' ? 'bg-slate-50 border-slate-100' : 'bg-white/5 border-white/10'}`}>
+                        <div className="text-3xl font-black text-blue-500">{profile?.badges?.length || 0}</div>
+                        <div className={`text-xs font-bold uppercase ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>Kazanılan Rozet</div>
+                    </div>
+                    {/* En iyi Ruh Hali */}
+                    <div className={`p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 text-center
+                        ${theme === 'light' ? 'bg-slate-50 border-slate-100' : 'bg-white/5 border-white/10'}`}>
+                        <div className="text-3xl font-black">
+                            {(() => {
+                                if (!entries || entries.length === 0) return '🤔';
+                                const moodCounts: Record<string, number> = {};
+                                entries.forEach(e => { moodCounts[e.mood] = (moodCounts[e.mood] || 0) + 1; });
+                                const topMood = Object.keys(moodCounts).reduce((a, b) => moodCounts[a] > moodCounts[b] ? a : b);
+                                const moodEmojiMap: Record<string, string> = { grateful: '🙏', peaceful: '🕊️', happy: '😊', blessed: '✨', reflective: '🤔', tired: '😮‍💨' };
+                                return moodEmojiMap[topMood] || topMood;
+                            })()}
+                        </div>
+                        <div className={`text-xs font-bold uppercase ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>Genel Ruh Hali</div>
+                    </div>
+                </div>
+
+                {/* Ruh Hali Dağılımı Basit Grafik */}
+                {entries && entries.length > 0 && (
+                    <div>
+                        <p className={`text-xs font-bold uppercase mb-4 tracking-wider ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
+                            Ruh Hali Dağılımı
+                        </p>
+                        <div className="space-y-3">
+                            {(() => {
+                                const moodCounts: Record<string, number> = {};
+                                entries.forEach(e => { moodCounts[e.mood] = (moodCounts[e.mood] || 0) + 1; });
+                                const total = entries.length;
+                                const moodLabels: Record<string, { emoji: string, color: string }> = {
+                                    grateful: { emoji: '🙏', color: 'bg-emerald-500' },
+                                    peaceful: { emoji: '🕊️', color: 'bg-blue-400' },
+                                    happy: { emoji: '😊', color: 'bg-amber-400' },
+                                    blessed: { emoji: '✨', color: 'bg-purple-400' },
+                                    reflective: { emoji: '🤔', color: 'bg-slate-400' },
+                                    tired: { emoji: '😮‍💨', color: 'bg-rose-400' }
+                                };
+
+                                return Object.entries(moodCounts)
+                                    .sort((a, b) => b[1] - a[1]) // En çoktan aza
+                                    .map(([mood, count]) => {
+                                        const percent = Math.round((count / total) * 100);
+                                        const config = moodLabels[mood] || { emoji: mood, color: 'bg-gray-400' };
+                                        return (
+                                            <div key={mood} className="flex items-center gap-3">
+                                                <div className="text-xl w-8 text-center">{config.emoji}</div>
+                                                <div className="flex-1 h-3 bg-white/10 rounded-full overflow-hidden">
+                                                    <div className={`h-full ${config.color} rounded-full transition-all duration-1000`} style={{ width: `${percent}%` }} />
+                                                </div>
+                                                <div className={`text-xs font-bold w-12 text-right ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>{percent}%</div>
+                                            </div>
+                                        );
+                                    });
+                            })()}
+                        </div>
+                    </div>
+                )}
+            </div>
+
             {/* Badges Section - 3D Cards */}
             <div className={`glass-card p-8
                 ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
@@ -290,6 +443,48 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, onUpdateProfile }) =
                         })}
                     </div>
                 )}
+            </div>
+
+            {/* Arka Plan Teması Seçici - 3D Card */}
+            <div className={`glass-card p-8
+                ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
+                <div className="flex items-center gap-3 mb-6">
+                    <div className={`w-6 h-6 rounded flex items-center justify-center bg-gradient-to-r from-emerald-400 to-emerald-600 text-white`}>
+                        <Award className="w-4 h-4" />
+                    </div>
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>Uygulama Teması</h3>
+                </div>
+
+                <p className={`text-sm mb-6 ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
+                    Uygulamanın arkaplan görünümünü ruh halinize göre kişiselleştirin.
+                </p>
+
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    {[
+                        { id: 'default', label: 'Sade Zümrüt (Varsayılan)', src: null },
+                        { id: 'kabe', label: 'Kabe-i Muazzama', src: '/assets/themes/kabe.png' },
+                        { id: 'nebevi', label: 'Mescid-i Nebevi', src: '/assets/themes/nebevi.png' },
+                        { id: 'nature', label: 'Huzurlu Doğa', src: '/assets/themes/nature.png' }
+                    ].map(t => (
+                        <button
+                            key={t.id}
+                            onClick={() => setBgImage(t.id as any)}
+                            className={`relative rounded-2xl overflow-hidden aspect-[4/3] transition-all border-4 flex flex-col
+                                ${bgImage === t.id ? 'border-amber-400 scale-105 shadow-xl shadow-amber-500/20' : 'border-transparent opacity-80 hover:opacity-100 hover:scale-105'}`}
+                        >
+                            {t.src ? (
+                                <img src={t.src} alt={t.label} className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full bg-[#f0fdf4] flex items-center justify-center">
+                                    <div className="w-16 h-16 rounded-full blur-xl bg-emerald-300/50" />
+                                </div>
+                            )}
+                            <div className="absolute inset-x-0 bottom-0 bg-white/90 backdrop-blur text-xs font-bold py-2 text-center text-slate-800">
+                                {t.label}
+                            </div>
+                        </button>
+                    ))}
+                </div>
             </div>
 
             {/* Veri Yedekleme - 3D Card */}
@@ -448,6 +643,59 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, onUpdateProfile }) =
                         <span className="font-bold">PIN Ayarla</span>
                     </button>
                 )}
+            </div>
+
+            {/* Bildirim Ayarları - 3D Card */}
+            <div className={`glass-card p-8
+                ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
+                <div className="flex items-center gap-3 mb-6">
+                    <AlertCircle className={`w-6 h-6 ${theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`} />
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>Bildirim Ayarları</h3>
+                </div>
+
+                <div className="flex items-center justify-between">
+                    <div>
+                        <p className={`font-bold ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
+                            Günlük Ayet Bildirimleri
+                        </p>
+                        <p className={`text-xs mt-1 ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
+                            Her gün saat 09:00'da size özel seçilmiş bir ayet gönderilir.
+                        </p>
+                    </div>
+                    {/* Basit Toggle Switch */}
+                    <button
+                        onClick={() => handleToggleNotifications(!notificationsEnabled)}
+                        className={`w-14 h-8 flex items-center bg-gray-300 rounded-full p-1 transition-all duration-300 
+                            ${notificationsEnabled ? 'bg-emerald-500' : (theme === 'dark' ? 'bg-white/10' : 'bg-slate-300')}
+                        `}
+                    >
+                        <div className={`bg-white w-6 h-6 rounded-full shadow-md transform duration-300 ease-in-out
+                            ${notificationsEnabled ? 'translate-x-6' : ''}
+                        `}></div>
+                    </button>
+                </div>
+
+                <div className="flex items-center justify-between mt-6 pt-6 border-t border-slate-100">
+                    <div>
+                        <p className={`font-bold ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
+                            Konum İzni
+                        </p>
+                        <p className={`text-xs mt-1 max-w-xs ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
+                            Namaz ve oruç vakitlerini konumunuza göre otomatik hesaplamak için kullanılır. Dilediğiniz zaman kapatabilirsiniz.
+                        </p>
+                    </div>
+                    {/* Basit Toggle Switch */}
+                    <button
+                        onClick={() => handleToggleLocation(!locationEnabled)}
+                        className={`w-14 h-8 flex items-center bg-gray-300 rounded-full p-1 transition-all duration-300 
+                            ${locationEnabled ? 'bg-emerald-500' : (theme === 'dark' ? 'bg-white/10' : 'bg-slate-300')}
+                        `}
+                    >
+                        <div className={`bg-white w-6 h-6 rounded-full shadow-md transform duration-300 ease-in-out
+                            ${locationEnabled ? 'translate-x-6' : ''}
+                        `}></div>
+                    </button>
+                </div>
             </div>
 
             {/* Tüm Verileri Sil - Kart */}

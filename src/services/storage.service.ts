@@ -1,5 +1,7 @@
-import { JournalEntry, UserProfile, AppSettings, CustomPrayer, UserMessage } from '../core/types';
+import { JournalEntry, UserProfile, AppSettings, CustomPrayer, UserMessage, ReligiousDay, ReligiousDayItem } from '../core/types';
 import { Preferences } from '@capacitor/preferences';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Capacitor } from '@capacitor/core';
 
 const STORAGE_KEYS = {
   ENTRIES: 'sukur_entries',
@@ -9,6 +11,8 @@ const STORAGE_KEYS = {
   PIN_HASH: 'sukur_pin_hash',
   AGREEMENT_ACCEPTED: 'sukur_agreement_accepted',
   USER_MESSAGES: 'sukur_user_messages',
+  RELIGIOUS_DAYS: 'sukur_religious_days',
+  RELIGIOUS_DAY_ITEMS: 'sukur_religious_day_items',
 };
 
 /** Basit XSS temizleme fonksiyonu */
@@ -234,10 +238,63 @@ class StorageService {
       profile: await this.getProfile(),
       settings: await this.getSettings(),
       customPrayers: await this.getCustomPrayers(),
+      userMessages: await this.getUserMessages(),
+      religiousDays: await this.getReligiousDays(),
+      religiousDayItems: await this.getReligiousDayItems(),
       exportDate: new Date().toISOString(),
-      appVersion: '1.2.0'
+      appVersion: '1.4.0'
     };
     return JSON.stringify(data, null, 2);
+  }
+
+  async createNativeBackup(): Promise<{ success: boolean; message: string }> {
+    try {
+      const data = await this.exportAllData();
+      if (Capacitor.isNativePlatform()) {
+        await Filesystem.writeFile({
+          path: 'SukurOlsun/Yedek.json',
+          data,
+          directory: Directory.Documents,
+          encoding: Encoding.UTF8,
+          recursive: true
+        });
+        return { success: true, message: 'Yedek başarıyla Telefon/Documents/SukurOlsun klasörüne kaydedildi.' };
+      }
+      return { success: false, message: 'Sadece Android/Mobil sürümde çalışır.' };
+    } catch (err) {
+      return { success: false, message: 'Yedekleme hatası: İzinleri kontrol edin. ' + String(err) };
+    }
+  }
+
+  async hasNativeBackup(): Promise<boolean> {
+    try {
+      if (!Capacitor.isNativePlatform()) return false;
+      await Filesystem.stat({
+        path: 'SukurOlsun/Yedek.json',
+        directory: Directory.Documents
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async retrieveNativeBackup(): Promise<{ success: boolean; message: string }> {
+    try {
+      if (Capacitor.isNativePlatform()) {
+        const result = await Filesystem.readFile({
+          path: 'SukurOlsun/Yedek.json',
+          directory: Directory.Documents,
+          encoding: Encoding.UTF8
+        });
+        if (result.data) {
+          return await this.importAllData(result.data as string);
+        }
+      }
+      return { success: false, message: 'Desteklenmiyor.' };
+    } catch {
+      return { success: false, message: 'Yedek dosyası bulunamadı.' };
+    }
   }
 
   async importAllData(jsonData: string): Promise<{ success: boolean; message: string }> {
@@ -268,6 +325,11 @@ class StorageService {
       if (data.profile && typeof data.profile === 'object') await this.saveProfile(data.profile);
       if (data.settings && typeof data.settings === 'object') await this.saveSettings(data.settings);
       if (data.customPrayers && Array.isArray(data.customPrayers)) await this.saveCustomPrayers(data.customPrayers);
+      if (data.userMessages && Array.isArray(data.userMessages)) {
+        await storage.set(STORAGE_KEYS.USER_MESSAGES, JSON.stringify(data.userMessages));
+      }
+      if (data.religiousDays && Array.isArray(data.religiousDays)) await this.saveReligiousDays(data.religiousDays);
+      if (data.religiousDayItems && Array.isArray(data.religiousDayItems)) await this.saveReligiousDayItems(data.religiousDayItems);
 
       return { success: true, message: 'Veriler başarıyla geri yüklendi!' };
     } catch {
@@ -314,6 +376,96 @@ class StorageService {
     const current = await this.getUserMessages();
     const updated = current.filter(m => m.id !== id);
     await storage.set(STORAGE_KEYS.USER_MESSAGES, JSON.stringify(updated));
+    return updated;
+  }
+
+  // ===== Dini Günler =====
+  async getReligiousDays(): Promise<ReligiousDay[]> {
+    try {
+      const data = await storage.get(STORAGE_KEYS.RELIGIOUS_DAYS);
+      if (!data) return [];
+      return JSON.parse(data).sort((a: ReligiousDay, b: ReligiousDay) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      );
+    } catch {
+      return [];
+    }
+  }
+
+  async saveReligiousDays(days: ReligiousDay[]): Promise<boolean> {
+    try {
+      await storage.set(STORAGE_KEYS.RELIGIOUS_DAYS, JSON.stringify(days));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async addReligiousDay(title: string, date?: string): Promise<ReligiousDay[]> {
+    const newDay: ReligiousDay = {
+      id: Date.now().toString(36) + Math.random().toString(36).substring(2),
+      title: sanitizeString(title),
+      date,
+      timestamp: new Date().toISOString()
+    };
+    const current = await this.getReligiousDays();
+    const updated = [...current, newDay];
+    await this.saveReligiousDays(updated);
+    return updated;
+  }
+
+  async deleteReligiousDay(id: string): Promise<ReligiousDay[]> {
+    const current = await this.getReligiousDays();
+    const updated = current.filter(d => d.id !== id);
+    await this.saveReligiousDays(updated);
+
+    // Altındaki itemleri de sil
+    const items = await this.getReligiousDayItems();
+    const updatedItems = items.filter(i => i.dayId !== id);
+    await this.saveReligiousDayItems(updatedItems);
+
+    return updated;
+  }
+
+  async getReligiousDayItems(): Promise<ReligiousDayItem[]> {
+    try {
+      const data = await storage.get(STORAGE_KEYS.RELIGIOUS_DAY_ITEMS);
+      if (!data) return [];
+      return JSON.parse(data).sort((a: ReligiousDayItem, b: ReligiousDayItem) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
+    } catch {
+      return [];
+    }
+  }
+
+  async saveReligiousDayItems(items: ReligiousDayItem[]): Promise<boolean> {
+    try {
+      await storage.set(STORAGE_KEYS.RELIGIOUS_DAY_ITEMS, JSON.stringify(items));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async addReligiousDayItem(dayId: string, type: 'dua' | 'mesaj', text: string): Promise<ReligiousDayItem[]> {
+    const newItem: ReligiousDayItem = {
+      id: Date.now().toString(36) + Math.random().toString(36).substring(2),
+      dayId,
+      type,
+      text: sanitizeString(text),
+      timestamp: new Date().toISOString()
+    };
+    const current = await this.getReligiousDayItems();
+    const updated = [newItem, ...current];
+    await this.saveReligiousDayItems(updated);
+    return updated;
+  }
+
+  async deleteReligiousDayItem(id: string): Promise<ReligiousDayItem[]> {
+    const current = await this.getReligiousDayItems();
+    const updated = current.filter(i => i.id !== id);
+    await this.saveReligiousDayItems(updated);
     return updated;
   }
 
