@@ -49,6 +49,7 @@ export interface UserProfile {
   badges: string[]; // List of badge IDs
   notificationsEnabled?: boolean;
   locationEnabled?: boolean;
+  language?: string;
 }
 
 export interface AppSettings {

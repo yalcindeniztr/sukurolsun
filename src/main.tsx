@@ -3,13 +3,17 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { ThemeProvider } from './core/ThemeContext';
-import ErrorBoundary from './components/ErrorBoundary.tsx'
+import { LanguageProvider } from './core/LanguageContext';
+import ErrorBoundary from './components/ErrorBoundary.tsx';
+import './i18n';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <ErrorBoundary>
             <ThemeProvider>
-                <App />
+                <LanguageProvider>
+                    <App />
+                </LanguageProvider>
             </ThemeProvider>
         </ErrorBoundary>
     </React.StrictMode>,

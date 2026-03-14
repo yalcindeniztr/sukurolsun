@@ -3,6 +3,7 @@ import { Home, BookOpen, Heart, Gift, User, Share2, Calendar, Star, Clock, Activ
 import { Share } from '@capacitor/share';
 import { ReviewService } from '../../services/ReviewService';
 import { App as CapacitorApp } from '@capacitor/app';
+import { useLanguage } from '../../core/LanguageContext';
 
 interface SidebarProps {
     isOpen: boolean;
@@ -11,19 +12,20 @@ interface SidebarProps {
     onTabChange: (tab: string) => void;
 }
 
-const navItems = [
-    { id: 'home', label: 'Anasayfa', icon: Home },
-    { id: 'dua', label: 'Dualar', icon: Heart },
-    { id: 'tesbihat', label: 'Tesbihat', icon: Activity },
-    { id: 'prayer_times', label: 'Vakitler', icon: Clock },
-    { id: 'places', label: 'Mekanlar', icon: Map },
-    { id: 'extras', label: 'Mesajlar', icon: Gift },
-    { id: 'religious_days', label: 'Dini Günler', icon: Calendar },
-    { id: 'history', label: 'Arşiv', icon: BookOpen },
-    { id: 'profile', label: 'Profilim', icon: User },
-];
-
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChange }) => {
+    const { t } = useLanguage();
+
+    const navItems = [
+        { id: 'home', label: t('nav.home'), icon: Home },
+        { id: 'dua', label: t('nav.duas'), icon: Heart },
+        { id: 'tesbihat', label: t('nav.tesbihat'), icon: Activity },
+        { id: 'prayer_times', label: t('nav.prayerTimes'), icon: Clock },
+        { id: 'places', label: t('nav.places'), icon: Map },
+        { id: 'extras', label: t('nav.messages'), icon: Gift },
+        { id: 'religious_days', label: t('nav.religiousDays'), icon: Calendar },
+        { id: 'history', label: t('nav.archive'), icon: BookOpen },
+        { id: 'profile', label: t('nav.profile'), icon: User },
+    ];
 
     // Body scroll lock
     useEffect(() => {
@@ -58,10 +60,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                 {/* Header */}
                 <div className="pt-10 pb-6 px-6">
                     <h2 className="text-2xl font-serif font-black bg-gradient-to-br from-emerald-600 to-teal-800 dark:from-emerald-400 dark:to-teal-600 bg-clip-text text-transparent">
-                        Şükür Olsun
+                        {t('common.appName')}
                     </h2>
                     <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest">
-                        Manevi Günlüğün
+                        {t('common.motto')}
                     </p>
                 </div>
 

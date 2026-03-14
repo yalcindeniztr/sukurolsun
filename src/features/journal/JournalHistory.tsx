@@ -3,6 +3,7 @@ import { Trash2, Edit2, Calendar, Heart, Hand, ChevronDown, ChevronUp, Search, S
 import { JournalEntry } from '../../core/types';
 import { MOODS } from '../../constants';
 import { useTheme } from '../../core/ThemeContext';
+import { useLanguage } from '../../core/LanguageContext';
 
 interface JournalHistoryProps {
     entries: JournalEntry[];
@@ -14,6 +15,7 @@ interface JournalHistoryProps {
 
 const JournalHistory: React.FC<JournalHistoryProps> = ({ entries, onDelete, onEdit, onToggleFavorite, showFilters = false }) => {
     const { theme } = useTheme();
+    const { t } = useLanguage();
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [filterType, setFilterType] = useState<'all' | 'gratitude' | 'allah_action' | 'favorites'>('all');
     const [searchQuery, setSearchQuery] = useState('');
@@ -66,7 +68,7 @@ const JournalHistory: React.FC<JournalHistoryProps> = ({ entries, onDelete, onEd
         return (
             <div className={`text-center py-12 rounded-2xl border-2 border-dashed
                 ${theme === 'light' ? 'bg-slate-50 border-slate-200' : 'bg-white/5 border-white/10'}`}>
-                <p className={`${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>Henüz günlük eklenmemiş.</p>
+                <p className={`${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>{t('journal.noEntries')}</p>
             </div>
         );
     }
@@ -77,7 +79,7 @@ const JournalHistory: React.FC<JournalHistoryProps> = ({ entries, onDelete, onEd
             <div className="flex flex-col gap-4 mb-4">
                 <div className="flex justify-between items-center">
                     <h3 className={`text-lg font-serif ${theme === 'light' ? 'text-slate-800' : 'text-slate-100'}`}>
-                        {showFilters ? 'Arşiv' : 'Son Günlükler'}
+                        {showFilters ? t('nav.archive') : t('journal.recentEntries')}
                     </h3>
                 </div>
 
@@ -92,7 +94,7 @@ const JournalHistory: React.FC<JournalHistoryProps> = ({ entries, onDelete, onEd
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 type="text"
-                                placeholder="Başlık veya içerikte ara..."
+                                placeholder={t('journal.searchPlaceholder')}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className={`w-full rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none transition-all

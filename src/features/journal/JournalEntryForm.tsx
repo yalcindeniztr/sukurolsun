@@ -4,6 +4,7 @@ import { JournalEntry, MoodType, PromptType } from '../../core/types';
 import { AdMobService } from '../../services/AdMobService';
 import { MOODS } from '../../constants';
 import { useTheme } from '../../core/ThemeContext';
+import { useLanguage } from '../../core/LanguageContext';
 
 interface JournalEntryFormProps {
     onSave: (entry: Omit<JournalEntry, 'id' | 'timestamp'>) => void;
@@ -13,6 +14,7 @@ interface JournalEntryFormProps {
 
 const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEntry, onCancel }) => {
     const { theme } = useTheme();
+    const { language, t } = useLanguage();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [mood, setMood] = useState<MoodType>('grateful');
@@ -93,7 +95,7 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
                     className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 active:scale-95 ${promptType === 'gratitude' ? activeTabClass : inactiveTabClass}`}
                 >
                     <Heart className={`w-4 h-4 ${promptType === 'gratitude' ? 'fill-current' : ''}`} />
-                    <span>Şükür Sebebim</span>
+                    <span>{t('journal.gratitudeReason')}</span>
                 </button>
                 <button
                     onClick={async () => {
@@ -104,7 +106,7 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
                     className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 active:scale-95 ${promptType === 'allah_action' ? activeTabClass : inactiveTabClass}`}
                 >
                     <Hand className={`w-4 h-4 ${promptType === 'allah_action' ? 'fill-current' : ''}`} />
-                    <span>Allah için ne yaptın?</span>
+                    <span>{t('journal.allahAction')}</span>
                 </button>
             </div>
 
@@ -114,7 +116,7 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
                 <div className="relative">
                     <label className={`block text-xs font-bold uppercase tracking-wider mb-2
                         ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}
-                    `}>Ruh Hali</label>
+                    `}>{t('journal.mood')}</label>
                     <button
                         type="button"
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -128,7 +130,7 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
                             <span className="text-xl group-hover:scale-110 transition-transform">{activeMood?.emoji}</span>
                             <span className={`transition-colors font-bold
                                 ${theme === 'light' ? 'text-slate-800' : 'group-hover:text-slate-200'}
-                            `}>{activeMood?.labelTr}</span>
+                            `}>{language === 'tr' ? activeMood?.labelTr : activeMood?.labelEn}</span>
                         </div>
                         <ChevronRight className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-90' : ''}`} />
                     </button>
@@ -150,7 +152,7 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
                                     `}
                                 >
                                     <span className="text-xl">{m.emoji}</span>
-                                    <span className="text-sm font-bold">{m.labelTr}</span>
+                                    <span className="text-sm font-bold">{language === 'tr' ? m.labelTr : m.labelEn}</span>
                                 </button>
                             ))}
                         </div>
@@ -162,17 +164,17 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
                     <div>
                         <label className={`block text-xs font-bold uppercase tracking-wider mb-2
                             ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
-                            {isAllahAction ? 'Başlık (Allah rızası için ne yaptın?)' : 'Başlık (Bugün en çok neye şükrettin?)'}
+                            {isAllahAction ? t('journal.titleAllah') : t('journal.titleGratitude')}
                         </label>
                         <input
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder={isAllahAction ? "Örn: Komşuma yardım ettim..." : "Örn: Güneşli bir sabah..."}
+                            placeholder={isAllahAction ? t('journal.placeholderAllah') : t('journal.placeholderGratitude')}
                             className={`input-field text-lg font-bold transition-all
                                 ${theme === 'light'
-                                    ? 'bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-emerald-400 shadow-sm'
-                                    : 'bg-white/[0.03] border-white/[0.08] text-white placeholder-slate-600 focus:border-emerald-400/50'
+                                    ? 'bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 shadow-sm'
+                                    : 'bg-white/[0.03] border-white/[0.08] text-white placeholder-slate-600'
                                 }`}
                         />
                     </div>
@@ -200,7 +202,7 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
                             className={`text-sm font-medium transition-colors
                                 ${theme === 'light' ? 'text-slate-500 hover:text-slate-700' : 'text-slate-400 hover:text-white'}`}
                         >
-                            Vazgeç
+                            {t('common.cancel')}
                         </button>
                     )}
                     <button
@@ -219,7 +221,7 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
                         } : undefined}
                     >
                         {selectedEntry ? <Save className="w-4 h-4" /> : <CheckCircle2 className="w-4 h-4" />}
-                        <span>{selectedEntry ? 'Güncelle' : 'Kaydet'}</span>
+                        <span>{selectedEntry ? t('common.update') : t('common.save')}</span>
                     </button>
                 </div>
             </form>

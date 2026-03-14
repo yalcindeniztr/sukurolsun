@@ -6,6 +6,7 @@ import { storageService } from '../../services/storage.service';
 import { useTheme } from '../../core/ThemeContext';
 import { Capacitor } from '@capacitor/core';
 import { notificationService } from '../../services/NotificationService';
+import { useLanguage } from '../../core/LanguageContext';
 
 // Rozet Tanımları
 const BADGE_INFO: Record<string, { label: string, color: string }> = {
@@ -23,6 +24,7 @@ interface ProfileViewProps {
 
 const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdateProfile }) => {
     const { theme, bgImage, setBgImage } = useTheme();
+    const { language, setLanguage, t } = useLanguage();
     const [isEditing, setIsEditing] = useState(false);
     const [name, setName] = useState(profile?.name || '');
     const [title, setTitle] = useState(profile?.title || '');
@@ -178,6 +180,14 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
         }
     };
 
+    // Dil Değiştirme
+    const handleToggleLanguage = (lang: 'tr' | 'en') => {
+        setLanguage(lang);
+        if (profile) {
+            onUpdateProfile({ ...profile, language: lang });
+        }
+    };
+
     // Fallback avatar
     const handleAvatarError = (e: React.SyntheticEvent<HTMLImageElement>) => {
         e.currentTarget.src = AVATARS[0];
@@ -200,7 +210,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                     <h2 className={`text-2xl font-serif flex items-center gap-3
                         ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>
                         <User className={`w-6 h-6 ${theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`} />
-                        Profilim
+                        {t('profile.title') || 'Profilim'}
                     </h2>
                     <button
                         onClick={() => setIsEditing(!isEditing)}
@@ -209,7 +219,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                 ? 'hover:bg-slate-100 text-slate-400 hover:text-emerald-600'
                                 : 'hover:bg-white/[0.06] text-slate-400 hover:text-emerald-400'}`}
                     >
-                        {isEditing ? <span className="text-sm font-bold">Vazgeç</span> : <Edit2 className="w-5 h-5" />}
+                        {isEditing ? <span className="text-sm font-bold">{t('profile.cancel') || 'Vazgeç'}</span> : <Edit2 className="w-5 h-5" />}
                     </button>
                 </div>
 
@@ -239,7 +249,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                     ? 'bg-slate-50 border-slate-200'
                                     : 'bg-black/20 border-white/[0.06]'}`}>
                                 <p className={`text-xs font-bold uppercase text-center mb-3 tracking-wider
-                                    ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>Avatar Seç Veya Yükle</p>
+                                    ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>{t('profile.avatarSelect') || 'Avatar Seç Veya Yükle'}</p>
                                 <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide items-center justify-start md:justify-center">
                                     {/* Özel Resim Yükle Butonu */}
                                     <label className="flex flex-col items-center justify-center w-16 h-16 shrink-0 rounded-full border-2 border-dashed border-emerald-300 hover:border-emerald-500 hover:bg-emerald-50 transition-all cursor-pointer overflow-hidden p-1 shadow-sm">
@@ -316,8 +326,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                     {isEditing && (
                         <div className="flex justify-center pt-4 animate-fade-in">
                             <button type="submit" className="btn-gold flex items-center gap-2 px-8">
-                                <Save className="w-4 h-4" />
-                                <span>Değişiklikleri Kaydet</span>
+                                <Save className="w-5 h-5" />
+                                {t('profile.saveSettings') || 'Ayarları Kaydet'}
                             </button>
                         </div>
                     )}
@@ -416,13 +426,14 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
                 <div className="flex items-center gap-3 mb-6">
                     <Award className={`w-6 h-6 ${theme === 'light' ? 'text-amber-500' : 'text-amber-400'}`} />
-                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>Rozetlerim</h3>
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.badges') || 'Rozetlerim'}</h3>
                 </div>
 
                 {(!profile?.badges || profile.badges.length === 0) ? (
-                    <div className={`text-center py-8 rounded-2xl border-2 border-dashed
-                        ${theme === 'light' ? 'bg-slate-50 border-slate-200' : 'bg-white/[0.02] border-white/[0.06]'}`}>
-                        <p className={`text-sm ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>Henüz rozet kazanılmadı. Günlük tutmaya devam et, sürprizleri yakala!</p>
+                    <div className={`text-center py-8 border-2 border-dashed rounded-2xl
+                        ${theme === 'light' ? 'border-slate-200' : 'border-white/10'}`}>
+                        <Award className={`w-12 h-12 mx-auto mb-3 opacity-20 ${theme === 'light' ? 'text-slate-400' : 'text-white'}`} />
+                        <p className={theme === 'light' ? 'text-slate-500' : 'text-slate-400'}>{t('profile.noBadges') || 'Henüz rozet kazanmadınız. İlerledikçe burada rozetleriniz görünecek.'}</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -492,11 +503,11 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
                 <div className="flex items-center gap-3 mb-6">
                     <Download className={`w-6 h-6 ${theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`} />
-                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>Veri Yedekleme</h3>
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.dataBackup') || 'Veri Yedekleme'}</h3>
                 </div>
 
                 <p className={`text-sm mb-6 ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
-                    Tüm şükür notlarınızı, profilinizi ve ayarlarınızı yedekleyebilir veya geri yükleyebilirsiniz.
+                    {t('profile.dataBackupDesc') || 'Tüm şükür notlarınızı, profilinizi ve ayarlarınızı yedekleyebilir veya geri yükleyebilirsiniz.'}
                 </p>
 
                 {/* Status Mesajı */}
@@ -521,7 +532,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                             }`}
                     >
                         <Download className="w-5 h-5" />
-                        <span className="font-bold">Veriyi Dışa Aktar</span>
+                        <span className="font-bold">{t('profile.exportData') || 'Veriyi Dışa Aktar'}</span>
                     </button>
 
                     {/* İçe Aktar */}
@@ -531,7 +542,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                             : 'bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20'
                         }`}>
                         <Upload className="w-5 h-5" />
-                        <span className="font-bold">Veriyi İçe Aktar</span>
+                        <span className="font-bold">{t('profile.importData') || 'Veriyi İçe Aktar'}</span>
                         <input
                             ref={fileInputRef}
                             type="file"
@@ -548,18 +559,18 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
                 <div className="flex items-center gap-3 mb-6">
                     <ShieldCheck className={`w-6 h-6 ${theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`} />
-                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>PIN Güvenlik</h3>
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.pinSecurity') || 'PIN Güvenlik'}</h3>
                 </div>
 
                 <p className={`text-sm mb-6 ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
-                    Uygulamayı açarken PIN kodu sorulmasını istiyorsanız buradan ayarlayabilirsiniz.
+                    {t('profile.pinSecurityDesc') || 'Uygulamayı açarken PIN kodu sorulmasını istiyorsanız buradan ayarlayabilirsiniz.'}
                 </p>
 
                 {hasPinSet ? (
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <Lock className={`w-5 h-5 ${theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`} />
-                            <span className={`font-bold ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>PIN aktif</span>
+                            <span className={`font-bold ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>{t('profile.pinActive') || 'PIN aktif'}</span>
                         </div>
                         <button
                             onClick={handleRemovePin}
@@ -568,14 +579,14 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                     ? 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100'
                                     : 'bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20'}`}
                         >
-                            PIN'i Kaldır
+                            {t('profile.removePin') || 'PIN\'i Kaldır'}
                         </button>
                     </div>
                 ) : showPinSetup ? (
                     <div className="space-y-4 animate-fadeIn">
                         <div>
                             <label className={`text-xs font-bold uppercase mb-1 block tracking-wider
-                                ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>Yeni PIN (4 haneli)</label>
+                                ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>{t('profile.newPin') || 'Yeni PIN (4 haneli)'}</label>
                             <input
                                 type="password"
                                 maxLength={4}
@@ -592,7 +603,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                         </div>
                         <div>
                             <label className={`text-xs font-bold uppercase mb-1 block tracking-wider
-                                ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>PIN'i Onayla</label>
+                                ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>{t('profile.confirmPin') || 'PIN\'i Onayla'}</label>
                             <input
                                 type="password"
                                 maxLength={4}
@@ -619,7 +630,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                 className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all
                                     ${theme === 'light' ? 'text-slate-500 hover:bg-slate-100' : 'text-slate-400 hover:bg-white/5'}`}
                             >
-                                Vazgeç
+                                {t('profile.cancelSetup') || 'Vazgeç'}
                             </button>
                             <button
                                 type="button"
@@ -627,7 +638,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                 className="flex-1 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-bold transition-all active:scale-95"
                                 style={{ boxShadow: '0 4px 14px -3px rgba(16,185,129,0.4)' }}
                             >
-                                PIN'i Kaydet
+                                {t('profile.savePin') || 'PIN\'i Kaydet'}
                             </button>
                         </div>
                     </div>
@@ -640,9 +651,46 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                 : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'}`}
                     >
                         <Unlock className="w-5 h-5" />
-                        <span className="font-bold">PIN Ayarla</span>
+                        <span className="font-bold">{t('profile.setPin') || 'PIN Ayarla'}</span>
                     </button>
                 )}
+            </div>
+
+            {/* Dil Ayarları - 3D Card */}
+            <div className={`glass-card p-8 mb-6
+                ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
+                <div className="flex items-center gap-3 mb-6">
+                    <AlertCircle className={`w-6 h-6 ${theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`} />
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.language') || 'Dil Ayarları'}</h3>
+                </div>
+
+                <div className="flex items-center justify-between">
+                    <div>
+                        <p className={`font-bold ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
+                            Türkçe / English
+                        </p>
+                        <p className={`text-xs mt-1 ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
+                            {t('profile.language_desc') || 'Uygulama dilini seçin'}
+                        </p>
+                    </div>
+                    {/* Dil Switcher */}
+                    <div className={`flex rounded-lg p-1 ${theme === 'light' ? 'bg-slate-200' : 'bg-slate-700'}`}>
+                        <button
+                            type="button"
+                            onClick={() => handleToggleLanguage('tr')}
+                            className={`px-3 py-1 rounded-md text-sm font-bold transition-all ${language === 'tr' ? 'bg-emerald-500 text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:text-emerald-600'}`}
+                        >
+                            TR
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => handleToggleLanguage('en')}
+                            className={`px-3 py-1 rounded-md text-sm font-bold transition-all ${language === 'en' ? 'bg-emerald-500 text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:text-emerald-600'}`}
+                        >
+                            EN
+                        </button>
+                    </div>
+                </div>
             </div>
 
             {/* Bildirim Ayarları - 3D Card */}
@@ -650,16 +698,16 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
                 <div className="flex items-center gap-3 mb-6">
                     <AlertCircle className={`w-6 h-6 ${theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`} />
-                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>Bildirim Ayarları</h3>
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.notificationSettings') || 'Bildirim Ayarları'}</h3>
                 </div>
 
                 <div className="flex items-center justify-between">
                     <div>
                         <p className={`font-bold ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
-                            Günlük Ayet Bildirimleri
+                            {t('profile.dailyVerseNotifications') || 'Günlük Ayet Bildirimleri'}
                         </p>
                         <p className={`text-xs mt-1 ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
-                            Her gün saat 09:00'da size özel seçilmiş bir ayet gönderilir.
+                            {t('profile.dailyVerseNotificationsDesc') || 'Her gün saat 09:00\'da size özel seçilmiş bir ayet gönderilir.'}
                         </p>
                     </div>
                     {/* Basit Toggle Switch */}
@@ -678,10 +726,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 <div className="flex items-center justify-between mt-6 pt-6 border-t border-slate-100">
                     <div>
                         <p className={`font-bold ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
-                            Konum İzni
+                            {t('profile.location') || 'Konum İzni'}
                         </p>
                         <p className={`text-xs mt-1 max-w-xs ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
-                            Namaz ve oruç vakitlerini konumunuza göre otomatik hesaplamak için kullanılır. Dilediğiniz zaman kapatabilirsiniz.
+                            {t('profile.location_desc') || 'Namaz ve oruç vakitlerini konumunuza göre otomatik hesaplamak için kullanılır. Dilediğiniz zaman kapatabilirsiniz.'}
                         </p>
                     </div>
                     {/* Basit Toggle Switch */}
@@ -703,17 +751,16 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
                 <div className="flex items-center gap-3 mb-6">
                     <Trash2 className="w-6 h-6 text-red-500" />
-                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>Veri Yönetimi</h3>
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.dataManagement') || 'Veri Yönetimi'}</h3>
                 </div>
 
                 <p className={`text-sm mb-6 ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
-                    Tüm şükür notlarınızı, profilinizi ve ayarlarınızı kalıcı olarak silebilirsiniz.
-                    Bu işlem geri alınamaz.
+                    {t('profile.dataManagementDesc') || 'Tüm şükür notlarınızı, profilinizi ve ayarlarınızı kalıcı olarak silebilirsiniz. Bu işlem geri alınamaz.'}
                 </p>
 
                 <button
                     onClick={async () => {
-                        if (window.confirm('⚠️ TÜM VERİLERİN SİLİNECEK!\n\nŞükür notların, profilin, duaların ve tüm ayarların kalıcı olarak silinecek.\n\nBu işlem geri alınamaz. Devam etmek istiyor musun?')) {
+                        if (window.confirm(t('delete.warning') || '⚠️ DEVAM ETMEK İSTİYOR MUSUNUZ?')) {
                             await storageService.deleteAllData();
                             window.location.reload();
                         }
@@ -722,7 +769,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                         bg-red-50 border-red-200 text-red-600 hover:bg-red-100"
                 >
                     <Trash2 className="w-5 h-5" />
-                    <span className="font-bold">Tüm Verilerimi Sil</span>
+                    <span className="font-bold">{t('delete.warning') || 'Tüm Verilerimi Sil'}</span>
                 </button>
             </div>
         </div>

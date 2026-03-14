@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { BookHeart, RefreshCw, Heart, ChevronRight, Trash2 } from 'lucide-react';
 import { ANNUAL_DUAS } from '../../core/duas_data';
 import { useTheme } from '../../core/ThemeContext';
+import { useLanguage } from '../../core/LanguageContext';
 import { storageService } from '../../services/storage.service';
 import { CustomPrayer } from '../../core/types';
 import { AdMobService } from '../../services/AdMobService';
@@ -9,6 +10,7 @@ import { Preferences } from '@capacitor/preferences';
 
 const DuaView: React.FC = () => {
     const { theme } = useTheme();
+    const { language, t } = useLanguage();
 
     const todayIndex = useMemo(() => {
         const now = new Date();
@@ -61,7 +63,7 @@ const DuaView: React.FC = () => {
     };
 
     const handleDeleteCustomPrayer = async (id: string) => {
-        if (window.confirm('Bu duayı silmek istediğinden emin misin?')) {
+        if (window.confirm(t('common.deleteConfirm') || 'Bu duayı silmek istediğinden emin misin?')) {
             const updated = await storageService.deleteCustomPrayer(id);
             setCustomPrayers(updated);
         }
@@ -91,23 +93,19 @@ const DuaView: React.FC = () => {
     }, [favorites, currentIndex]);
 
     const isFavorite = favorites.includes(currentIndex);
-    const isToday = currentIndex === todayIndex;
 
     return (
         <div className="space-y-6 animate-fadeIn pb-24">
             {/* Başlık */}
             <div className="text-center">
                 <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border
-                    ${theme === 'light'
-                        ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                        : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'}`}
-                    style={{ boxShadow: theme === 'dark' ? '0 0 20px -5px rgba(16,185,129,0.2)' : undefined }}
-                >
-                    <BookHeart className="w-5 h-5" />
-                    <span className="text-sm font-bold">
-                        {isToday ? "Günün Duası" : "Dua Hazinesi"}
-                    </span>
+                    ${theme === 'light' ? 'bg-amber-50 border-amber-200 text-amber-600' : 'bg-amber-500/10 border-amber-500/20 text-amber-400'}`}>
+                    <BookHeart className="w-4 h-4" />
+                    <span className="text-xs font-bold uppercase tracking-widest">{t('nav.duas')}</span>
                 </div>
+                <h2 className={`text-2xl font-serif mt-3 ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>
+                    {t('duas.daily_title')}
+                </h2>
             </div>
 
             {/* Dua Kartı - 3D */}
@@ -129,7 +127,7 @@ const DuaView: React.FC = () => {
                     <div className="mb-8">
                         <p className={`text-xl md:text-2xl font-medium leading-relaxed font-serif transition-colors
                             ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>
-                            "{currentPrayer?.text}"
+                            "{language === 'tr' ? currentPrayer?.textTr : currentPrayer?.textEn}"
                         </p>
                     </div>
 
@@ -137,7 +135,7 @@ const DuaView: React.FC = () => {
                         <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-emerald-400/50"></div>
                         <span className={`text-sm font-bold tracking-wider uppercase
                             ${theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`}>
-                            {currentPrayer?.source}
+                            {language === 'tr' ? currentPrayer?.sourceTr : currentPrayer?.sourceEn}
                         </span>
                         <div className="h-[1px] w-8 bg-gradient-to-l from-transparent to-emerald-400/50"></div>
                     </div>
@@ -159,7 +157,7 @@ const DuaView: React.FC = () => {
                         }`}
                 >
                     <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
-                    <span className="text-sm">{isFavorite ? 'Favorilerde' : 'Favorile'}</span>
+                    <span className="text-sm">{isFavorite ? t('duas.favorited') : t('duas.favorite')}</span>
                 </button>
 
                 <button
@@ -171,7 +169,7 @@ const DuaView: React.FC = () => {
                         }`}
                 >
                     <RefreshCw className="w-5 h-5" />
-                    <span className="text-sm">Başka Bir Dua</span>
+                    <span className="text-sm">{t('duas.another_dua')}</span>
                 </button>
             </div>
 
@@ -185,22 +183,22 @@ const DuaView: React.FC = () => {
                     <h3 className={`text-sm font-bold uppercase tracking-wider flex items-center gap-2
                         ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
                         <Heart className={`w-4 h-4 ${theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`} />
-                        Benim Dualarım ({customPrayers.length})
+                        {t('duas.my_prayers')} ({customPrayers.length})
                     </h3>
                     <button
                         onClick={handleAddCustomPrayerClick}
                         className="text-xs font-bold text-white bg-emerald-500 hover:bg-emerald-400 px-4 py-2 rounded-xl active:scale-95 transition-all"
                         style={{ boxShadow: '0 4px 14px -3px rgba(16,185,129,0.4)' }}
                     >
-                        + Dua Ekle
+                        + {t('duas.add_prayer')}
                     </button>
                 </div>
 
                 {customPrayers.length === 0 ? (
                     <div className={`text-center py-10 rounded-2xl border-2 border-dashed transition-colors
                         ${theme === 'light' ? 'border-slate-200 bg-slate-50/50' : 'border-slate-700 bg-slate-800/30'}`}>
-                        <p className={`text-sm font-medium ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>Henüz özel bir dua eklemedin.</p>
-                        <p className={`text-xs mt-1 ${theme === 'light' ? 'text-slate-400' : 'text-slate-500'}`}>İçinden gelenleri Rabbine arz etmek için ekle.</p>
+                        <p className={`text-sm font-medium ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>{t('duas.no_custom_prayers')}</p>
+                        <p className={`text-xs mt-1 ${theme === 'light' ? 'text-slate-400' : 'text-slate-500'}`}>{t('duas.custom_prayer_hint')}</p>
                     </div>
                 ) : (
                     <div className="grid gap-3">
@@ -219,7 +217,7 @@ const DuaView: React.FC = () => {
                                     <button
                                         onClick={(e) => { e.stopPropagation(); handleDeleteCustomPrayer(prayer.id); }}
                                         className="p-2 text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors"
-                                        title="Duayı Sil"
+                                        title={t('common.delete') || 'Sil'}
                                     >
                                         <Trash2 className="w-4 h-4" />
                                     </button>
@@ -236,7 +234,7 @@ const DuaView: React.FC = () => {
                     <h3 className={`text-sm font-bold uppercase tracking-wider mb-4 flex items-center gap-2
                         ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
                         <BookHeart className="w-4 h-4" />
-                        Favori Hazinem ({favorites.length})
+                        {t('duas.favorites_title')} ({favorites.length})
                     </h3>
                     <div className="grid gap-3">
                         {favorites.map((index) => {
@@ -254,10 +252,10 @@ const DuaView: React.FC = () => {
                                     <div className="pr-4">
                                         <p className={`text-sm line-clamp-1 transition-colors
                                             ${theme === 'light' ? 'text-slate-700 group-hover:text-emerald-700' : 'text-slate-300 group-hover:text-emerald-300'}`}>
-                                            {dua.text}
+                                            {language === 'tr' ? dua.textTr : dua.textEn}
                                         </p>
                                         <span className={`text-xs mt-1 block ${theme === 'light' ? 'text-slate-400' : 'text-slate-500'}`}>
-                                            {dua.source}
+                                            {language === 'tr' ? dua.sourceTr : dua.sourceEn}
                                         </span>
                                     </div>
                                     <div className="opacity-0 group-hover:opacity-100 transition-opacity">
@@ -280,12 +278,12 @@ const DuaView: React.FC = () => {
                         style={{ boxShadow: '0 25px 60px -12px rgba(0,0,0,0.5)' }}
                     >
                         <h3 className={`text-xl font-serif font-medium mb-4
-                            ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>Yeni Dua Ekle</h3>
+                            ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('duas.add_prayer')}</h3>
 
                         <textarea
                             value={newPrayerText}
                             onChange={(e) => setNewPrayerText(e.target.value)}
-                            placeholder="İçinden geçenleri Rabbine arz et..."
+                            placeholder={t('common.cancel') === 'Vazgeç' ? "İçinden geçenleri Rabbine arz et..." : "Present your heart's desires to your Lord..."}
                             className={`w-full h-32 p-4 rounded-2xl resize-none text-base outline-none transition-all border
                                 ${theme === 'light'
                                     ? 'bg-slate-50 text-slate-800 border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20'
@@ -298,7 +296,7 @@ const DuaView: React.FC = () => {
                                 className={`px-4 py-2 text-sm font-bold transition-colors
                                     ${theme === 'light' ? 'text-slate-500 hover:text-slate-700' : 'text-slate-500 hover:text-slate-300'}`}
                             >
-                                Vazgeç
+                                {t('common.cancel')}
                             </button>
                             <button
                                 onClick={saveCustomPrayer}
@@ -306,7 +304,7 @@ const DuaView: React.FC = () => {
                                 className="px-6 py-2 bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-bold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95"
                                 style={{ boxShadow: '0 4px 14px -3px rgba(16,185,129,0.4)' }}
                             >
-                                Kaydet
+                                {t('common.save')}
                             </button>
                         </div>
                     </div>

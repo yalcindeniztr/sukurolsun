@@ -4,6 +4,7 @@ import Sidebar from './Sidebar';
 import { UserProfile } from '../../core/types';
 import { AVATARS } from '../../constants';
 import { useTheme } from '../../core/ThemeContext';
+import { useLanguage } from '../../core/LanguageContext';
 
 interface MainLayoutProps {
     children: React.ReactNode;
@@ -13,6 +14,7 @@ interface MainLayoutProps {
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChange, profile }) => {
+    const { language, t } = useLanguage();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const isCustomAvatar = profile?.avatarId?.startsWith('data:image') || false;
@@ -62,10 +64,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
                 {/* Tarih & Saat */}
                 <div className="text-center pt-8 pb-2">
                     <p className="text-sm font-bold tracking-widest text-emerald-600 uppercase">
-                        {new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' }).toUpperCase()}
+                        {new Date().toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US', { day: 'numeric', month: 'long', weekday: 'long' }).toUpperCase()}
                     </p>
                     <p className="text-5xl font-light text-slate-700 mt-1 tracking-tight font-mono">
-                        {new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                        {new Date().toLocaleTimeString(language === 'tr' ? 'tr-TR' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                     </p>
                 </div>
 
@@ -81,7 +83,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
 
                     {/* Logo */}
                     <h1 className="text-lg font-serif font-bold text-emerald-700 tracking-wide">
-                        Şükür Olsun
+                        {t('common.appName')}
                     </h1>
 
                     {/* Sağ Taraf - Aksiyonlar */}

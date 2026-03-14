@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Quote, Sparkles } from 'lucide-react';
 import { ANNUAL_VERSES } from '../../core/verses_data';
 import { useTheme } from '../../core/ThemeContext';
+import { useLanguage } from '../../core/LanguageContext';
 
 interface VerseBannerProps {
     specificIndex?: number;
@@ -9,6 +10,7 @@ interface VerseBannerProps {
 
 const VerseBanner: React.FC<VerseBannerProps> = ({ specificIndex }) => {
     const { theme } = useTheme();
+    const { language } = useLanguage();
 
     const verse = useMemo(() => {
         if (specificIndex !== undefined) {
@@ -67,7 +69,7 @@ const VerseBanner: React.FC<VerseBannerProps> = ({ specificIndex }) => {
                 <h2 className={`text-xl lg:text-2xl font-serif font-medium leading-relaxed max-w-2xl mx-auto transition-colors duration-300
                     ${theme === 'light' ? 'text-slate-800' : 'text-white'}
                 `}>
-                    "{verse.text}"
+                    "{language === 'tr' ? verse.textTr : verse.textEn}"
                 </h2>
 
                 <div className="mt-8 flex items-center justify-center gap-4">
@@ -77,8 +79,8 @@ const VerseBanner: React.FC<VerseBannerProps> = ({ specificIndex }) => {
                             ? 'text-amber-600 bg-amber-400/10 border-amber-400/20'
                             : 'text-amber-400 bg-amber-500/10 border-amber-500/20'}
                      `}>
-                        <Sparkles className="w-3 h-3" />
-                        {verse.source}
+                         <Sparkles className="w-3 h-3" />
+                        {language === 'tr' ? verse.sourceTr : verse.sourceEn}
                     </div>
                     <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-amber-400/50"></div>
                 </div>
