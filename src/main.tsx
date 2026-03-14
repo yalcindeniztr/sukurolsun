@@ -5,7 +5,7 @@ import './index.css'
 import { ThemeProvider } from './core/ThemeContext';
 import { LanguageProvider } from './core/LanguageContext';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
-import './i18n';
+
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

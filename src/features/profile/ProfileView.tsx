@@ -51,7 +51,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
 
     const [selectedAvatarUrl, setSelectedAvatarUrl] = useState(initialAvatarUrl);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (profile?.avatarId) {
             const isCust = profile.avatarId.startsWith('data:image');
             const url = isCust

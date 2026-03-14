@@ -1,6 +1,8 @@
 export const translations = {
   tr: {
     common: {
+      appName: "Şükür Olsun",
+      motto: "Manevi Günlüğünüz",
       save: "Kaydet",
       cancel: "Vazgeç",
       delete: "Sil",
@@ -26,6 +28,10 @@ export const translations = {
       home: "Ana Sayfa",
       archive: "Arşiv",
       duas: "Dua Hazinesi",
+      tesbihat: "Tesbihat",
+      places: "Mübarek Yerler",
+      messages: "Günün Mesajı",
+      religiousDays: "Dini Günler",
       prayerTimes: "Ezan Vakitleri",
       profile: "Profilim",
       agreement: "Kullanım Koşulları",
@@ -43,9 +49,11 @@ export const translations = {
       placeholderGratitude: "Örn: Güneşli bir sabah...",
       placeholderAllah: "Örn: Komşuma yardım ettim...",
       allahAction: "Allah için ne yaptın?",
+      gratitudeReason: "Bugün neden şükrettin?",
       recentEntries: "Son Günlükler",
       noEntries: "Henüz günlük eklenmemiş.",
       searchPlaceholder: "Başlık veya içerikte ara...",
+      entrySaved: "Kayıt başarıyla eklendi.",
     },
     duas: {
       daily_title: "Her Güne Bir Niyaz",
@@ -92,6 +100,8 @@ export const translations = {
   },
   en: {
     common: {
+      appName: "Shukur Olsun",
+      motto: "Your Spiritual Journal",
       save: "Save",
       cancel: "Cancel",
       delete: "Delete",
@@ -117,6 +127,10 @@ export const translations = {
       home: "Home",
       archive: "Archive",
       duas: "Dua Treasure",
+      tesbihat: "Tasbih",
+      places: "Holy Places",
+      messages: "Daily Messages",
+      religiousDays: "Religious Days",
       prayerTimes: "Prayer Times",
       profile: "Profile",
       agreement: "Terms of Use",
@@ -134,9 +148,11 @@ export const translations = {
       placeholderGratitude: "Ex: A sunny morning...",
       placeholderAllah: "Ex: I helped my neighbor...",
       allahAction: "What did you do for Allah?",
+      gratitudeReason: "Why did you thank today?",
       recentEntries: "Recent Entries",
       noEntries: "No entries yet.",
       searchPlaceholder: "Search in title or content...",
+      entrySaved: "Entry saved successfully.",
     },
     duas: {
       daily_title: "A Supplication for Every Day",
