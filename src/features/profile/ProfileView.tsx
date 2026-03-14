@@ -210,7 +210,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                     <h2 className={`text-2xl font-serif flex items-center gap-3
                         ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>
                         <User className={`w-6 h-6 ${theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`} />
-                        {t('profile.title') || 'Profilim'}
+                        {t('common.profile')}
                     </h2>
                     <button
                         onClick={() => setIsEditing(!isEditing)}
@@ -219,7 +219,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                 ? 'hover:bg-slate-100 text-slate-400 hover:text-emerald-600'
                                 : 'hover:bg-white/[0.06] text-slate-400 hover:text-emerald-400'}`}
                     >
-                        {isEditing ? <span className="text-sm font-bold">{t('profile.cancel') || 'Vazgeç'}</span> : <Edit2 className="w-5 h-5" />}
+                        {isEditing ? <span className="text-sm font-bold">{t('common.cancel')}</span> : <Edit2 className="w-5 h-5" />}
                     </button>
                 </div>
 
@@ -249,7 +249,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                     ? 'bg-slate-50 border-slate-200'
                                     : 'bg-black/20 border-white/[0.06]'}`}>
                                 <p className={`text-xs font-bold uppercase text-center mb-3 tracking-wider
-                                    ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>{t('profile.avatarSelect') || 'Avatar Seç Veya Yükle'}</p>
+                                    ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>{t('profile.avatarSelect')}</p>
                                 <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide items-center justify-start md:justify-center">
                                     {/* Özel Resim Yükle Butonu */}
                                     <label className="flex flex-col items-center justify-center w-16 h-16 shrink-0 rounded-full border-2 border-dashed border-emerald-300 hover:border-emerald-500 hover:bg-emerald-50 transition-all cursor-pointer overflow-hidden p-1 shadow-sm">
@@ -288,7 +288,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <label className={`text-xs font-bold uppercase ml-1 tracking-wider
-                                ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>İsim</label>
+                                ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>{t('profile.nameLabel')}</label>
                             <input
                                 type="text"
                                 value={name}
@@ -306,7 +306,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
 
                         <div className="space-y-2">
                             <label className={`text-xs font-bold uppercase ml-1 tracking-wider
-                                ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>Unvan / Motto</label>
+                                ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>{t('profile.titleLabel')}</label>
                             <input
                                 type="text"
                                 value={title}
@@ -327,7 +327,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                         <div className="flex justify-center pt-4 animate-fade-in">
                             <button type="submit" className="btn-gold flex items-center gap-2 px-8">
                                 <Save className="w-5 h-5" />
-                                {t('profile.saveSettings') || 'Ayarları Kaydet'}
+                                {t('common.save') || 'Kaydet'}
                             </button>
                         </div>
                     )}
@@ -341,7 +341,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                     <div className={`w-6 h-6 rounded flex items-center justify-center bg-gradient-to-r from-blue-400 to-blue-600 text-white`}>
                         <Award className="w-4 h-4" />
                     </div>
-                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>İstatistiklerim</h3>
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.stats.statistics')}</h3>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -349,19 +349,19 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                     <div className={`p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 text-center
                         ${theme === 'light' ? 'bg-slate-50 border-slate-100' : 'bg-white/5 border-white/10'}`}>
                         <div className="text-3xl font-black text-amber-500">{entries?.length || 0}</div>
-                        <div className={`text-xs font-bold uppercase ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>Toplam Kayıt</div>
+                        <div className={`text-xs font-bold uppercase ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>{t('profile.stats.myJournalEntries')}</div>
                     </div>
                     {/* İstikrar Kartı */}
                     <div className={`p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 text-center
                         ${theme === 'light' ? 'bg-slate-50 border-slate-100' : 'bg-white/5 border-white/10'}`}>
                         <div className="text-3xl font-black text-emerald-500">{profile?.streak || 0}</div>
-                        <div className={`text-xs font-bold uppercase ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>Günlük Seri</div>
+                        <div className={`text-xs font-bold uppercase ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>{t('profile.stats.streak')}</div>
                     </div>
                     {/* Rozet Sayısı */}
                     <div className={`p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 text-center
                         ${theme === 'light' ? 'bg-slate-50 border-slate-100' : 'bg-white/5 border-white/10'}`}>
                         <div className="text-3xl font-black text-blue-500">{profile?.badges?.length || 0}</div>
-                        <div className={`text-xs font-bold uppercase ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>Kazanılan Rozet</div>
+                        <div className={`text-xs font-bold uppercase ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>{t('profile.stats.myBadges')}</div>
                     </div>
                     {/* En iyi Ruh Hali */}
                     <div className={`p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 text-center
@@ -372,11 +372,14 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                 const moodCounts: Record<string, number> = {};
                                 entries.forEach(e => { moodCounts[e.mood] = (moodCounts[e.mood] || 0) + 1; });
                                 const topMood = Object.keys(moodCounts).reduce((a, b) => moodCounts[a] > moodCounts[b] ? a : b);
-                                const moodEmojiMap: Record<string, string> = { grateful: '🙏', peaceful: '🕊️', happy: '😊', blessed: '✨', reflective: '🤔', tired: '😮‍💨' };
+                                const moodEmojiMap: Record<string, string> = { 
+                                    grateful: '🥰', peaceful: '😌', happy: '😊', blessed: '✨', reflective: '🤔', 
+                                    anxious: '😰', sad: '😔', tired: '😮‍💨', hopeful: '🤲', joyful: '😊' 
+                                };
                                 return moodEmojiMap[topMood] || topMood;
                             })()}
                         </div>
-                        <div className={`text-xs font-bold uppercase ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>Genel Ruh Hali</div>
+                        <div className={`text-xs font-bold uppercase ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>{t('profile.stats.topMood')}</div>
                     </div>
                 </div>
 
@@ -384,7 +387,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 {entries && entries.length > 0 && (
                     <div>
                         <p className={`text-xs font-bold uppercase mb-4 tracking-wider ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
-                            Ruh Hali Dağılımı
+                            {t('profile.moodHistory')}
                         </p>
                         <div className="space-y-3">
                             {(() => {
@@ -397,7 +400,11 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                     happy: { emoji: '😊', color: 'bg-amber-400' },
                                     blessed: { emoji: '✨', color: 'bg-purple-400' },
                                     reflective: { emoji: '🤔', color: 'bg-slate-400' },
-                                    tired: { emoji: '😮‍💨', color: 'bg-rose-400' }
+                                    anxious: { emoji: '😰', color: 'bg-orange-400' }, 
+                                    sad: { emoji: '😔', color: 'bg-blue-400' },
+                                    tired: { emoji: '😮‍💨', color: 'bg-slate-500' },
+                                    hopeful: { emoji: '🤲', color: 'bg-emerald-400' },
+                                    joyful: { emoji: '😊', color: 'bg-amber-500' }
                                 };
 
                                 return Object.entries(moodCounts)
@@ -426,14 +433,14 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
                 <div className="flex items-center gap-3 mb-6">
                     <Award className={`w-6 h-6 ${theme === 'light' ? 'text-amber-500' : 'text-amber-400'}`} />
-                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.badges') || 'Rozetlerim'}</h3>
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.stats.myBadges')}</h3>
                 </div>
 
                 {(!profile?.badges || profile.badges.length === 0) ? (
                     <div className={`text-center py-8 border-2 border-dashed rounded-2xl
                         ${theme === 'light' ? 'border-slate-200' : 'border-white/10'}`}>
                         <Award className={`w-12 h-12 mx-auto mb-3 opacity-20 ${theme === 'light' ? 'text-slate-400' : 'text-white'}`} />
-                        <p className={theme === 'light' ? 'text-slate-500' : 'text-slate-400'}>{t('profile.noBadges') || 'Henüz rozet kazanmadınız. İlerledikçe burada rozetleriniz görünecek.'}</p>
+                        <p className={theme === 'light' ? 'text-slate-500' : 'text-slate-400'}>{t('profile.noBadges')}</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -463,7 +470,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                     <div className={`w-6 h-6 rounded flex items-center justify-center bg-gradient-to-r from-emerald-400 to-emerald-600 text-white`}>
                         <Award className="w-4 h-4" />
                     </div>
-                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>Uygulama Teması</h3>
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.theme')}</h3>
                 </div>
 
                 <p className={`text-sm mb-6 ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
@@ -503,11 +510,11 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
                 <div className="flex items-center gap-3 mb-6">
                     <Download className={`w-6 h-6 ${theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`} />
-                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.dataBackup') || 'Veri Yedekleme'}</h3>
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.backup')}</h3>
                 </div>
 
                 <p className={`text-sm mb-6 ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
-                    {t('profile.dataBackupDesc') || 'Tüm şükür notlarınızı, profilinizi ve ayarlarınızı yedekleyebilir veya geri yükleyebilirsiniz.'}
+                    {t('profile.backupDesc')}
                 </p>
 
                 {/* Status Mesajı */}
@@ -532,7 +539,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                             }`}
                     >
                         <Download className="w-5 h-5" />
-                        <span className="font-bold">{t('profile.exportData') || 'Veriyi Dışa Aktar'}</span>
+                        <span className="font-bold">{t('profile.export')}</span>
                     </button>
 
                     {/* İçe Aktar */}
@@ -542,7 +549,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                             : 'bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20'
                         }`}>
                         <Upload className="w-5 h-5" />
-                        <span className="font-bold">{t('profile.importData') || 'Veriyi İçe Aktar'}</span>
+                        <span className="font-bold">{t('profile.import')}</span>
                         <input
                             ref={fileInputRef}
                             type="file"
@@ -559,18 +566,18 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
                 <div className="flex items-center gap-3 mb-6">
                     <ShieldCheck className={`w-6 h-6 ${theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`} />
-                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.pinSecurity') || 'PIN Güvenlik'}</h3>
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.pinSecurity')}</h3>
                 </div>
 
                 <p className={`text-sm mb-6 ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
-                    {t('profile.pinSecurityDesc') || 'Uygulamayı açarken PIN kodu sorulmasını istiyorsanız buradan ayarlayabilirsiniz.'}
+                    {t('profile.pinSecurityDesc')}
                 </p>
 
                 {hasPinSet ? (
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <Lock className={`w-5 h-5 ${theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`} />
-                            <span className={`font-bold ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>{t('profile.pinActive') || 'PIN aktif'}</span>
+                            <span className={`font-bold ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>{t('profile.pinActive')}</span>
                         </div>
                         <button
                             onClick={handleRemovePin}
@@ -579,14 +586,14 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                     ? 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100'
                                     : 'bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20'}`}
                         >
-                            {t('profile.removePin') || 'PIN\'i Kaldır'}
+                            {t('profile.removePin')}
                         </button>
                     </div>
                 ) : showPinSetup ? (
                     <div className="space-y-4 animate-fadeIn">
                         <div>
                             <label className={`text-xs font-bold uppercase mb-1 block tracking-wider
-                                ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>{t('profile.newPin') || 'Yeni PIN (4 haneli)'}</label>
+                                ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>{t('profile.newPin')}</label>
                             <input
                                 type="password"
                                 maxLength={4}
@@ -603,7 +610,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                         </div>
                         <div>
                             <label className={`text-xs font-bold uppercase mb-1 block tracking-wider
-                                ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>{t('profile.confirmPin') || 'PIN\'i Onayla'}</label>
+                                ${theme === 'light' ? 'text-slate-500' : 'text-slate-500'}`}>{t('profile.confirmPin')}</label>
                             <input
                                 type="password"
                                 maxLength={4}
@@ -630,7 +637,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                 className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all
                                     ${theme === 'light' ? 'text-slate-500 hover:bg-slate-100' : 'text-slate-400 hover:bg-white/5'}`}
                             >
-                                {t('profile.cancelSetup') || 'Vazgeç'}
+                                {t('common.cancel')}
                             </button>
                             <button
                                 type="button"
@@ -638,7 +645,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                 className="flex-1 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-bold transition-all active:scale-95"
                                 style={{ boxShadow: '0 4px 14px -3px rgba(16,185,129,0.4)' }}
                             >
-                                {t('profile.savePin') || 'PIN\'i Kaydet'}
+                                {t('profile.savePin')}
                             </button>
                         </div>
                     </div>
@@ -651,7 +658,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                 : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'}`}
                     >
                         <Unlock className="w-5 h-5" />
-                        <span className="font-bold">{t('profile.setPin') || 'PIN Ayarla'}</span>
+                        <span className="font-bold">{t('profile.setPin')}</span>
                     </button>
                 )}
             </div>
@@ -661,7 +668,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
                 <div className="flex items-center gap-3 mb-6">
                     <AlertCircle className={`w-6 h-6 ${theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`} />
-                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.language') || 'Dil Ayarları'}</h3>
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.language')}</h3>
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -670,7 +677,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                             Türkçe / English
                         </p>
                         <p className={`text-xs mt-1 ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
-                            {t('profile.language_desc') || 'Uygulama dilini seçin'}
+                            {t('profile.languageDesc')}
                         </p>
                     </div>
                     {/* Dil Switcher */}
@@ -698,16 +705,16 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
                 <div className="flex items-center gap-3 mb-6">
                     <AlertCircle className={`w-6 h-6 ${theme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`} />
-                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.notificationSettings') || 'Bildirim Ayarları'}</h3>
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('common.notificationSettings')}</h3>
                 </div>
 
                 <div className="flex items-center justify-between">
                     <div>
                         <p className={`font-bold ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
-                            {t('profile.dailyVerseNotifications') || 'Günlük Ayet Bildirimleri'}
+                            {t('profile.dailyVerseNotifications')}
                         </p>
                         <p className={`text-xs mt-1 ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
-                            {t('profile.dailyVerseNotificationsDesc') || 'Her gün saat 09:00\'da size özel seçilmiş bir ayet gönderilir.'}
+                            {t('profile.dailyVerseNotificationsDesc')}
                         </p>
                     </div>
                     {/* Basit Toggle Switch */}
@@ -726,10 +733,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 <div className="flex items-center justify-between mt-6 pt-6 border-t border-slate-100">
                     <div>
                         <p className={`font-bold ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
-                            {t('profile.location') || 'Konum İzni'}
+                            {t('common.location')}
                         </p>
                         <p className={`text-xs mt-1 max-w-xs ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
-                            {t('profile.location_desc') || 'Namaz ve oruç vakitlerini konumunuza göre otomatik hesaplamak için kullanılır. Dilediğiniz zaman kapatabilirsiniz.'}
+                            {t('profile.locationDesc')}
                         </p>
                     </div>
                     {/* Basit Toggle Switch */}
@@ -751,11 +758,11 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
                 <div className="flex items-center gap-3 mb-6">
                     <Trash2 className="w-6 h-6 text-red-500" />
-                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.dataManagement') || 'Veri Yönetimi'}</h3>
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.dataManagement')}</h3>
                 </div>
 
                 <p className={`text-sm mb-6 ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
-                    {t('profile.dataManagementDesc') || 'Tüm şükür notlarınızı, profilinizi ve ayarlarınızı kalıcı olarak silebilirsiniz. Bu işlem geri alınamaz.'}
+                    {t('profile.dataManagementDesc')}
                 </p>
 
                 <button
@@ -765,11 +772,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                             window.location.reload();
                         }
                     }}
-                    className="flex items-center justify-center gap-3 w-full p-4 rounded-2xl border transition-all active:scale-95
-                        bg-red-50 border-red-200 text-red-600 hover:bg-red-100"
+                    className="flex items-center justify-center gap-3 w-full p-4 rounded-2xl border transition-all active:scale-95 bg-red-50 border-red-200 text-red-600 hover:bg-red-100"
                 >
                     <Trash2 className="w-5 h-5" />
-                    <span className="font-bold">{t('delete.warning') || 'Tüm Verilerimi Sil'}</span>
+                    <span className="font-bold">{t('common.delete') || 'Sil'}</span>
                 </button>
             </div>
         </div>

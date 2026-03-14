@@ -1,7 +1,7 @@
 export type Language = 'tr' | 'en';
 export type Theme = 'light' | 'dark';
 
-export type MoodType = 'peaceful' | 'grateful' | 'hopeful' | 'joyful' | 'reflective' | 'somber';
+export type MoodType = 'peaceful' | 'grateful' | 'hopeful' | 'joyful' | 'reflective' | 'somber' | 'anxious' | 'sad' | 'tired';
 export type PromptType = 'gratitude' | 'allah_action';
 
 export interface CustomPrayer {

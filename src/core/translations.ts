@@ -23,6 +23,10 @@ export const translations = {
       updateCheck: "Güncellemeleri Denetle",
       update: "Güncelle",
       deleteConfirm: "Bu öğeyi silmek istediğinden emin misin?",
+      copy: "Kopyala",
+      noData: "Veri bulunamadı",
+      secureExit: "Güvenli Çıkış",
+      notificationSettings: "Bildirim Ayarları"
     },
     nav: {
       home: "Ana Sayfa",
@@ -38,7 +42,7 @@ export const translations = {
     },
     home: {
       verseTitle: "Günün Ayet-i Kerimesi",
-      placeholder: "Bugün ne için şükrediyororsun?",
+      placeholder: "Bugün ne için şükrediyor musun?",
       allahAction: "Allah için ne yaptın?",
       saveGratitude: "Şükrü Kaydet",
     },
@@ -79,7 +83,15 @@ export const translations = {
         streak: "İstikrar Serisi",
         badges: "Rozetler",
         topMood: "En Çok Hissedilen",
-      }
+        statistics: "İstatistikler",
+        myJournalEntries: "Günlüklerim",
+        myBadges: "Rozetlerim",
+      },
+      moodHistory: "Ruh Hali Geçmişi",
+      dailyMessage: "Günün Mesajı",
+      backup: "Veri Yedekleme",
+      export: "Dışa Aktar",
+      import: "İçe Aktar"
     },
     prayer: {
       title: "Namaz & Oruç Vakitleri",
@@ -91,6 +103,18 @@ export const translations = {
       ikindi: "İkindi",
       aksam: "Akşam",
       yatsi: "Yatsı",
+    },
+    places: {
+      title: "Mübarek Yerler Rehberi",
+      subtitle: "Türkiye'nin Manevi Durakları",
+      description: "Anadolu'nun dört bir yanındaki en önemli cami, türbe ve kutsal mekanlar hakkında bilgi ve ulaşım rehberi.",
+      searchPlaceholder: "Şehir veya mekan ara...",
+      about: "Hakkında",
+      history: "Tarihçe",
+      transport: "Nasıl Gidilir?",
+      visitingHours: "Ziyaret Saatleri",
+      viewDetails: "Detayları Gör",
+      noResults: "Aradığınız kriterlere uygun mekan bulunamadı."
     },
     agreement: {
       title: "Kullanım Koşulları",
@@ -122,6 +146,10 @@ export const translations = {
       updateCheck: "Check for Updates",
       update: "Update",
       deleteConfirm: "Are you sure you want to delete this item?",
+      copy: "Copy",
+      noData: "No data found",
+      secureExit: "Secure Exit",
+      notificationSettings: "Notification Settings"
     },
     nav: {
       home: "Home",
@@ -178,7 +206,15 @@ export const translations = {
         streak: "Current Streak",
         badges: "Badges",
         topMood: "Most Frequent Mood",
-      }
+        statistics: "Statistics",
+        myJournalEntries: "My Journals",
+        myBadges: "My Badges",
+      },
+      moodHistory: "Mood History",
+      dailyMessage: "Daily Message",
+      backup: "Data Backup",
+      export: "Export",
+      import: "Import"
     },
     prayer: {
       title: "Prayer & Fasting Times",
@@ -195,6 +231,18 @@ export const translations = {
       title: "Terms of Use",
       accept: "I Accept",
       continue: "Continue",
+    },
+    places: {
+      title: "Holy Places Guide",
+      subtitle: "Spiritual Stations of Turkey",
+      description: "Information and transportation guide about the most important mosques, tombs, and sacred places across Anatolia.",
+      searchPlaceholder: "Search city or place...",
+      about: "About",
+      history: "History",
+      transport: "How to Get There?",
+      visitingHours: "Visiting Hours",
+      viewDetails: "View Details",
+      noResults: "No places found matching your criteria."
     }
   }
 };

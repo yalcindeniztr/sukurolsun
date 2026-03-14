@@ -17,6 +17,7 @@ import Toast from '../components/ui/Toast';
 import UpdateChecker from '../components/UpdateChecker';
 import { AdMobService } from '../services/AdMobService';
 import { ReviewService } from '../services/ReviewService';
+import { storageService } from '../services/storage.service';
 
 const RootNavigator: React.FC = () => {
   const {
@@ -118,7 +119,23 @@ const RootNavigator: React.FC = () => {
 
         {activeTab === 'history' && (
           <div className="animate-fadeIn">
-            <h2 className="text-2xl font-serif text-white mb-6">Arşiv</h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-serif text-white">Arşiv</h2>
+              <button
+                onClick={async () => {
+                  const result = await (storageService as any).createNativeBackup();
+                  setToast({ message: result.message, type: result.success ? 'success' : 'error' });
+                }}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-sm font-bold hover:bg-emerald-500/20 transition-all active:scale-95"
+              >
+                <div className="p-1 bg-emerald-500 rounded-lg text-white">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                </div>
+                Tek Tıkla Yedekle
+              </button>
+            </div>
             <JournalHistory
               entries={combinedHistory}
               onDelete={handleDeleteEntry}

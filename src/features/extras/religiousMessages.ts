@@ -47,6 +47,8 @@ export const RELIGIOUS_MESSAGES: ReligiousCategory[] = [
             { id: 'mk2', text: 'Bu mübarek gecede dualarınız kabul, kalpleriniz huzurla dolsun. Mevlid Kandiliniz kutlu olsun.' },
             { id: 'mk3', text: 'Peygamber Efendimizin doğduğu bu kutlu gecede, ümmetine şefaati üzerimize olsun. Kandiliniz mübarek olsun.' },
             { id: 'mk4', text: 'Mevlid Kandili\'nin feyz ve bereketiyle gönüllerimiz aydınlansın. Hayırlı kandiller.' },
+            { id: 'mk5', text: 'Gül sevginin tacıdır, her bahar bir gül taçlanır. Peygamber Efendimizin doğum yıldönümü kutlu olsun.' },
+            { id: 'mk6', text: 'Bu gece rahmet gecesi, bu gece mağfiret gecesi. Mevlid Kandiliniz hayırlara vesile olsun.' },
         ]
     },
     {
@@ -57,6 +59,8 @@ export const RELIGIOUS_MESSAGES: ReligiousCategory[] = [
             { id: 'rk1', text: 'Üç ayların başlangıcı olan Regaib Kandili\'niz mübarek olsun. Allah hayırlara vesile eylesin.' },
             { id: 'rk2', text: 'Regaib Kandili\'nin getireceği manevi bereketin evlerinize dolması temennisiyle, kandiliniz kutlu olsun.' },
             { id: 'rk3', text: 'Bu mübarek gecede yapacağınız dualar kabul, ibadetler makbul olsun. Regaib Kandiliniz hayırlı olsun.' },
+            { id: 'rk4', text: 'Arzularımızın ve isteklerimizin Allah katında kabul gördüğü bu kutlu gece mübarek olsun.' },
+            { id: 'rk5', text: 'Ruhumuzun arınacağı, huzurun kalplerimize dolacağı Regaib Kandilimizi tebrik ederim.' },
         ]
     },
     {
@@ -66,7 +70,9 @@ export const RELIGIOUS_MESSAGES: ReligiousCategory[] = [
         messages: [
             { id: 'mc1', text: 'Peygamberimizin miracına şahitlik eden bu mübarek gecede, dualarınız kabul olsun. Miraç Kandiliniz mübarek olsun.' },
             { id: 'mc2', text: 'Göklere yükselişin simgesi olan Miraç Kandili\'nde, gönüllerimiz de yücelsin. Hayırlı kandiller.' },
-            { id: 'mc3', text: 'Miraç Kandili\'nin feyz ve bereketinin üzerinize olması temennisiyle, kandiliniz kutlu olsun.' },
+            { id: 'mc3', text: 'Miraç Kandili\'nin feyz ve bereketiyle dualarınız semaya yükselsin, kabul olsun.' },
+            { id: 'mc4', text: 'Bu kutlu gece, manevi yükselişimizin başlangıcı olsun. Miraç Kandiliniz mübarek olsun.' },
+            { id: 'mc5', text: 'İnsanlığın hidayet rehberi Hz. Muhammed\'in Miracını kutlar, ümmete hayırlar getirmesini dilerim.' },
         ]
     },
     {
@@ -77,6 +83,8 @@ export const RELIGIOUS_MESSAGES: ReligiousCategory[] = [
             { id: 'bk1', text: 'Günahlardan arınma ve bağışlanma gecesi olan Berat Kandili\'niz mübarek olsun.' },
             { id: 'bk2', text: 'Bu gece af ve mağfiret dileme gecesidir. Berat Kandiliniz hayırlara vesile olsun.' },
             { id: 'bk3', text: 'Berat Kandili\'nde Allah tüm günahlarımızı affetsin, kalplerimizi nurlandırsın. Kandiliniz mübarek olsun.' },
+            { id: 'bk4', text: 'Kurtuluş ve arınma gecesi olan Berat Kandili\'nin sizlere huzur getirmesini dilerim.' },
+            { id: 'bk5', text: 'Hüküm ve takdir gecesi olan Berat Kandili\'niz hayırlı ve bereketli olsun.' },
         ]
     },
     {

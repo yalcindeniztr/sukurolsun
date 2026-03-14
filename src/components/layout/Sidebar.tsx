@@ -48,7 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
 
             {/* Panel */}
             <div
-                className={`fixed inset-y-0 left-0 z-50 w-[260px] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]
+                className={`fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]
                     ${isOpen ? 'translate-x-0' : '-translate-x-full'}
                     bg-white/90 dark:bg-slate-900/90 backdrop-blur-3xl border-r border-slate-200/50 dark:border-white/10`}
                 style={{
@@ -67,8 +67,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                     </p>
                 </div>
 
-                {/* Navigation */}
-                <nav className="px-3 flex-1 overflow-y-auto space-y-1 pb-24">
+                {/* Navigation - Scrollable Area */}
+                <nav className="px-3 flex-1 overflow-y-auto overflow-x-hidden space-y-1 pb-28 custom-scrollbar">
                     {navItems.map((item) => {
                         const isActive = activeTab === item.id;
                         const Icon = item.icon;
@@ -156,10 +156,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                                 }
                             }
                         }}
-                        className="w-full mt-4 flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 active:bg-red-100"
+                        className="w-full mt-6 flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all duration-300 group text-red-500 bg-red-50/50 dark:bg-red-500/5 hover:bg-red-50 dark:hover:bg-red-500/10 active:scale-[0.98] border border-red-100 dark:border-red-500/20"
                     >
-                        <LogOut className="w-5 h-5 text-red-400 group-hover:text-red-600 transition-colors" />
-                        <span className="text-sm font-bold">Çıkış Yap</span>
+                        <LogOut className="w-5 h-5 text-red-500 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm font-bold tracking-tight">{t('common.secureExit') || 'Güvenli Çıkış'}</span>
                     </button>
                 </nav>
 
