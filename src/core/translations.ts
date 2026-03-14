@@ -26,7 +26,21 @@ export const translations = {
       copy: "Kopyala",
       noData: "Veri bulunamadı",
       secureExit: "Güvenli Çıkış",
-      notificationSettings: "Bildirim Ayarları"
+      notificationSettings: "Bildirim Ayarları",
+      shareApp: "Uygulamayı Paylaş",
+      appLatest: "Şu an en güncel sürümü kullanıyorsunuz.",
+      exitConfirm: "Uygulamadan çıkmak istediğinize emin misiniz?",
+      shareTitle: "Şükür Olsun",
+      shareText: "Harika bir manevi günlük uygulaması keşfettim! Sen de Şükür Olsun uygulamasını dene.",
+      shareDialog: "Şükür Olsun Uygulamasını Paylaş",
+      viewAllHistory: "Tüm geçmişi gör",
+      oneClickBackup: "Tek Tıkla Yedekle",
+      reviewModal: {
+        title: "Uygulamamızı Beğendiniz mi?",
+        desc: "Play Store'da bizi değerlendirerek destek olabilirsiniz.",
+        notNow: "Şimdi Değil",
+        rate: "Değerlendir"
+      }
     },
     nav: {
       home: "Ana Sayfa",
@@ -91,7 +105,36 @@ export const translations = {
       dailyMessage: "Günün Mesajı",
       backup: "Veri Yedekleme",
       export: "Dışa Aktar",
-      import: "İçe Aktar"
+      import: "İçe Aktar",
+      language: "Dil Seçimi",
+      languageDesc: "Uygulama dilini buradan değiştirebilirsiniz.",
+      dailyVerseNotifications: "Günün Ayeti Bildirimleri",
+      dailyVerseNotificationsDesc: "Her gün taze bir ayet mesajı alın.",
+      locationDesc: "Ezan vakitlerinin doğruluğu için yaklaşık konum bilgisi gerekebilir.",
+      dataManagement: "Veri Yönetimi",
+      dataManagementDesc: "Tüm verilerinizi silebilir veya cihazınızdan kaldırabilirsiniz.",
+      themeDesc: "Uygulamanın arkaplan görünümünü ruh halinize göre kişiselleştirin.",
+      themes: {
+        default: "Sade Zümrüt (Varsayılan)",
+        kabe: "Kabe-i Muazzama",
+        nebevi: "Mescid-i Nebevi",
+        nature: "Huzurlu Doğa"
+      },
+      badges: {
+        start_journey: "İlk Adım",
+        week_streak: "Bir Hafta",
+        month_streak: "İstikrar",
+        master_streak: "Şükür Ustası"
+      },
+      noBadges: "Henüz bir rozet kazanılmadı.",
+      backupSuccess: "Yedek dosyası indirildi!",
+      backupError: "Yedekleme başarısız oldu.",
+      pinDigitsError: "PIN 4 haneli rakam olmalı.",
+      pinMatchError: "PIN'ler eşleşmiyor.",
+      removePinConfirm: "PIN korumasını kaldırmak istediğinize emin misiniz?",
+      newPin: "Yeni PIN",
+      confirmPin: "PIN Onayla",
+      savePin: "PIN'i Kaydet"
     },
     prayer: {
       title: "Namaz & Oruç Vakitleri",
@@ -118,8 +161,107 @@ export const translations = {
     },
     agreement: {
       title: "Kullanım Koşulları",
+      subtitle: "Kullanım Koşulları ve Gizlilik",
       accept: "Kabul Ediyorum",
       continue: "Devam Et",
+      policyTitle: "KULLANIM KOŞULLARI VE GİZLİLİK POLİTİKASI",
+      lastUpdate: "Son güncelleme: 24 Şubat 2026",
+      checkboxText: "Kullanım koşullarını ve gizlilik politikasını okudum. Uygulamanın kapalı devre (lokal) çalıştığını, verilerimi hiçbir bulut sunucuya yedeklemediğini, bu nedenle cihaz arızası veya uygulama silinmesi durumunda oluşabilecek hiçbir veri kaybından geliştiriciyi sorumlu tutmayacağımı; konum ve bildirim izinlerinin tamamen kendi tercihim olduğunu kabul ediyorum. Geliştiriciyi her türlü teknik, hukuki ve maddi tazminat yükümlülüğünden kayıtsız şartsız muaf tuttuğumu beyan ederim.",
+      sections: {
+        genel: "1. GENEL BİLGİ",
+        genelText: "\"Şükür Olsun\" uygulaması (bundan böyle \"Uygulama\"), kullanıcıların günlük şükür notları tutmalarını, manevi içeriklerden faydalanmalarını sağlayan bir mobil uygulamadır. Uygulamayı kullanarak bu koşulları kabul etmiş sayılırsınız.",
+        veri: "2. VERİ TOPLAMA VE GİZLİLİK",
+        veriText1: "Uygulama, kişisel verilerinizi hiçbir sunucuya asla göndermez ve kaydetmez. Tüm verileriniz yalnızca kendi cihazınızın depolama alanında yerel (lokal) olarak saklanır.",
+        veriText2: "Uygulama, kayıt olmanızı (e-posta, telefon numarası vb.) istemez ve sizi kişisel olarak tanımlayacak hiçbir bilgi toplamaz.",
+        veriText3: "Uygulama varsayılan olarak sizden Konum veya Bildirim izni İSTEMEZ. Bu özellikler tamamen sizin kontrolünüzdedir.",
+        reklam: "3. REKLAMLAR",
+        reklamText: "Uygulama, Google AdMob aracılığıyla reklam göstermektedir.",
+        sorumluluk: "4. SORUMLULUK SINIRLAMASI",
+        sorumlulukText: "Tüm verileriniz yalnızca sizin cihazınızda tutulur. Uygulamanın silinmesi veya cihaz arızası durumunda oluşabilecek veri kaybından geliştirici sorumlu tutulamaz.",
+        iletisim: "5. İLETİŞİM",
+        iletisimText: "Sorularınız için: sukurolsun.app@gmail.com"
+      }
+    },
+    tesbihat: {
+      title: "Tesbihat",
+      freeZikir: "Serbest Zikir",
+      freeZikirLimitless: "Serbest Zikir (Sınırsız)",
+      selectZikir: "Zikir Seç",
+      close: "Kapat",
+      target: "Hedef",
+      completed: "Tamamlandı",
+      tap: "Bas",
+      zikirs: {
+        subhanallah: "Sübhanallah",
+        subhanallahMeaning: "Allah noksan sıfatlardan münezzehtir.",
+        elhamdulillah: "Elhamdülillah",
+        elhamdulillahMeaning: "Hamd Allah'a mahsustur.",
+        allahuekber: "Allahu Ekber",
+        allahuekberMeaning: "Allah en büyüktür.",
+        kelimeiTevhid: "Kelime-i Tevhid",
+        kelimeiTevhidMeaning: "Allah'tan başka ilah yoktur.",
+        estagfirullah: "Estağfirullah",
+        estagfirullahMeaning: "Allah'tan bağışlanma dilerim.",
+        salavat: "Salavat",
+        salavatMeaning: "Allah'ım, Muhammed'e salat eyle."
+      }
+    },
+    religious_days: {
+      title: "Dini Günler",
+      subtitle: "Özel Dini Günler ve Kandiller",
+      description: "Kendinize özel dini günler oluşturun ve dualarınızı kaydedin.",
+      myDays: "Takvim & Günler",
+      guide: "Dua Rehberi",
+      addDay: "Günü Kaydet",
+      dayNamePlaceholder: "Dinin Günün Adı (Örn: Kadir Gecesi 2024)",
+      add: "Ekle",
+      contentCount: "içerik",
+      noDays: "Henüz özel bir gün eklemediniz. Yukarıdaki 'Ekle' butonuyla başlayın.",
+      writeDua: "Dua Yaz",
+      addMessage: "Mesaj Ekle",
+      duaPlaceholder: "Özel duanızı yazın...",
+      messagePlaceholder: "Göndermek üzere mesaj yazın...",
+      dua: "Dua",
+      message: "Mesaj",
+      guideTitle: "Dua ve Niyaz Rehberi",
+      guideSubtitle: "Kandiller, mübarek geceler ve kendi eklediğiniz özel dualar.",
+      addCategory: "Yeni Dua Kategorisi Ekle",
+      categoryNamePlaceholder: "Kategori Adı (Örn: Borçlardan Kurtulma)",
+      categoryDescPlaceholder: "Kısa Açıklama",
+      createCategory: "Kategori Oluştur",
+      duaTitle: "Dua Başlığı",
+      arabicText: "Arapça Metin",
+      reading: "Okunuşu",
+      meaning: "Anlamı",
+      virtue: "Fazileti",
+      noPrayers: "Henüz bu kategoriye dua eklenmemiş.",
+      editAndCopy: "Düzenle ve Kopyala",
+      special: "Özel",
+      deleteDayConfirm: "Bu dini günü ve altındaki tüm mesajları silmek istediğinize emin misiniz?",
+      deleteItemConfirm: "Bu içeriği silmek istediğinize emin misiniz?",
+      deleteCategoryConfirm: "Bu günü ve içindeki tüm duaları silmek istediğine emin misin?",
+      static: {
+        kadir: {
+          name: "Kadir Gecesi",
+          desc: "Bin aydan daha hayırlı olan Kadir Gecesinde bolca istiğfar edilmeli, dua ve niyazda bulunulmalıdır.",
+          prayer1: {
+            title: "Hz. Aişe'nin Kadir Gecesi Duası",
+            reading: "Allahümme inneke afüvvün, tühibbül-afve, fa'fü annî.",
+            meaning: "Allah’ım! Sen affedicisin, affetmeyi seversin, beni de affet.",
+            virtue: "Peygamber Efendimiz (s.a.v) Hz. Aişe validemize Kadir Gecesinde özellikle bu duayı okumasını tavsiye etmiştir."
+          }
+        },
+        regaip: {
+          name: "Regaip Kandili",
+          desc: "Üç ayların başlangıcı ve ilahi rahmetin coştuğu bu gecede bolca tövbe edilmelidir.",
+          prayer1: {
+            title: "Üç Aylar Duası",
+            reading: "Allahümme bârik lenâ fî Recebe ve Şa'bân ve bellığnâ Ramazân.",
+            meaning: "Allah’ım! Recep ve Şaban aylarını bizim için mübarek kıl ve bizi Ramazan’a ulaştır.",
+            virtue: "Peygamber Efendimiz (s.a.v) üç aylar girdiğinde bu duayı çokça okurdu."
+          }
+        }
+      }
     }
   },
   en: {
@@ -149,7 +291,21 @@ export const translations = {
       copy: "Copy",
       noData: "No data found",
       secureExit: "Secure Exit",
-      notificationSettings: "Notification Settings"
+      notificationSettings: "Notification Settings",
+      shareApp: "Share App",
+      appLatest: "You are currently using the latest version.",
+      exitConfirm: "Are you sure you want to exit the app?",
+      shareTitle: "Shukur Olsun",
+      shareText: "I discovered a great spiritual journal app! You should try Shukur Olsun too.",
+      shareDialog: "Share Shukur Olsun App",
+      viewAllHistory: "See all history",
+      oneClickBackup: "One-Click Backup",
+      reviewModal: {
+        title: "Do you like our app?",
+        desc: "You can support us by rating us on the Play Store.",
+        notNow: "Not Now",
+        rate: "Rate"
+      }
     },
     nav: {
       home: "Home",
@@ -214,7 +370,36 @@ export const translations = {
       dailyMessage: "Daily Message",
       backup: "Data Backup",
       export: "Export",
-      import: "Import"
+      import: "Import",
+      language: "Language Selection",
+      languageDesc: "You can change the application language here.",
+      dailyVerseNotifications: "Daily Verse Notifications",
+      dailyVerseNotificationsDesc: "Receive a fresh verse message every day.",
+      locationDesc: "Approximate location may be required for accurate prayer times.",
+      dataManagement: "Data Management",
+      dataManagementDesc: "You can delete all your data or remove it from your device.",
+      themeDesc: "Personalize the background appearance of the app according to your mood.",
+      themes: {
+        default: "Simple Emerald (Default)",
+        kabe: "Kaaba al-Muazzama",
+        nebevi: "Masjid an-Nabawi",
+        nature: "Peaceful Nature"
+      },
+      badges: {
+        start_journey: "First Step",
+        week_streak: "One Week",
+        month_streak: "Stability",
+        master_streak: "Gratitude Master"
+      },
+      noBadges: "No badges earned yet.",
+      backupSuccess: "Backup file downloaded!",
+      backupError: "Backup failed.",
+      pinDigitsError: "PIN must be a 4-digit number.",
+      pinMatchError: "PINs do not match.",
+      removePinConfirm: "Are you sure you want to remove PIN protection?",
+      newPin: "New PIN",
+      confirmPin: "Confirm PIN",
+      savePin: "Save PIN"
     },
     prayer: {
       title: "Prayer & Fasting Times",
@@ -229,8 +414,107 @@ export const translations = {
     },
     agreement: {
       title: "Terms of Use",
+      subtitle: "Terms of Use and Privacy",
       accept: "I Accept",
       continue: "Continue",
+      policyTitle: "TERMS OF USE AND PRIVACY POLICY",
+      lastUpdate: "Last updated: February 24, 2026",
+      checkboxText: "I have read the terms of use and privacy policy. I accept that the application operates in a closed-loop (local) manner, does not back up my data to any cloud server, and therefore the developer cannot be held responsible for any data loss that may occur in case of device failure or app deletion; I acknowledge that location and notification permissions are entirely my own choice. I declare that I unconditionally exempt the developer from all technical, legal, and financial compensation liabilities.",
+      sections: {
+        genel: "1. GENERAL INFORMATION",
+        genelText: "\"Shukur Olsun\" application (hereinafter \"App\") is a mobile application that allows users to keep daily gratitude notes and benefit from spiritual content. By using the App, you agree to these terms.",
+        veri: "2. DATA COLLECTION AND PRIVACY",
+        veriText1: "The App never sends or saves your personal data to any server. All your data is stored locally only on your own device's storage.",
+        veriText2: "The App does not ask you to register and does not collect any information that identifies you personally.",
+        veriText3: "The App does not ask for Location or Notification permission by default. These features are entirely under your control.",
+        reklam: "3. ADVERTISEMENTS",
+        reklamText: "The App displays advertisements through Google AdMob.",
+        sorumluluk: "4. LIMITATION OF LIABILITY",
+        sorumlulukText: "All your data is kept only on your device. The developer cannot be held responsible for data loss that may occur in case of app deletion or device failure.",
+        iletisim: "5. CONTACT",
+        iletisimText: "For your questions: sukurolsun.app@gmail.com"
+      }
+    },
+    tesbihat: {
+      title: "Tasbih",
+      freeZikir: "Free Tasbih",
+      freeZikirLimitless: "Free Tasbih (Unlimited)",
+      selectZikir: "Select Dhikr",
+      close: "Close",
+      target: "Target",
+      completed: "Completed",
+      tap: "Tap",
+      zikirs: {
+        subhanallah: "SubhanAllah",
+        subhanallahMeaning: "Glory be to Allah.",
+        elhamdulillah: "Alhamdulillah",
+        elhamdulillahMeaning: "Praise be to Allah.",
+        allahuekber: "Allahu Akbar",
+        allahuekberMeaning: "Allah is the Greatest.",
+        kelimeiTevhid: "Kalima-i Tawhid",
+        kelimeiTevhidMeaning: "There is no god but Allah.",
+        estagfirullah: "Astaghfirullah",
+        estagfirullahMeaning: "I seek forgiveness from Allah.",
+        salavat: "Salavat",
+        salavatMeaning: "O Allah, bestow your blessings upon Muhammad."
+      }
+    },
+    religious_days: {
+      title: "Religious Days",
+      subtitle: "Special Religious Days and Kandils",
+      description: "Create your own special religious days and save your prayers.",
+      myDays: "Calendar & Days",
+      guide: "Prayer Guide",
+      addDay: "Save Day",
+      dayNamePlaceholder: "Name of Religious Day (e.g., Laylat al-Qadr 2024)",
+      add: "Add",
+      contentCount: "content",
+      noDays: "You haven't added a special day yet. Start with the 'Add' button above.",
+      writeDua: "Write Prayer",
+      addMessage: "Add Message",
+      duaPlaceholder: "Write your special prayer...",
+      messagePlaceholder: "Write a message to send...",
+      dua: "Prayer",
+      message: "Message",
+      guideTitle: "Supplication and Niyaz Guide",
+      guideSubtitle: "Kandils, holy nights and special prayers you add.",
+      addCategory: "Add New Prayer Category",
+      categoryNamePlaceholder: "Category Name (e.g., Relief from Debts)",
+      categoryDescPlaceholder: "Short Description",
+      createCategory: "Create Category",
+      duaTitle: "Prayer Title",
+      arabicText: "Arabic Text",
+      reading: "Reading",
+      meaning: "Meaning",
+      virtue: "Virtue",
+      noPrayers: "No prayers added to this category yet.",
+      editAndCopy: "Edit and Copy",
+      special: "Special",
+      deleteDayConfirm: "Are you sure you want to delete this religious day and all messages under it?",
+      deleteItemConfirm: "Are you sure you want to delete this content?",
+      deleteCategoryConfirm: "Are you sure you want to delete this day and all prayers in it?",
+      static: {
+        kadir: {
+          name: "Laylat al-Qadr",
+          desc: "On the Night of al-Qadr, which is better than a thousand months, one should seek forgiveness, make dua, and supplicate abundantly.",
+          prayer1: {
+            title: "Dua of Aisha (r.a.) for Laylat al-Qadr",
+            reading: "Allahumma innaka 'afuwwun, tuhibbul-'afwa, fa'fu 'anni.",
+            meaning: "O Allah! You are most forgiving, and You love to forgive; so forgive me.",
+            virtue: "The Prophet (saw) recommended this specific dua to Aisha (r.a.) to be recited on the Night of al-Qadr."
+          }
+        },
+        regaip: {
+          name: "Regaib Kandil",
+          desc: "This night marks the beginning of the three months and the overflow of divine mercy; one should repent abundantly.",
+          prayer1: {
+            title: "Three Months Dua",
+            reading: "Allahumma barik lana fi Rajaba wa Sha’bana wa ballighna Ramadana.",
+            meaning: "O Allah! Make the months of Rajab and Shaban blessed for us, and let us reach Ramadan.",
+            virtue: "The Prophet (saw) used to recite this dua frequently when the three months began."
+          }
+        }
+      }
     },
     places: {
       title: "Holy Places Guide",

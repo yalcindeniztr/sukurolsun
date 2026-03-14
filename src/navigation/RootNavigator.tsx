@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { useApp } from '../core/AppContext';
 import MainLayout from '../components/layout/MainLayout';
+import { useLanguage } from '../core/LanguageContext';
+import { useTheme } from '../core/ThemeContext';
 import VerseBanner from '../features/journal/VerseBanner';
 import JournalEntryForm from '../features/journal/JournalEntryForm';
 import JournalHistory from '../features/journal/JournalHistory';
@@ -26,6 +28,8 @@ const RootNavigator: React.FC = () => {
     setActiveTab, setSelectedEntry, setToast, setShowReviewModal, setIsLocked,
     handleSaveEntry, handleDeleteEntry, handleToggleFavorite, handleUpdateProfile, handleAgreementAccept
   } = useApp();
+  const { t } = useLanguage();
+  const { theme } = useTheme();
 
   // Sekme değişimlerinde AdMob banner kontrolü
   useEffect(() => {
@@ -109,7 +113,7 @@ const RootNavigator: React.FC = () => {
                     onClick={() => setActiveTab('history')}
                     className="w-full mt-4 py-3 text-sm text-slate-400 hover:text-emerald-400 transition-colors border border-white/10 rounded-xl hover:bg-white/5"
                   >
-                    Tüm geçmişi gör ({entries.length}) →
+                    {t('common.viewAllHistory')} ({entries.length}) →
                   </button>
                 )}
               </div>
@@ -120,7 +124,7 @@ const RootNavigator: React.FC = () => {
         {activeTab === 'history' && (
           <div className="animate-fadeIn">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-serif text-white">Arşiv</h2>
+              <h2 className={`text-2xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('nav.archive')}</h2>
               <button
                 onClick={async () => {
                   const result = await (storageService as any).createNativeBackup();
@@ -133,7 +137,7 @@ const RootNavigator: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                   </svg>
                 </div>
-                Tek Tıkla Yedekle
+                {t('common.oneClickBackup')}
               </button>
             </div>
             <JournalHistory
@@ -166,16 +170,16 @@ const RootNavigator: React.FC = () => {
           <div className="bg-white border border-emerald-100 rounded-2xl p-6 mx-4 max-w-sm w-full shadow-2xl">
             <div className="text-center">
               <div className="text-4xl mb-4">⭐</div>
-              <h3 className="text-xl font-bold text-slate-800 mb-2">Uygulamamızı Beğendiniz mi?</h3>
+              <h3 className="text-xl font-bold text-slate-800 mb-2">{t('common.reviewModal.title')}</h3>
               <p className="text-slate-500 text-sm mb-6">
-                Play Store'da bizi değerlendirerek destek olabilirsiniz.
+                {t('common.reviewModal.desc')}
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowReviewModal(false)}
                   className="flex-1 py-3 px-4 rounded-xl text-slate-500 border border-slate-200 hover:bg-slate-50 transition-colors"
                 >
-                  Şimdi Değil
+                  {t('common.reviewModal.notNow')}
                 </button>
                 <button
                   onClick={() => {
@@ -184,7 +188,7 @@ const RootNavigator: React.FC = () => {
                   }}
                   className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold hover:shadow-lg hover:shadow-amber-500/20 transition-all"
                 >
-                  Değerlendir
+                  {t('common.reviewModal.rate')}
                 </button>
               </div>
             </div>

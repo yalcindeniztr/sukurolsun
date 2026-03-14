@@ -1,11 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { ShieldCheck, ChevronDown } from 'lucide-react';
+import { useLanguage } from '../core/LanguageContext';
 
 interface UserAgreementProps {
     onAccept: () => void;
 }
 
 const UserAgreement: React.FC<UserAgreementProps> = ({ onAccept }) => {
+    const { t } = useLanguage();
     const [accepted, setAccepted] = useState(false);
     const [scrolledToBottom, setScrolledToBottom] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -32,8 +34,8 @@ const UserAgreement: React.FC<UserAgreementProps> = ({ onAccept }) => {
                     <div className="inline-flex p-4 rounded-full bg-emerald-100 text-emerald-600 mb-4">
                         <ShieldCheck className="w-10 h-10" />
                     </div>
-                    <h1 className="text-2xl font-serif font-bold text-slate-800">Şükür Olsun</h1>
-                    <p className="text-sm text-slate-500 mt-1">Kullanım Koşulları ve Gizlilik</p>
+                    <h1 className="text-2xl font-serif font-bold text-slate-800">{t('common.appName')}</h1>
+                    <p className="text-sm text-slate-500 mt-1">{t('agreement.subtitle')}</p>
                 </div>
 
                 {/* Sözleşme Metni */}
@@ -43,75 +45,25 @@ const UserAgreement: React.FC<UserAgreementProps> = ({ onAccept }) => {
                         onScroll={handleScroll}
                         className="h-80 overflow-y-auto p-6 text-sm text-slate-600 leading-relaxed space-y-4"
                     >
-                        <h2 className="text-lg font-bold text-slate-800">KULLANIM KOŞULLARI VE GİZLİLİK POLİTİKASI</h2>
-                        <p className="text-xs text-slate-400">Son güncelleme: 24 Şubat 2026</p>
+                        <h2 className="text-lg font-bold text-slate-800 uppercase">{t('agreement.policyTitle')}</h2>
+                        <p className="text-xs text-slate-400">{t('agreement.lastUpdate')}</p>
 
-                        <h3 className="font-bold text-slate-700 mt-4">1. GENEL BİLGİ</h3>
-                        <p>
-                            "Şükür Olsun" uygulaması (bundan böyle "Uygulama"), kullanıcıların günlük şükür notları tutmalarını,
-                            manevi içeriklerden faydalanmalarını sağlayan bir mobil uygulamadır. Uygulamayı kullanarak
-                            bu koşulları kabul etmiş sayılırsınız.
-                        </p>
+                        <h3 className="font-bold text-slate-700 mt-4">{t('agreement.sections.genel')}</h3>
+                        <p>{t('agreement.sections.genelText')}</p>
 
-                        <h3 className="font-bold text-slate-700">2. VERİ TOPLAMA VE GİZLİLİK</h3>
-                        <p>
-                            <strong>2.1.</strong> Uygulama, kişisel verilerinizi hiçbir sunucuya <strong>asla göndermez ve kaydetmez</strong>.
-                            Tüm verileriniz (şükür notları, profil bilgileri, ayarlar, dualar) yalnızca kendi cihazınızın depolama alanında yerel (lokal) olarak saklanır.
-                        </p>
-                        <p>
-                            <strong>2.2.</strong> Uygulama, kayıt olmanızı (e-posta, telefon numarası vb.) istemez ve sizi kişisel olarak tanımlayacak hiçbir bilgi toplamaz.
-                        </p>
-                        <p>
-                            <strong>2.3.</strong> Uygulama varsayılan olarak sizden <strong>Konum veya Bildirim izni İSTEMEZ</strong>. Bu özellikler tamamen sizin kontrolünüzdedir ve isterseniz uygulama içindeki Profil ayarlarından kendiniz aktif edebilir veya istediğiniz an kapatabilirsiniz.
-                        </p>
-                        <p>
-                            <strong>2.4.</strong> Tüm verilerinizi istediğiniz zaman Profil sayfasından tek bir dokunuşla kalıcı olarak silebilirsiniz. Silinen verilerin kurtarılması geliştirici tarafından mümkün değildir.
-                        </p>
+                        <h3 className="font-bold text-slate-700">{t('agreement.sections.veri')}</h3>
+                        <p>{t('agreement.sections.veriText1')}</p>
+                        <p>{t('agreement.sections.veriText2')}</p>
+                        <p>{t('agreement.sections.veriText3')}</p>
 
-                        <h3 className="font-bold text-slate-700">3. REKLAMLAR</h3>
-                        <p>
-                            <strong>3.1.</strong> Uygulama, Google AdMob aracılığıyla reklam göstermektedir.
-                            AdMob, cihaz bilgilerinizi (reklam kimliği, cihaz türü) kullanabilir.
-                            Detaylı bilgi için <a href="https://policies.google.com/privacy" className="text-emerald-600 underline" target="_blank" rel="noopener noreferrer">Google Gizlilik Politikası</a>'nı inceleyebilirsiniz.
-                        </p>
+                        <h3 className="font-bold text-slate-700">{t('agreement.sections.reklam')}</h3>
+                        <p>{t('agreement.sections.reklamText')}</p>
 
-                        <h3 className="font-bold text-slate-700">4. FİKRİ MÜLKİYET</h3>
-                        <p>
-                            <strong>4.1.</strong> Uygulama içeriği, tasarımı ve kaynak kodu telif hakkıyla korunmaktadır.
-                            İzinsiz kopyalanması, dağıtılması veya tersine mühendislik yapılması yasaktır.
-                        </p>
+                        <h3 className="font-bold text-slate-700">{t('agreement.sections.sorumluluk')}</h3>
+                        <p>{t('agreement.sections.sorumlulukText')}</p>
 
-                        <h3 className="font-bold text-slate-700">5. SORUMLULUK SINIRLAMASI VE FERAGATNAME</h3>
-                        <p>
-                            <strong>5.1.</strong> Uygulama "olduğu gibi" sunulmaktadır. Geliştirici, uygulamanın
-                            kesintisiz veya hatasız çalışacağını, veya cihaz donanımlarıyla tam uyumlu olacağını garanti etmez.
-                        </p>
-                        <p>
-                            <strong>5.2.</strong> <strong>Tüm verileriniz yalnızca sizin cihazınızda (lokalde) şifreli olarak tutulur.</strong> Uygulamanın silinmesi, cihazınızın arızalanması, güncellemeler sırasındaki hatalar veya işletim sisteminin önbellek temizlemesi sonucu oluşabilecek <strong>hiçbir veri kaybından geliştirici hukuki veya maddi olarak sorumlu tutulamaz.</strong> Verileri "Dışa Aktar" seçeneği ile düzenli olarak yedeklemek tamamen kullanıcının kendi sorumluluğundadır.
-                        </p>
-                        <p>
-                            <strong>5.3.</strong> Uygulama içindeki dini içerikler (hadisler, dualar, namaz vakitleri) genel kaynaklardan
-                            ve API'lerden (Aladhan vb.) derlenmiştir. Bu içeriklerin doğruluğu veya güncelliği konusunda geliştirici hiçbir şekilde mesuliyet kabul etmez, kullanıcı her zaman nihai teyidi kendi sağlamalıdır.
-                        </p>
-
-                        <h3 className="font-bold text-slate-700">6. KVKK UYUMU</h3>
-                        <p>
-                            <strong>6.1.</strong> 6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında:
-                            Uygulama kişisel veri işlememektedir. Tüm veriler yalnızca cihazınızda saklanır
-                            ve hiçbir üçüncü tarafa aktarılmaz.
-                        </p>
-
-                        <h3 className="font-bold text-slate-700">7. DEĞİŞİKLİKLER</h3>
-                        <p>
-                            <strong>7.1.</strong> Bu koşullar önceden bildirilmeksizin güncellenebilir.
-                            Güncellemeler uygulama içinden duyurulur. Uygulamayı kullanmaya devam etmeniz,
-                            güncellenmiş koşulları kabul ettiğiniz anlamına gelir.
-                        </p>
-
-                        <h3 className="font-bold text-slate-700">8. İLETİŞİM</h3>
-                        <p>
-                            Sorularınız için: <strong>sukurolsun.app@gmail.com</strong>
-                        </p>
+                        <h3 className="font-bold text-slate-700">{t('agreement.sections.iletisim')}</h3>
+                        <p>{t('agreement.sections.iletisimText')}</p>
 
                         <div className="h-4" />
                     </div>
@@ -133,8 +85,7 @@ const UserAgreement: React.FC<UserAgreementProps> = ({ onAccept }) => {
                             onChange={(e) => setAccepted(e.target.checked)}
                             className="mt-1 w-6 h-6 rounded border-2 border-emerald-300 text-emerald-600 focus:ring-emerald-400 accent-emerald-500 shrink-0 cursor-pointer"
                         />
-                        <span className="text-[13px] text-slate-600 leading-normal">
-                            Kullanım koşullarını ve gizlilik politikasını okudum. Uygulamanın <strong>kapalı devre (lokal)</strong> çalıştığını, verilerimi hiçbir bulut sunucuya yedeklemediğini, bu nedenle cihaz arızası veya uygulama silinmesi durumunda oluşabilecek <strong>hiçbir veri kaybından geliştiriciyi sorumlu tutmayacağımı</strong>; konum ve bildirim izinlerinin tamamen kendi tercihim olduğunu kabul ediyorum. Geliştiriciyi her türlü <strong>teknik, hukuki ve maddi tazminat yükümlülüğünden kayıtsız şartsız muaf tuttuğumu</strong> beyan ederim.
+                        <span className="text-[13px] text-slate-600 leading-normal" dangerouslySetInnerHTML={{ __html: t('agreement.checkboxText') }}>
                         </span>
                     </label>
 
@@ -147,7 +98,7 @@ const UserAgreement: React.FC<UserAgreementProps> = ({ onAccept }) => {
                                 : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                             }`}
                     >
-                        Devam Et
+                        {t('agreement.continue')}
                     </button>
                 </div>
             </div>

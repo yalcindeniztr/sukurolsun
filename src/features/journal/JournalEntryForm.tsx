@@ -183,7 +183,7 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
                         <textarea
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
-                            placeholder="Detayları buraya yaz... (opsiyonel)"
+                            placeholder={language === 'tr' ? "Detayları buraya yaz... (opsiyonel)" : "Write details here... (optional)"}
                             className={`input-field min-h-[150px] resize-none leading-relaxed transition-all
                                 ${theme === 'light'
                                     ? 'bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-emerald-400 shadow-sm'

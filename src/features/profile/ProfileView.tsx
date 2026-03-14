@@ -8,12 +8,12 @@ import { Capacitor } from '@capacitor/core';
 import { notificationService } from '../../services/NotificationService';
 import { useLanguage } from '../../core/LanguageContext';
 
-// Rozet Tanımları
-const BADGE_INFO: Record<string, { label: string, color: string }> = {
-    'start_journey': { label: 'İlk Adım', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
-    'week_streak': { label: 'Bir Hafta', color: 'bg-blue-500/20 text-blue-300 border-blue-500/30' },
-    'month_streak': { label: 'İstikrar', color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
-    'master_streak': { label: 'Şükür Ustası', color: 'bg-purple-500/20 text-purple-300 border-purple-500/30' },
+// Rozetler artık t() ile her renderda güncelleniyor, burası sadece Stil veriyor
+const BADGE_STYLES: Record<string, { color: string }> = {
+    'start_journey': { color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+    'week_streak': { color: 'bg-blue-500/20 text-blue-300 border-blue-500/30' },
+    'month_streak': { color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
+    'master_streak': { color: 'bg-purple-500/20 text-purple-300 border-purple-500/30' },
 };
 
 interface ProfileViewProps {
@@ -112,10 +112,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-                setBackupStatus({ type: 'success', message: 'Yedek dosyası indirildi!' });
+                setBackupStatus({ type: 'success', message: t('profile.backupSuccess') });
                 setTimeout(() => setBackupStatus(null), 3000);
             } catch {
-                setBackupStatus({ type: 'error', message: 'Yedekleme başarısız oldu.' });
+                setBackupStatus({ type: 'error', message: t('profile.backupError') });
             }
         }
     };
@@ -142,11 +142,11 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
     const handleSetPin = async () => {
         setPinError('');
         if (newPin.length !== 4 || !/^\d{4}$/.test(newPin)) {
-            setPinError('PIN 4 haneli rakam olmalı.');
+            setPinError(t('profile.pinDigitsError'));
             return;
         }
         if (newPin !== confirmPin) {
-            setPinError('PIN\'ler eşleşmiyor.');
+            setPinError(t('profile.pinMatchError'));
             return;
         }
         await storageService.setPin(newPin);
@@ -157,7 +157,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
     };
 
     const handleRemovePin = async () => {
-        if (window.confirm('PIN korumasını kaldırmak istediğinize emin misiniz?')) {
+        if (window.confirm(t('profile.removePinConfirm'))) {
             await storageService.removePin();
             setHasPinSet(false);
         }
@@ -445,17 +445,17 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 ) : (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {profile.badges.map(badgeId => {
-                            const info = BADGE_INFO[badgeId];
-                            if (!info) return null;
+                            const style = BADGE_STYLES[badgeId];
+                            if (!style) return null;
                             return (
                                 <div key={badgeId}
-                                    className={`p-4 rounded-2xl border flex flex-col items-center gap-3 transition-all hover:scale-105 active:scale-95 ${info.color}`}
+                                    className={`p-4 rounded-2xl border flex flex-col items-center gap-3 transition-all hover:scale-105 active:scale-95 ${style.color}`}
                                     style={{ boxShadow: '0 4px 14px -3px rgba(0,0,0,0.2)' }}
                                 >
                                     <div className="p-3 bg-white/10 rounded-full shadow-inner">
                                         <Award className="w-6 h-6" />
                                     </div>
-                                    <span className="font-bold text-sm text-center">{info.label}</span>
+                                    <span className="font-bold text-sm text-center">{t(`profile.badges.${badgeId}` as any)}</span>
                                 </div>
                             )
                         })}
@@ -474,15 +474,15 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 </div>
 
                 <p className={`text-sm mb-6 ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
-                    Uygulamanın arkaplan görünümünü ruh halinize göre kişiselleştirin.
+                    {t('profile.themeDesc')}
                 </p>
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     {[
-                        { id: 'default', label: 'Sade Zümrüt (Varsayılan)', src: null },
-                        { id: 'kabe', label: 'Kabe-i Muazzama', src: '/assets/themes/kabe.png' },
-                        { id: 'nebevi', label: 'Mescid-i Nebevi', src: '/assets/themes/nebevi.png' },
-                        { id: 'nature', label: 'Huzurlu Doğa', src: '/assets/themes/nature.png' }
+                        { id: 'default', label: t('profile.themes.default'), src: null },
+                        { id: 'kabe', label: t('profile.themes.kabe'), src: '/assets/themes/kabe.png' },
+                        { id: 'nebevi', label: t('profile.themes.nebevi'), src: '/assets/themes/nebevi.png' },
+                        { id: 'nature', label: t('profile.themes.nature'), src: '/assets/themes/nature.png' }
                     ].map(t => (
                         <button
                             key={t.id}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { RotateCcw, Activity, ChevronRight } from 'lucide-react';
 import { useTheme } from '../../core/ThemeContext';
+import { useLanguage } from '../../core/LanguageContext';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 interface Zikir {
@@ -11,16 +12,18 @@ interface Zikir {
     meaning?: string;
 }
 
-const COMMON_ZIKIRS: Zikir[] = [
-    { id: '1', title: 'Sübhanallah', target: 33, arabic: 'سُبْحَانَ اللَّهِ', meaning: 'Allah noksan sıfatlardan münezzehtir.' },
-    { id: '2', title: 'Elhamdülillah', target: 33, arabic: 'الْحَمْدُ لِلَّهِ', meaning: 'Hamd Allah\'a mahsustur.' },
-    { id: '3', title: 'Allahu Ekber', target: 33, arabic: 'اللَّهُ أَكْبَرُ', meaning: 'Allah en büyüktür.' },
-    { id: '4', title: 'Kelime-i Tevhid', target: 100, arabic: 'لَا إِلَهَ إِلَّا اللَّهُ', meaning: 'Allah\'tan başka ilah yoktur.' },
-    { id: '5', title: 'Estağfirullah', target: 100, arabic: 'أَسْتَغْفِرُ اللَّهَ', meaning: 'Allah\'tan bağışlanma dilerim.' },
-    { id: '6', title: 'Salavat', target: 100, arabic: 'اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ', meaning: 'Allah\'ım, Muhammed\'e salat eyle.' }
+const getCommonZikirs = (t: any): Zikir[] => [
+    { id: '1', title: t('tesbihat.zikirs.subhanallah'), target: 33, arabic: 'سُبْحَانَ اللَّهِ', meaning: t('tesbihat.zikirs.subhanallahMeaning') },
+    { id: '2', title: t('tesbihat.zikirs.elhamdulillah'), target: 33, arabic: 'الْحَمْدُ لِلَّهِ', meaning: t('tesbihat.zikirs.elhamdulillahMeaning') },
+    { id: '3', title: t('tesbihat.zikirs.allahuekber'), target: 33, arabic: 'اللَّهُ أَكْبَرُ', meaning: t('tesbihat.zikirs.allahuekberMeaning') },
+    { id: '4', title: t('tesbihat.zikirs.kelimeiTevhid'), target: 100, arabic: 'لَا إِلَهَ إِلَّا اللَّهُ', meaning: t('tesbihat.zikirs.kelimeiTevhidMeaning') },
+    { id: '5', title: t('tesbihat.zikirs.estagfirullah'), target: 100, arabic: 'أَسْتَغْفِرُ اللَّهَ', meaning: t('tesbihat.zikirs.estagfirullahMeaning') },
+    { id: '6', title: t('tesbihat.zikirs.salavat'), target: 100, arabic: 'اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ', meaning: t('tesbihat.zikirs.salavatMeaning') }
 ];
 
 const TesbihatView: React.FC = () => {
+    const { t } = useLanguage();
+    const COMMON_ZIKIRS = getCommonZikirs(t);
     const { theme } = useTheme();
     const [count, setCount] = useState(0);
     const [selectedZikir, setSelectedZikir] = useState<Zikir | null>(null);
@@ -43,7 +46,7 @@ const TesbihatView: React.FC = () => {
                     await Haptics.impact({ style: ImpactStyle.Light });
                 }
             } catch (e) {
-                console.log('Haptics desteklenmiyor veya izin yok');
+                // Haptics not supported
             }
         }
     };
@@ -74,7 +77,7 @@ const TesbihatView: React.FC = () => {
                             ? 'bg-white border border-teal-200 text-teal-700 shadow-sm hover:bg-teal-50'
                             : 'bg-teal-500/10 border border-teal-500/20 text-teal-400 hover:bg-teal-500/20'}`}
                 >
-                    <span className="font-bold">{selectedZikir ? selectedZikir.title : 'Serbest Zikir'}</span>
+                    <span className="font-bold">{selectedZikir ? selectedZikir.title : t('tesbihat.freeZikir')}</span>
                     <ChevronRight className="w-4 h-4 opacity-50" />
                 </button>
 
@@ -92,7 +95,7 @@ const TesbihatView: React.FC = () => {
                         )}
                         <p className={`text-sm font-bold mt-3 
                             ${count >= selectedZikir.target ? 'text-green-500' : (theme === 'light' ? 'text-slate-400' : 'text-slate-500')}`}>
-                            Hedef: {selectedZikir.target} {count >= selectedZikir.target && '(Tamamlandı)'}
+                            {t('tesbihat.target')}: {selectedZikir.target} {count >= selectedZikir.target && `(${t('tesbihat.completed')})`}
                         </p>
                     </div>
                 )}
@@ -127,7 +130,7 @@ const TesbihatView: React.FC = () => {
                 >
                     <div className="absolute inset-2 rounded-full border border-white/20"></div>
                     <div className="absolute inset-4 rounded-full border border-white/10"></div>
-                    <span className="text-white/80 font-black tracking-widest text-2xl uppercase">Bas</span>
+                    <span className="text-white/80 font-black tracking-widest text-2xl uppercase">{t('tesbihat.tap')}</span>
                 </button>
 
                 {/* Alt Kontroller */}
@@ -160,13 +163,13 @@ const TesbihatView: React.FC = () => {
 
                         <div className="p-6 pb-4 border-b border-slate-100 dark:border-white/5 flex items-center justify-between">
                             <h3 className={`font-bold text-lg ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>
-                                Zikir Seç
+                                {t('tesbihat.selectZikir')}
                             </h3>
                             <button
                                 onClick={() => setShowZikirList(false)}
                                 className={`text-sm font-bold px-3 py-1.5 rounded-full ${theme === 'light' ? 'bg-slate-100 text-slate-500' : 'bg-white/10 text-slate-300'}`}
                             >
-                                Kapat
+                                {t('tesbihat.close')}
                             </button>
                         </div>
 
@@ -178,7 +181,7 @@ const TesbihatView: React.FC = () => {
                                         ? 'bg-teal-50 text-teal-600 dark:bg-teal-500/20 dark:text-teal-400'
                                         : 'bg-slate-50 text-slate-600 dark:bg-white/5 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10'}`}
                             >
-                                Serbest Zikir (Sınırsız)
+                                {t('tesbihat.freeZikirLimitless')}
                             </button>
 
                             {COMMON_ZIKIRS.map(zikir => (

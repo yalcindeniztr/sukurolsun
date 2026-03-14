@@ -100,18 +100,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                         onClick={async () => {
                             try {
                                 await Share.share({
-                                    title: 'Şükür Olsun',
-                                    text: 'Harika bir manevi günlük uygulaması keşfettim! Sen de Şükür Olsun uygulamasını dene.',
+                                    title: t('common.shareTitle'),
+                                    text: t('common.shareText'),
                                     url: 'https://play.google.com/store/apps/details?id=com.yalcin.sukurolsun',
-                                    dialogTitle: 'Şükür Olsun Uygulamasını Paylaş',
+                                    dialogTitle: t('common.shareDialog'),
                                 });
                             } catch (error) {
-                                console.log('Error sharing', error);
+                                // Error sharing
                                 // Fallback for Web
                                 if (navigator.share) {
                                     navigator.share({
-                                        title: 'Şükür Olsun',
-                                        text: 'Harika bir manevi günlük uygulaması keşfettim! Sen de Şükür Olsun uygulamasını dene.',
+                                        title: t('common.shareTitle'),
+                                        text: t('common.shareText'),
                                         url: 'https://play.google.com/store/apps/details?id=com.yalcin.sukurolsun'
                                     }).catch(() => { });
                                 }
@@ -120,7 +120,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                         className="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 active:bg-slate-200"
                     >
                         <Share2 className="w-5 h-5 text-slate-400 dark:text-slate-500 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors" />
-                        <span className="text-sm font-medium">Uygulamayı paylaş</span>
+                        <span className="text-sm font-medium">{t('common.shareApp')}</span>
                     </button>
 
                     {/* Rate Us Button */}
@@ -129,29 +129,27 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                         className="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 active:bg-slate-200"
                     >
                         <Star className="w-5 h-5 text-slate-400 dark:text-slate-500 group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors" />
-                        <span className="text-sm font-medium">Bizi Değerlendirin</span>
+                        <span className="text-sm font-medium">{t('common.rateUs')}</span>
                     </button>
 
                     {/* Update Check Button */}
                     <button
                         onClick={() => {
-                            // Burada manuel bir alert/toast veya UpdateChecker'ı tetikleyecek bir Event emit edilebilir.
-                            // Şimdilik sadece toast gösterelim
-                            alert("Şu an en güncel sürümü kullanıyorsunuz.");
+                            alert(t('common.appLatest'));
                         }}
                         className="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 active:bg-slate-200"
                     >
                         <DownloadCloud className="w-5 h-5 text-slate-400 dark:text-slate-500 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors" />
-                        <span className="text-sm font-medium">Güncellemeleri Kontrol Et</span>
+                        <span className="text-sm font-medium">{t('common.updateCheck')}</span>
                     </button>
                     {/* Exit App Button */}
                     <button
                         onClick={async () => {
-                            if (window.confirm("Uygulamadan çıkmak istediğinize emin misiniz?")) {
+                            if (window.confirm(t('common.exitConfirm'))) {
                                 try {
                                     await CapacitorApp.exitApp();
                                 } catch (e) {
-                                    console.log("Çıkış desteklenmiyor (Web ortamı vb.)", e);
+                                    // Exit not supported
                                     window.close();
                                 }
                             }
@@ -167,7 +165,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                 <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-white via-white dark:from-slate-900 dark:via-slate-900 to-transparent">
                     <div className="flex flex-col items-center justify-center">
                         <p className="text-[10px] font-bold tracking-widest uppercase text-emerald-600 dark:text-emerald-500 mb-0.5">by ziberkan</p>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.5.0</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.6.0</p>
                     </div>
                 </div>
             </div>

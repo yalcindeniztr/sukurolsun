@@ -4,8 +4,10 @@ import { useTheme } from '../../core/ThemeContext';
 import { storageService } from '../../services/storage.service';
 import { ReligiousDay, ReligiousDayItem } from '../../core/types';
 import ReligiousDaysPrayersView from './ReligiousDaysPrayersView';
+import { useLanguage } from '../../core/LanguageContext';
 
 const ReligiousDaysView: React.FC = () => {
+    const { t, language } = useLanguage();
     const { theme } = useTheme();
     const [activeTab, setActiveTab] = useState<'myDays' | 'guide'>('myDays');
     const [days, setDays] = useState<ReligiousDay[]>([]);
@@ -36,7 +38,7 @@ const ReligiousDaysView: React.FC = () => {
 
     const handleAddDay = async () => {
         if (!newDayTitle.trim()) return;
-        const formattedDate = newDayDate ? new Date(newDayDate).toLocaleDateString('tr-TR') : undefined;
+        const formattedDate = newDayDate ? new Date(newDayDate).toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US') : undefined;
         const updated = await storageService.addReligiousDay(newDayTitle.trim(), formattedDate);
         setDays(updated);
         setNewDayTitle('');
@@ -45,7 +47,7 @@ const ReligiousDaysView: React.FC = () => {
     };
 
     const handleDeleteDay = async (id: string) => {
-        if (window.confirm('Bu dini günü ve altındaki tüm mesajları silmek istediğinize emin misiniz?')) {
+        if (window.confirm(t('religious_days.deleteDayConfirm'))) {
             const updated = await storageService.deleteReligiousDay(id);
             setDays(updated);
             const remainingItems = await storageService.getReligiousDayItems();
@@ -61,7 +63,7 @@ const ReligiousDaysView: React.FC = () => {
     };
 
     const handleDeleteItem = async (id: string) => {
-        if (window.confirm('Bu içeriği silmek istediğinize emin misiniz?')) {
+        if (window.confirm(t('religious_days.deleteItemConfirm'))) {
             const updated = await storageService.deleteReligiousDayItem(id);
             setItems(updated);
         }
@@ -90,7 +92,7 @@ const ReligiousDaysView: React.FC = () => {
                                 ? (theme === 'light' ? 'bg-white text-indigo-600 shadow-sm' : 'bg-slate-700 text-indigo-400 shadow-sm')
                                 : (theme === 'light' ? 'text-slate-500' : 'text-slate-400')}`}
                     >
-                        Takvim & Günler
+                        {t('religious_days.myDays')}
                     </button>
                     <button
                         onClick={() => setActiveTab('guide')}
@@ -100,7 +102,7 @@ const ReligiousDaysView: React.FC = () => {
                                 : (theme === 'light' ? 'text-slate-500' : 'text-slate-400')}`}
                     >
                         <BookOpen className="w-4 h-4" />
-                        Dua Rehberi
+                        {t('religious_days.guide')}
                     </button>
                 </div>
             </div>
@@ -113,13 +115,13 @@ const ReligiousDaysView: React.FC = () => {
                         <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4
                             ${theme === 'light' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'}`}>
                             <Calendar className="w-5 h-5" />
-                            <span className="font-bold text-sm">Dini Günler</span>
+                            <span className="font-bold text-sm">{t('nav.religiousDays')}</span>
                         </div>
                         <h2 className={`text-2xl font-serif font-bold ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>
-                            Özel Dini Günler ve Kandiller
+                            {t('religious_days.subtitle')}
                         </h2>
                         <p className={`text-sm mt-2 ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
-                            Kendinize özel dini günler oluşturun ve dualarınızı kaydedin.
+                            {t('religious_days.description')}
                         </p>
                     </div>
 
@@ -131,7 +133,7 @@ const ReligiousDaysView: React.FC = () => {
 
                         <div className="flex items-center justify-between mb-4">
                             <span className={`font-bold ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>
-                                Takvim & Günler ({days.length})
+                                {t('religious_days.myDays')} ({days.length})
                             </span>
                             <button
                                 onClick={() => setShowAddDay(!showAddDay)}
@@ -140,7 +142,7 @@ const ReligiousDaysView: React.FC = () => {
                                         ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
                                         : 'bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20'}`}
                             >
-                                <Plus className="w-4 h-4" /> Ekle
+                                <Plus className="w-4 h-4" /> {t('religious_days.add')}
                             </button>
                         </div>
 
@@ -148,7 +150,7 @@ const ReligiousDaysView: React.FC = () => {
                             <div className="space-y-3 animate-fadeIn mb-4 p-4 rounded-2xl bg-black/5 dark:bg-white/5">
                                 <input
                                     type="text"
-                                    placeholder="Dinin Günün Adı (Örn: Kadir Gecesi 2024)"
+                                    placeholder={t('religious_days.dayNamePlaceholder')}
                                     value={newDayTitle}
                                     onChange={(e) => setNewDayTitle(e.target.value)}
                                     className={`w-full p-3 rounded-xl border transition-all ${theme === 'light' ? 'bg-white border-slate-200' : 'bg-black/20 border-white/10 text-white'}`}
@@ -167,7 +169,7 @@ const ReligiousDaysView: React.FC = () => {
                                             ? 'bg-indigo-500 text-white hover:bg-indigo-400 shadow-sm'
                                             : 'bg-slate-200 text-slate-400 cursor-not-allowed hidden'}`}
                                 >
-                                    Günü Kaydet
+                                    {t('religious_days.addDay')}
                                 </button>
                             </div>
                         )}
@@ -201,7 +203,7 @@ const ReligiousDaysView: React.FC = () => {
                                         )}
                                         <span className={`text-xs px-2.5 py-1 rounded-full font-bold
                                     ${theme === 'light' ? 'bg-indigo-50 text-indigo-500' : 'bg-indigo-500/10 text-indigo-400'}`}>
-                                            {items.filter(i => i.dayId === day.id).length} içerik
+                                            {items.filter(i => i.dayId === day.id).length} {t('religious_days.contentCount')}
                                         </span>
                                         {expandedDay === day.id
                                             ? <ChevronUp className={`w-5 h-5 ml-auto ${theme === 'light' ? 'text-slate-400' : 'text-slate-500'}`} />
@@ -226,20 +228,20 @@ const ReligiousDaysView: React.FC = () => {
                                                     onClick={() => setNewItemType('dua')}
                                                     className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all ${newItemType === 'dua' ? 'bg-indigo-500 text-white' : 'bg-white/50 dark:bg-black/20 text-slate-500'}`}
                                                 >
-                                                    Dua Yaz
+                                                    {t('religious_days.writeDua')}
                                                 </button>
                                                 <button
                                                     onClick={() => setNewItemType('mesaj')}
                                                     className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all ${newItemType === 'mesaj' ? 'bg-indigo-500 text-white' : 'bg-white/50 dark:bg-black/20 text-slate-500'}`}
                                                 >
-                                                    Mesaj Ekle
+                                                    {t('religious_days.addMessage')}
                                                 </button>
                                             </div>
                                             <div className="flex gap-2">
                                                 <textarea
                                                     value={newItemText}
                                                     onChange={(e) => setNewItemText(e.target.value)}
-                                                    placeholder={`${newItemType === 'dua' ? 'Özel duanızı yazın...' : 'Göndermek üzere mesaj yazın...'}`}
+                                                    placeholder={`${newItemType === 'dua' ? t('religious_days.duaPlaceholder') : t('religious_days.messagePlaceholder')}`}
                                                     rows={2}
                                                     className={`flex-1 resize-none p-3 rounded-xl border transition-all ${theme === 'light' ? 'bg-white border-slate-200 text-slate-800' : 'bg-black/20 border-white/10 text-white'}`}
                                                 />
@@ -267,7 +269,7 @@ const ReligiousDaysView: React.FC = () => {
                                             >
                                                 <div className="flex-1">
                                                     <span className={`inline-block mb-1 text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md ${theme === 'light' ? 'bg-indigo-50 text-indigo-600' : 'bg-indigo-500/20 text-indigo-400'}`}>
-                                                        {item.type === 'dua' ? 'Dua' : 'Mesaj'}
+                                                        {item.type === 'dua' ? t('religious_days.dua') : t('religious_days.message')}
                                                     </span>
                                                     <p className={`text-sm leading-relaxed
                                                 ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
@@ -308,7 +310,7 @@ const ReligiousDaysView: React.FC = () => {
                         {days.length === 0 && (
                             <div className="p-6 text-center">
                                 <p className={`text-sm ${theme === 'light' ? 'text-slate-400' : 'text-slate-500'}`}>
-                                    Henüz özel bir gün eklemediniz. Yukarıdaki 'Ekle' butonuyla başlayın.
+                                    {t('religious_days.noDays')}
                                 </p>
                             </div>
                         )}

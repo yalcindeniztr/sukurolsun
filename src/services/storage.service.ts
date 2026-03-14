@@ -210,6 +210,13 @@ class StorageService {
     return updated;
   }
 
+  async updateCustomPrayer(id: string, text: string): Promise<CustomPrayer[]> {
+    const current = await this.getCustomPrayers();
+    const updated = current.map(p => p.id === id ? { ...p, text: sanitizeString(text), timestamp: new Date().toISOString() } : p);
+    await this.saveCustomPrayers(updated);
+    return updated;
+  }
+
   // ===== PIN Güvenlik =====
   async setPin(pin: string): Promise<void> {
     const hash = await hashPin(pin);
@@ -470,6 +477,13 @@ class StorageService {
     };
     const current = await this.getReligiousDayItems();
     const updated = [newItem, ...current];
+    await this.saveReligiousDayItems(updated);
+    return updated;
+  }
+
+  async updateReligiousDayItem(id: string, text: string): Promise<ReligiousDayItem[]> {
+    const current = await this.getReligiousDayItems();
+    const updated = current.map(m => m.id === id ? { ...m, text: sanitizeString(text), timestamp: new Date().toISOString() } : m);
     await this.saveReligiousDayItems(updated);
     return updated;
   }

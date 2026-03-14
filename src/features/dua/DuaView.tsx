@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { BookHeart, RefreshCw, Heart, ChevronRight, Trash2 } from 'lucide-react';
+import { BookHeart, RefreshCw, Heart, ChevronRight, Trash2, Edit2 } from 'lucide-react';
 import { ANNUAL_DUAS } from '../../core/duas_data';
 import { useTheme } from '../../core/ThemeContext';
 import { useLanguage } from '../../core/LanguageContext';
@@ -28,6 +28,7 @@ const DuaView: React.FC = () => {
     const [customPrayers, setCustomPrayers] = useState<CustomPrayer[]>([]);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [newPrayerText, setNewPrayerText] = useState('');
+    const [editingPrayerId, setEditingPrayerId] = useState<string | null>(null);
 
     useEffect(() => {
         const loadData = async () => {
@@ -50,14 +51,30 @@ const DuaView: React.FC = () => {
     const handleAddCustomPrayerClick = async () => {
         await AdMobService.trackPageViewAndShowInterstitial();
         AdMobService.prepareInterstitial();
+        setEditingPrayerId(null);
+        setNewPrayerText('');
+        setIsAddModalOpen(true);
+    };
+
+    const handleEditCustomPrayerClick = (prayer: CustomPrayer) => {
+        setEditingPrayerId(prayer.id);
+        setNewPrayerText(prayer.text);
         setIsAddModalOpen(true);
     };
 
     const saveCustomPrayer = async () => {
         if (!newPrayerText.trim()) return;
-        const updated = await storageService.addCustomPrayer(newPrayerText);
+        
+        let updated;
+        if (editingPrayerId) {
+            updated = await storageService.updateCustomPrayer(editingPrayerId, newPrayerText);
+        } else {
+            updated = await storageService.addCustomPrayer(newPrayerText);
+        }
+        
         setCustomPrayers(updated);
         setNewPrayerText('');
+        setEditingPrayerId(null);
         setIsAddModalOpen(false);
         AdMobService.trackSaveAndShowInterstitial();
     };
@@ -213,7 +230,14 @@ const DuaView: React.FC = () => {
                                 <p className={`text-base font-serif leading-relaxed ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
                                     "{prayer.text}"
                                 </p>
-                                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); handleEditCustomPrayerClick(prayer); }}
+                                        className="p-2 text-emerald-400 hover:bg-emerald-500/10 rounded-xl transition-colors"
+                                        title={t('common.edit') || 'Düzenle'}
+                                    >
+                                        <Edit2 className="w-4 h-4" />
+                                    </button>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); handleDeleteCustomPrayer(prayer.id); }}
                                         className="p-2 text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors"
@@ -278,7 +302,9 @@ const DuaView: React.FC = () => {
                         style={{ boxShadow: '0 25px 60px -12px rgba(0,0,0,0.5)' }}
                     >
                         <h3 className={`text-xl font-serif font-medium mb-4
-                            ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('duas.add_prayer')}</h3>
+                            ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>
+                            {editingPrayerId ? t('common.edit') : t('duas.add_prayer')}
+                        </h3>
 
                         <textarea
                             value={newPrayerText}
