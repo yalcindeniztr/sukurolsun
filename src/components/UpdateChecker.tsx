@@ -3,10 +3,10 @@ import { DownloadCloud, X } from 'lucide-react';
 import { useTheme } from '../core/ThemeContext';
 import { ReviewService } from '../services/ReviewService';
 
-// Mevcut versiyon. Gerçek uygulamada package.json veya capacitor.config üzerinden dinamik de alınabilir.
-const CURRENT_VERSION = '1.5.0';
-// Gerçek bir API'den veya statik bir endpointten çekilecek en güncel versiyon bilgisi simülasyonu
-const LATEST_VERSION = '1.5.0'; // Test amaçlı daha yüksek
+// Mevcut versiyon
+const CURRENT_VERSION = '1.6.0';
+// En güncel versiyon bilgisi
+const LATEST_VERSION = '1.6.0';
 
 const UpdateChecker: React.FC = () => {
     const { theme } = useTheme();

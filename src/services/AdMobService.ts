@@ -9,8 +9,8 @@ export class AdMobService {
     private static readonly INTERSTITIAL_ID = import.meta.env.VITE_ADMOB_INTERSTITIAL_ID || 'ca-app-pub-3940256099942544/1033173712';
     private static readonly REWARDED_ID = import.meta.env.VITE_ADMOB_REWARDED_ID || 'ca-app-pub-3940256099942544/5224354917';
 
-    // Production modunu kontrol et
-    private static readonly IS_PRODUCTION = import.meta.env.VITE_APP_MODE === 'production';
+    // Production modu zorunlu
+    private static readonly IS_PRODUCTION = true;
 
     static async initialize(): Promise<void> {
         if (this.initialised) return;
@@ -19,7 +19,7 @@ export class AdMobService {
             await AdMob.trackingAuthorizationStatus();
 
             const options: AdMobInitializationOptions = {
-                initializeForTesting: !this.IS_PRODUCTION,
+                initializeForTesting: false,
             };
 
             await AdMob.initialize(options);
