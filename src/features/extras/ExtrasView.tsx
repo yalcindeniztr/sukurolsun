@@ -18,11 +18,15 @@ const ExtrasView: React.FC = () => {
     const [customCategories, setCustomCategories] = useState<string[]>([]);
     const [showAddCategory, setShowAddCategory] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState('');
+    const [hiddenStaticIds, setHiddenStaticIds] = useState<string[]>([]);
 
     useEffect(() => {
         const loadMessages = async () => {
             const msgs = await storageService.getUserMessages();
             setUserMessages(msgs);
+            
+            const hidden = await storageService.getHiddenStaticMessages();
+            setHiddenStaticIds(hidden);
             
             // Mevcut kategorileri topla
             const cats = Array.from(new Set(msgs.map(m => m.category).filter(Boolean))) as string[];
@@ -54,10 +58,7 @@ const ExtrasView: React.FC = () => {
 
     const handleUpdateMessage = useCallback(async (id: string) => {
         if (!editText.trim()) return;
-        const current = await storageService.getUserMessages();
-        const updated = current.map(m => m.id === id ? { ...m, text: editText.trim() } : m);
-        // Doğrudan storage.set kullanarak güncelliyoruz (servis metodunu genişletmek yerine)
-        await (storageService as any).saveUserMessages(updated); 
+        const updated = await storageService.updateUserMessage(id, editText.trim());
         setUserMessages(updated);
         setEditingId(null);
     }, [editText]);
@@ -78,9 +79,44 @@ const ExtrasView: React.FC = () => {
         setShowAddCategory(false);
     };
 
+    const handleDeleteCategory = (catName: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (window.confirm(`${catName} kategorisini ve içindeki TÜM ÖZEL mesajları silmek istediğinden emin misin?`)) {
+            setCustomCategories(prev => prev.filter(c => c !== catName));
+            // İsteğe bağlı: Bu kategorideki mesajları da sil
+            const filteredMsgs = userMessages.filter(m => m.category !== catName);
+            setUserMessages(filteredMsgs);
+            storageService.saveUserMessages(filteredMsgs);
+        }
+    };
+
     const startEditing = (msg: UserMessage) => {
         setEditingId(msg.id);
         setEditText(msg.text);
+    };
+
+    const handleHideStaticMessage = async (id: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (window.confirm('Bu hazır mesajı listeden kaldırmak istediğinden emin misin?')) {
+            const updated = await storageService.hideStaticMessage(id);
+            setHiddenStaticIds(updated);
+        }
+    };
+
+    const handleEditStaticMessage = async (msg: { id: string, text: string }, categoryTitle: string) => {
+        // Hazır mesajı düzenlemek için: 
+        // 1. Hazır olanı gizle
+        // 2. Yeni metni kullanıcı mesajı olarak ekle (düzenleme modunda açacağız)
+        const updatedHidden = await storageService.hideStaticMessage(msg.id);
+        setHiddenStaticIds(updatedHidden);
+        
+        const updatedMsgs = await storageService.addUserMessage(msg.text, categoryTitle);
+        setUserMessages(updatedMsgs);
+        
+        // Yeni eklenen mesajın sonuncusunu bul ve düzenleme moduna al
+        const lastAdded = updatedMsgs[0]; // addUserMessage başa ekliyor
+        setEditingId(lastAdded.id);
+        setEditText(lastAdded.text);
     };
 
     // Tüm kategorileri birleştir (Statik + Özel)
@@ -166,7 +202,17 @@ const ExtrasView: React.FC = () => {
                                     {(category.messages.length + userMessages.filter(m => m.category === category.title).length)} Mesaj
                                 </span>
                             </div>
-                            {expandedCategory === category.id ? <ChevronUp className="w-5 h-5 opacity-50" /> : <ChevronDown className="w-5 h-5 opacity-50" />}
+                            <div className="flex items-center gap-3">
+                                {category.isCustom && (
+                                    <button 
+                                        onClick={(e) => handleDeleteCategory(category.title, e)}
+                                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                )}
+                                {expandedCategory === category.id ? <ChevronUp className="w-5 h-5 opacity-50" /> : <ChevronDown className="w-5 h-5 opacity-50" />}
+                            </div>
                         </button>
 
                         {expandedCategory === category.id && (
@@ -231,8 +277,7 @@ const ExtrasView: React.FC = () => {
                                     </div>
                                 ))}
 
-                                {/* Statik Mesajlar */}
-                                {category.messages.map((message) => (
+                                {category.messages.filter(m => !hiddenStaticIds.includes(m.id)).map((message) => (
                                     <div
                                         key={message.id}
                                         className={`p-4 rounded-2xl flex items-start gap-3 transition-colors group
@@ -241,13 +286,22 @@ const ExtrasView: React.FC = () => {
                                         <p className={`flex-1 text-sm leading-relaxed ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
                                             {message.text}
                                         </p>
-                                        <button
-                                            onClick={() => copyToClipboard(message.text, message.id)}
-                                            className={`shrink-0 p-2 rounded-xl transition-all
-                                                ${copiedId === message.id ? 'bg-green-500/20 text-green-400' : 'text-slate-400 hover:text-emerald-500'}`}
-                                        >
-                                            {copiedId === message.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                                        </button>
+                                        <div className="flex gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button
+                                                onClick={() => copyToClipboard(message.text, message.id)}
+                                                className={`p-2 rounded-xl transition-all
+                                                    ${copiedId === message.id ? 'bg-green-500/20 text-green-400' : 'text-slate-400 hover:text-emerald-500'}`}
+                                            >
+                                                {copiedId === message.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                                            </button>
+                                            <button onClick={() => handleEditStaticMessage(message, category.title)} className="p-2 text-slate-400 hover:text-blue-500"><Edit2 className="w-4 h-4"/></button>
+                                            <button onClick={(e) => handleHideStaticMessage(message.id, e)} className="p-2 text-slate-400 hover:text-red-500"><Trash2 className="w-4 h-4"/></button>
+                                        </div>
+                                        {/* Mobile Visible */}
+                                        <div className="md:hidden flex gap-1">
+                                            <button onClick={() => copyToClipboard(message.text, message.id)} className="p-2 text-slate-400"><Copy className="w-4 h-4"/></button>
+                                            <button onClick={() => handleEditStaticMessage(message, category.title)} className="p-2 text-slate-400"><Edit2 className="w-4 h-4"/></button>
+                                        </div>
                                     </div>
                                 ))}
                             </div>

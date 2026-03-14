@@ -13,6 +13,7 @@ const STORAGE_KEYS = {
   USER_MESSAGES: 'sukur_user_messages',
   RELIGIOUS_DAYS: 'sukur_religious_days',
   RELIGIOUS_DAY_ITEMS: 'sukur_religious_day_items',
+  HIDDEN_STATIC_MESSAGES: 'sukur_hidden_static_messages',
 };
 
 /** Basit XSS temizleme fonksiyonu */
@@ -359,6 +360,10 @@ class StorageService {
     }
   }
 
+  async saveUserMessages(updated: UserMessage[]): Promise<void> {
+    await storage.set(STORAGE_KEYS.USER_MESSAGES, JSON.stringify(updated));
+  }
+
   async addUserMessage(text: string, category?: string): Promise<UserMessage[]> {
     const msg: UserMessage = {
       id: Date.now().toString(36) + Math.random().toString(36).substring(2),
@@ -368,6 +373,13 @@ class StorageService {
     };
     const current = await this.getUserMessages();
     const updated = [msg, ...current];
+    await storage.set(STORAGE_KEYS.USER_MESSAGES, JSON.stringify(updated));
+    return updated;
+  }
+
+  async updateUserMessage(id: string, text: string): Promise<UserMessage[]> {
+    const current = await this.getUserMessages();
+    const updated = current.map(m => m.id === id ? { ...m, text: sanitizeString(text), timestamp: new Date().toISOString() } : m);
     await storage.set(STORAGE_KEYS.USER_MESSAGES, JSON.stringify(updated));
     return updated;
   }
@@ -466,6 +478,18 @@ class StorageService {
     const current = await this.getReligiousDayItems();
     const updated = current.filter(i => i.id !== id);
     await this.saveReligiousDayItems(updated);
+    return updated;
+  }
+
+  async getHiddenStaticMessages(): Promise<string[]> {
+    const data = await storage.get(STORAGE_KEYS.HIDDEN_STATIC_MESSAGES);
+    return data ? JSON.parse(data) : [];
+  }
+
+  async hideStaticMessage(messageId: string): Promise<string[]> {
+    const current = await this.getHiddenStaticMessages();
+    const updated = [...new Set([...current, messageId])];
+    await storage.set(STORAGE_KEYS.HIDDEN_STATIC_MESSAGES, JSON.stringify(updated));
     return updated;
   }
 
