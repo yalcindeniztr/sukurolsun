@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Edit2, Save, Award, User, Download, Upload, Check, AlertCircle, Lock, Unlock, ShieldCheck, Trash2 } from 'lucide-react';
+import { Edit2, Save, Award, User, Download, Upload, Check, AlertCircle, Lock, ShieldCheck, Trash2, Activity } from 'lucide-react';
 import { UserProfile } from '../../core/types';
 import { AVATARS } from '../../constants';
 import { storageService } from '../../services/storage.service';
@@ -7,6 +7,8 @@ import { useTheme } from '../../core/ThemeContext';
 import { Capacitor } from '@capacitor/core';
 import { notificationService } from '../../services/NotificationService';
 import { useLanguage } from '../../core/LanguageContext';
+import { Geolocation } from '@capacitor/geolocation';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
 // Rozetler artık t() ile her renderda güncelleniyor, burası sadece Stil veriyor
 const BADGE_STYLES: Record<string, { color: string }> = {
@@ -39,6 +41,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
     const [newPin, setNewPin] = useState('');
     const [confirmPin, setConfirmPin] = useState('');
     const [pinError, setPinError] = useState('');
+
+    // System Test States
+    const [testStatus, setTestStatus] = useState<{ type: 'info' | 'success' | 'error'; message: string } | null>(null);
+    const [isTesting, setIsTesting] = useState(false);
 
     useEffect(() => {
         storageService.hasPin().then(setHasPinSet);
@@ -184,7 +190,44 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
     const handleToggleLanguage = (lang: 'tr' | 'en') => {
         setLanguage(lang);
         if (profile) {
-            onUpdateProfile({ ...profile, language: lang });
+            onUpdateProfile({ ...profile, language: lang as any });
+        }
+    };
+
+    const runSystemTest = async () => {
+        setIsTesting(true);
+        setTestStatus({ type: 'info', message: t('profile.testStarted') });
+        
+        try {
+            // 1. Konum Testi
+            const locPerm = await Geolocation.checkPermissions();
+            const locStatus = locPerm.location === 'granted' ? t('profile.granted') : t('profile.denied');
+            
+            // 2. Bildirim Testi
+            const notPerm = await LocalNotifications.checkPermissions();
+            const notStatus = notPerm.display === 'granted' ? t('profile.granted') : t('profile.denied');
+            
+            // 3. Test Bildirimi Gönder
+            if (notPerm.display === 'granted') {
+                await LocalNotifications.schedule({
+                    notifications: [{
+                        title: 'Şükür Olsun - Sistem Testi',
+                        body: 'Bildirim sistemi başarıyla çalışıyor! 🤲',
+                        id: 999,
+                        schedule: { at: new Date(Date.now() + 1000) }
+                    }]
+                });
+            }
+
+            setTestStatus({ 
+                type: 'success', 
+                message: `${t('profile.testComplete')}\n${t('profile.locationStatus')}: ${locStatus}\n${t('profile.notificationStatus')}: ${notStatus}` 
+            });
+        } catch (error) {
+            setTestStatus({ type: 'error', message: t('profile.testError') });
+        } finally {
+            setIsTesting(false);
+            setTimeout(() => setTestStatus(null), 10000);
         }
     };
 
@@ -625,25 +668,18 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                 placeholder="• • • •"
                             />
                         </div>
-                        {pinError && (
-                            <p className="text-sm text-red-400 flex items-center gap-2">
-                                <AlertCircle className="w-4 h-4" /> {pinError}
-                            </p>
-                        )}
+                        {pinError && <p className="text-red-400 text-xs font-bold text-center">{pinError}</p>}
                         <div className="flex gap-3">
                             <button
-                                type="button"
                                 onClick={() => { setShowPinSetup(false); setNewPin(''); setConfirmPin(''); setPinError(''); }}
-                                className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all
-                                    ${theme === 'light' ? 'text-slate-500 hover:bg-slate-100' : 'text-slate-400 hover:bg-white/5'}`}
+                                className={`flex-1 py-4 rounded-2xl font-bold transition-all
+                                    ${theme === 'light' ? 'bg-slate-100 text-slate-600' : 'bg-white/5 text-slate-400'}`}
                             >
                                 {t('common.cancel')}
                             </button>
                             <button
-                                type="button"
                                 onClick={handleSetPin}
-                                className="flex-1 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-bold transition-all active:scale-95"
-                                style={{ boxShadow: '0 4px 14px -3px rgba(16,185,129,0.4)' }}
+                                className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold shadow-lg shadow-emerald-500/20 active:scale-95 transition-all"
                             >
                                 {t('profile.savePin')}
                             </button>
@@ -652,15 +688,60 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                 ) : (
                     <button
                         onClick={() => setShowPinSetup(true)}
-                        className={`flex items-center gap-3 w-full p-4 rounded-2xl border transition-all active:scale-95
+                        className={`w-full py-4 rounded-2xl border-2 border-dashed font-bold transition-all active:scale-95
                             ${theme === 'light'
-                                ? 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100'
-                                : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'}`}
+                                ? 'border-slate-200 text-slate-400 hover:border-emerald-400 hover:text-emerald-600'
+                                : 'border-white/10 text-slate-500 hover:border-emerald-500/50 hover:text-emerald-400'}`}
                     >
-                        <Unlock className="w-5 h-5" />
-                        <span className="font-bold">{t('profile.setPin')}</span>
+                        + {t('profile.setPin')}
                     </button>
                 )}
+            </div>
+
+            {/* Sistem Tanı Araçları (Test) - 3D Card */}
+            <div className={`glass-card p-8
+                ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
+                <div className="flex items-center gap-3 mb-6">
+                    <Activity className={`w-6 h-6 ${theme === 'light' ? 'text-blue-600' : 'text-blue-400'}`} />
+                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>
+                        {t('profile.systemDiagnostics')}
+                    </h3>
+                </div>
+
+                <p className={`text-sm mb-6 ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
+                    {t('profile.systemDiagnosticsDesc')}
+                </p>
+
+                {testStatus && (
+                    <div className={`mb-6 p-4 rounded-2xl whitespace-pre-line text-sm font-medium animate-scale-in
+                        ${testStatus.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 
+                          testStatus.type === 'error' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 
+                          'bg-blue-500/10 text-blue-400 border border-blue-500/20'}`}>
+                        {testStatus.message}
+                    </div>
+                )}
+
+                <button
+                    onClick={runSystemTest}
+                    disabled={isTesting}
+                    className={`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all active:scale-95
+                        ${isTesting ? 'opacity-50 cursor-not-allowed' : ''}
+                        ${theme === 'light'
+                            ? 'bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 shadow-sm'
+                            : 'bg-blue-500/10 text-blue-400 border border-blue-500/30 hover:bg-blue-500/20'}`}
+                >
+                    {isTesting ? (
+                        <>
+                            <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                            {t('profile.testingInProgress')}
+                        </>
+                    ) : (
+                        <>
+                            <Check className="w-5 h-5" />
+                            {t('profile.runSystemTest')}
+                        </>
+                    )}
+                </button>
             </div>
 
             {/* Dil Ayarları - 3D Card */}
@@ -767,7 +848,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
 
                 <button
                     onClick={async () => {
-                        if (window.confirm(t('delete.warning') || '⚠️ DEVAM ETMEK İSTİYOR MUSUNUZ?')) {
+                        if (window.confirm(t('profile.deleteWarning'))) {
                             await storageService.deleteAllData();
                             window.location.reload();
                         }

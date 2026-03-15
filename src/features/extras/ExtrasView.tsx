@@ -237,12 +237,11 @@ const ExtrasView: React.FC = () => {
                                     </button>
                                 </div>
 
-                                {/* Kullanıcı Mesajları */}
                                 {userMessages.filter(m => m.category === category.title).map(msg => (
                                     <div
                                         key={msg.id}
-                                        className={`p-4 rounded-2xl flex items-start gap-3 border
-                                            ${theme === 'light' ? 'bg-emerald-50 border-emerald-100' : 'bg-emerald-500/10 border-emerald-500/20'}`}
+                                        className={`group p-4 rounded-2xl flex items-start gap-3 border transition-all
+                                            ${theme === 'light' ? 'bg-white border-slate-100 shadow-sm' : 'bg-white/[0.03] border-white/[0.05]'}`}
                                     >
                                         {editingId === msg.id ? (
                                             <div className="flex-1 space-y-2">
@@ -259,18 +258,19 @@ const ExtrasView: React.FC = () => {
                                             </div>
                                         ) : (
                                             <>
-                                                <p className={`flex-1 text-sm leading-relaxed ${theme === 'light' ? 'text-emerald-800' : 'text-emerald-100'}`}>
+                                                <p className={`flex-1 text-sm leading-relaxed ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
                                                     {msg.text}
                                                 </p>
-                                                <div className="flex gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button onClick={() => copyToClipboard(msg.text, msg.id)} className="p-2 text-slate-400 hover:text-emerald-600"><Copy className="w-4 h-4"/></button>
-                                                    <button onClick={() => startEditing(msg)} className="p-2 text-slate-400 hover:text-blue-500"><Edit2 className="w-4 h-4"/></button>
-                                                    <button onClick={() => handleDeleteMessage(msg.id)} className="p-2 text-slate-400 hover:text-red-500"><Trash2 className="w-4 h-4"/></button>
-                                                </div>
-                                                {/* Mobile visible actions */}
-                                                <div className="md:hidden flex gap-1 shrink-0">
-                                                    <button onClick={() => copyToClipboard(msg.text, msg.id)} className={`p-2 rounded-lg ${copiedId === msg.id ? 'bg-green-500 text-white' : 'bg-white shadow-sm text-slate-400'}`}>{copiedId === msg.id ? <Check className="w-4 h-4"/> : <Copy className="w-4 h-4"/>}</button>
-                                                    <button onClick={() => startEditing(msg)} className="p-2 bg-white shadow-sm rounded-lg text-slate-400"><Edit2 className="w-4 h-4"/></button>
+                                                <div className="flex gap-1 shrink-0 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                                                    <button onClick={() => copyToClipboard(msg.text, msg.id)} className={`p-2 rounded-lg transition-all ${copiedId === msg.id ? 'bg-green-500 text-white' : 'text-slate-400 hover:text-emerald-500'}`}>
+                                                        {copiedId === msg.id ? <Check className="w-4 h-4"/> : <Copy className="w-4 h-4"/>}
+                                                    </button>
+                                                    <button onClick={() => startEditing(msg)} className="p-2 text-slate-400 hover:text-blue-500 transition-colors">
+                                                        <Edit2 className="w-4 h-4" />
+                                                    </button>
+                                                    <button onClick={() => handleDeleteMessage(msg.id)} className="p-2 text-slate-400 hover:text-red-500 transition-colors">
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
                                                 </div>
                                             </>
                                         )}

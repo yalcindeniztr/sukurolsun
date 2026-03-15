@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Home, BookOpen, Heart, Gift, User, Share2, Calendar, Star, Clock, Activity, Map, DownloadCloud, LogOut } from 'lucide-react';
+import { Home, BookOpen, Heart, Gift, User, Share2, Star, Clock, Activity, Map, DownloadCloud, LogOut } from 'lucide-react';
 import { Share } from '@capacitor/share';
 import { ReviewService } from '../../services/ReviewService';
 import { App as CapacitorApp } from '@capacitor/app';
@@ -20,9 +20,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
         { id: 'dua', label: t('nav.duas'), icon: Heart },
         { id: 'tesbihat', label: t('nav.tesbihat'), icon: Activity },
         { id: 'prayer_times', label: t('nav.prayerTimes'), icon: Clock },
-        { id: 'manevi_duraklar', label: t('maneviDuraklar' as any), icon: Map },
+        { id: 'manevi_duraklar', label: t('nav.maneviDuraklar'), icon: Map },
         { id: 'extras', label: t('nav.messages'), icon: Gift },
-        { id: 'religious_days', label: t('nav.religiousDays'), icon: Calendar },
         { id: 'history', label: t('nav.archive'), icon: BookOpen },
         { id: 'profile', label: t('nav.profile'), icon: User },
     ];

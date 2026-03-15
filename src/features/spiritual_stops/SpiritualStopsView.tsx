@@ -4,25 +4,9 @@ import { useTheme } from '../../core/ThemeContext';
 import { useLanguage } from '../../core/LanguageContext';
 import { storageService } from '../../services/storage.service';
 
-interface SpiritualStop {
-    id: string;
-    name: string;
-    city: string;
-    descriptionTr: string;
-    descriptionEn: string;
-    isCustom?: boolean;
-}
+import { STATIC_STOPS as SPIRITUAL_DATA_CORE, SpiritualStop } from '../../constants/spiritual_data';
 
-const STATIC_STOPS: SpiritualStop[] = [
-    { id: 'ist_1', name: 'Sultan Ahmed Camii', city: 'İstanbul', descriptionTr: 'Mavi Camii olarak da bilinir, 6 minaresiyle ünlüdür.', descriptionEn: 'Also known as the Blue Mosque, famous for its 6 minarets.' },
-    { id: 'ist_2', name: 'Ayasofya-i Kebir Cami-i Şerifi', city: 'İstanbul', descriptionTr: 'Dünya mimarlık tarihinin en önemli yapılarından biridir.', descriptionEn: 'One of the most important structures in the history of world architecture.' },
-    { id: 'ist_3', name: 'Eyüp Sultan Camii', city: 'İstanbul', descriptionTr: 'Ebu Eyyub el-Ensari\'nin türbesine ev sahipliği yapar.', descriptionEn: 'Hosts the tomb of Abu Ayyub al-Ansari.' },
-    { id: 'edr_1', name: 'Selimiye Camii', city: 'Edirne', descriptionTr: 'Mimar Sinan\'ın ustalık eseridir.', descriptionEn: 'Mimar Sinan\'s masterpiece.' },
-    { id: 'kon_1', name: 'Mevlana Müzesi', city: 'Konya', descriptionTr: 'Hazreti Mevlana\'nın dergahı ve türbesidir.', descriptionEn: 'The dervish lodge and tomb of Mevlana Rumi.' },
-    { id: 'san_1', name: 'Balıklıgöl (Rızvaniye Camii)', city: 'Şanlıurfa', descriptionTr: 'Hz. İbrahim\'in ateşe atıldığı yer olarak bilinir.', descriptionEn: 'Known as the place where Prophet Abraham was thrown into the fire.' },
-    { id: 'ank_1', name: 'Hacı Bayram-ı Veli Camii', city: 'Ankara', descriptionTr: 'Ankara\'nın manevi merkezidir.', descriptionEn: 'The spiritual center of Ankara.' },
-    { id: 'bur_1', name: 'Ulu Cami', city: 'Bursa', descriptionTr: 'Osmanlı mimarisinin en görkemli örneklerinden biridir.', descriptionEn: 'One of the most magnificent examples of Ottoman architecture.' },
-];
+const STATIC_STOPS = SPIRITUAL_DATA_CORE;
 
 const SpiritualStopsView: React.FC = () => {
     const { theme } = useTheme();
@@ -30,6 +14,7 @@ const SpiritualStopsView: React.FC = () => {
     const [stops, setStops] = useState<SpiritualStop[]>(STATIC_STOPS);
     const [searchTerm, setSearchTerm] = useState('');
     const [showAddForm, setShowAddForm] = useState(false);
+    const [expandedId, setExpandedId] = useState<string | null>(null);
     
     const [newName, setNewName] = useState('');
     const [newCity, setNewCity] = useState('');
@@ -54,6 +39,10 @@ const SpiritualStopsView: React.FC = () => {
             city: newCity,
             descriptionTr: newDesc,
             descriptionEn: newDesc,
+            featuresTr: '',
+            featuresEn: '',
+            howToGetTr: '',
+            howToGetEn: '',
             isCustom: true
         };
 
@@ -84,7 +73,7 @@ const SpiritualStopsView: React.FC = () => {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                     <h2 className={`text-2xl font-serif text-emerald-800 dark:text-emerald-400 flex items-center gap-3`}>
                         <MapPin className="w-6 h-6" />
-                        {t('sidebar.maneviDuraklar' as any) || 'Manevi Duraklar'}
+                        {t('nav.maneviDuraklar')}
                     </h2>
                     
                     <button 
@@ -92,7 +81,7 @@ const SpiritualStopsView: React.FC = () => {
                         className="btn-primary flex items-center gap-2 px-4 py-2 text-sm"
                     >
                         <Plus className="w-4 h-4" />
-                        {t('common.add' as any) || 'Yeni Ekle'}
+                        {t('common.add')}
                     </button>
                 </div>
 
@@ -100,7 +89,7 @@ const SpiritualStopsView: React.FC = () => {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                     <input 
                         type="text"
-                        placeholder={t('common.search' as any) || 'Ara... (İsim veya Şehir)'}
+                        placeholder={t('common.search')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className={`input-field pl-12 ${theme === 'light' ? 'bg-slate-50 border-slate-200' : 'bg-white/5'}`}
@@ -111,7 +100,7 @@ const SpiritualStopsView: React.FC = () => {
             {/* Add Form */}
             {showAddForm && (
                 <div className={`glass-card p-6 animate-scale-in ${theme === 'light' ? 'bg-white' : ''}`}>
-                    <h3 className="text-lg font-bold mb-4">{t('spiritualStops.addNew' as any) || 'Yeni Mekan Ekle'}</h3>
+                    <h3 className="text-lg font-bold mb-4">{t('spiritualStops.addNew')}</h3>
                     <form onSubmit={handleAddStop} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <input 
@@ -152,9 +141,13 @@ const SpiritualStopsView: React.FC = () => {
             {/* List */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredStops.map((stop) => (
-                    <div key={stop.id} className={`glass-card p-5 group transition-all hover:scale-[1.02] border border-transparent hover:border-emerald-500/30 ${theme === 'light' ? 'bg-white shadow-soft' : 'bg-slate-900/40'}`}>
-                        <div className="flex justify-between items-start mb-3">
-                            <div className="flex-1">
+                    <div key={stop.id} 
+                        className={`glass-card p-5 group transition-all duration-300 border border-transparent 
+                        ${expandedId === stop.id ? 'border-emerald-500/50 scale-[1.01]' : 'hover:border-emerald-500/30'}
+                        ${theme === 'light' ? 'bg-white shadow-soft' : 'bg-slate-900/40'}`}>
+                        
+                        <div className="flex justify-between items-start mb-3" onClick={() => setExpandedId(expandedId === stop.id ? null : stop.id)}>
+                            <div className="flex-1 cursor-pointer">
                                 <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 mb-2 inline-block`}>
                                     {stop.city}
                                 </span>
@@ -162,21 +155,53 @@ const SpiritualStopsView: React.FC = () => {
                                     {stop.name}
                                 </h4>
                             </div>
-                            {stop.isCustom && (
-                                <button 
-                                    onClick={() => handleDeleteStop(stop.id)}
-                                    className="p-2 text-slate-400 hover:text-red-500 transition-colors"
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                </button>
-                            )}
+                            <div className="flex items-center gap-1">
+                                {stop.isCustom && (
+                                    <button 
+                                        onClick={(e) => { e.stopPropagation(); handleDeleteStop(stop.id); }}
+                                        className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                )}
+                                <div className={`p-2 transition-transform duration-300 ${expandedId === stop.id ? 'rotate-180' : ''}`}>
+                                    <Info className={`w-5 h-5 ${expandedId === stop.id ? 'text-emerald-500' : 'text-slate-400'}`} />
+                                </div>
+                            </div>
                         </div>
-                        <p className={`text-sm leading-relaxed ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
+
+                        <p className={`text-sm leading-relaxed mb-2 ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
                             {language === 'tr' ? stop.descriptionTr : stop.descriptionEn}
                         </p>
+
+                        {/* Expandable Details */}
+                        {expandedId === stop.id && (
+                            <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/5 space-y-4 animate-scale-in">
+                                {((language === 'tr' ? stop.featuresTr : stop.featuresEn)) && (
+                                    <div>
+                                        <h5 className="text-[10px] font-black tracking-widest text-emerald-500 uppercase mb-1">
+                                            {language === 'tr' ? 'ÖNE ÇIKAN ÖZELLİKLER' : 'KEY FEATURES'}
+                                        </h5>
+                                        <p className="text-xs text-slate-500 leading-relaxed italic">
+                                            {language === 'tr' ? stop.featuresTr : stop.featuresEn}
+                                        </p>
+                                    </div>
+                                )}
+                                {((language === 'tr' ? stop.howToGetTr : stop.howToGetEn)) && (
+                                    <div>
+                                        <h5 className="text-[10px] font-black tracking-widest text-amber-500 uppercase mb-1">
+                                            {language === 'tr' ? 'NASIL GİDİLİR?' : 'HOW TO GET THERE?'}
+                                        </h5>
+                                        <p className="text-xs text-slate-500 leading-relaxed italic">
+                                            {language === 'tr' ? stop.howToGetTr : stop.howToGetEn}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
                         <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/5 flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase">
-                            <Info className="w-3 h-3" />
-                            {stop.isCustom ? (t('common.userAdded' as any) || 'SİZİN EKLEMENİZ') : (t('common.recommended' as any) || 'ÖNERİLEN DURAK')}
+                            {stop.isCustom ? t('common.userAdded') : t('common.recommended')}
                         </div>
                     </div>
                 ))}
@@ -185,7 +210,7 @@ const SpiritualStopsView: React.FC = () => {
             {filteredStops.length === 0 && (
                 <div className="text-center py-20 opacity-50">
                     <Search className="w-12 h-12 mx-auto mb-4" />
-                    <p>{t('common.noResults' as any) || 'Sonuç bulunamadı.'}</p>
+                    <p>{t('common.noResults')}</p>
                 </div>
             )}
         </div>

@@ -82,6 +82,28 @@ class NotificationService {
         const profile = await storageService.getProfile();
         if (profile?.notificationsEnabled) {
             await this.scheduleDailyNotification();
+        } else if (profile?.joinedDate) {
+            // 3 gün kuralı: Eğer bildirimler kapalıysa ve kayıt olalı 3 gün geçmişse hatırlatıcı gönder
+            const joinedDate = new Date(profile.joinedDate);
+            const now = new Date();
+            const diffTime = Math.abs(now.getTime() - joinedDate.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays >= 3) {
+                // Daha önce bu hatırlatıcının gönderilip gönderilmediğini kontrol etmek için bir flag kullanabiliriz.
+                // Basitlik adına, eğer bildirimler kapalıysa ve 3 gün geçtiyse bir kez tetikleyelim.
+                // LocalNotifications kendi ID sistemiyle mükerrer bildirimi önler.
+                await LocalNotifications.schedule({
+                    notifications: [
+                        {
+                            title: 'Manevi Yolculuğunuzu İhmal Etmeyin',
+                            body: 'Günlük ayet ve şükür hatırlatıcılarını açarak huzur dolu bir gün geçirebilirsiniz. Ayarlar sayfasından aktif edebilirsiniz.',
+                            id: 100, // Hatırlatıcı için özel ID
+                            schedule: { at: new Date(Date.now() + 10000) }, // 10 saniye sonra gönder
+                        }
+                    ]
+                });
+            }
         }
     }
 }

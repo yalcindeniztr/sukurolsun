@@ -27,6 +27,7 @@ export const DEFAULT_PROFILE: UserProfile = {
   joinedDate: new Date().toISOString(),
   streak: 0,
   badges: [],
+  notificationsEnabled: false,
 };
 
 // Vite base URL'i ile uyumlu avatar yolları

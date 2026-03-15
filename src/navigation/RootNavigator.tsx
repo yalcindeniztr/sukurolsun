@@ -9,7 +9,6 @@ import JournalHistory from '../features/journal/JournalHistory';
 import ProfileView from '../features/profile/ProfileView';
 import DuaView from '../features/dua/DuaView';
 import ExtrasView from '../features/extras/ExtrasView';
-import ReligiousDaysView from '../features/religious_days/ReligiousDaysView';
 import PrayerTimesView from '../features/prayer_times/PrayerTimesView';
 import TesbihatView from '../features/tesbihat/TesbihatView';
 import SpiritualStopsView from '../features/spiritual_stops/SpiritualStopsView';
@@ -152,7 +151,6 @@ const RootNavigator: React.FC = () => {
 
         {activeTab === 'dua' && <DuaView />}
         {activeTab === 'extras' && <ExtrasView />}
-        {activeTab === 'religious_days' && <ReligiousDaysView />}
         {activeTab === 'prayer_times' && <PrayerTimesView profile={profile} />}
         {activeTab === 'tesbihat' && <TesbihatView />}
         {activeTab === 'manevi_duraklar' && <SpiritualStopsView />}

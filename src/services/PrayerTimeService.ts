@@ -14,7 +14,7 @@ export interface PrayerTimesData {
 }
 
 export class PrayerTimeService {
-    private static API_URL = 'http://api.aladhan.com/v1/timings';
+    private static API_URL = 'https://api.aladhan.com/v1/timings';
 
     /**
      * Konum bazlı namaz vakitlerini getirir
