@@ -38,9 +38,9 @@ class NotificationService {
         // Her gün belirlenen bir saatte (Örn: Sabah 09:00) kur.
         // Tarih objesini yarına saat 09:00'a ayarlayalım:
         const scheduleDate = new Date();
-        scheduleDate.setHours(9, 0, 0, 0);
+        scheduleDate.setHours(12, 0, 0, 0);
 
-        // Eğer şu an saat 09:00'ı geçtiyse bir sonraki güne ayarla
+        // Eğer şu an saat 12:00'ı geçtiyse bir sonraki güne ayarla
         if (scheduleDate.getTime() < new Date().getTime()) {
             scheduleDate.setDate(scheduleDate.getDate() + 1);
         }
@@ -48,14 +48,14 @@ class NotificationService {
         await LocalNotifications.schedule({
             notifications: [
                 {
-                    title: 'Günün Ayeti',
+                    title: 'Günün Şükür Ayeti',
                     body: randomVerse,
                     id: 1, // Sabit ID, her gün bir tane olması için
                     schedule: {
                         repeats: true, // Her gün tekrar etmesini istersen
-                        every: 'day', // Kapasitör 4+'de bu "day", "week" vb.
+                        every: 'day',
                         on: {
-                            hour: 9,
+                            hour: 12,
                             minute: 0
                         }
                     },
@@ -75,6 +75,13 @@ class NotificationService {
         } else {
             // İzin kapalıysa tüm bildirimleri iptal et.
             await LocalNotifications.cancel({ notifications: [{ id: 1 }] });
+        }
+    }
+
+    async init() {
+        const profile = await storageService.getProfile();
+        if (profile?.notificationsEnabled) {
+            await this.scheduleDailyNotification();
         }
     }
 }

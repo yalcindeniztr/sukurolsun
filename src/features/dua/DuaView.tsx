@@ -230,18 +230,18 @@ const DuaView: React.FC = () => {
                                 <p className={`text-base font-serif leading-relaxed ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
                                     "{prayer.text}"
                                 </p>
-                                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                                <div className="absolute top-2 right-2 flex gap-1">
                                     <button
                                         onClick={(e) => { e.stopPropagation(); handleEditCustomPrayerClick(prayer); }}
-                                        className="p-2 text-emerald-400 hover:bg-emerald-500/10 rounded-xl transition-colors"
-                                        title={t('common.edit') || 'Düzenle'}
+                                        className={`p-2 rounded-xl transition-colors ${theme === 'light' ? 'text-emerald-600 hover:bg-emerald-50' : 'text-emerald-400 hover:bg-emerald-500/10'}`}
+                                        title={t('common.edit')}
                                     >
                                         <Edit2 className="w-4 h-4" />
                                     </button>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); handleDeleteCustomPrayer(prayer.id); }}
-                                        className="p-2 text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors"
-                                        title={t('common.delete') || 'Sil'}
+                                        className={`p-2 rounded-xl transition-colors ${theme === 'light' ? 'text-rose-600 hover:bg-rose-50' : 'text-rose-400 hover:bg-rose-500/10'}`}
+                                        title={t('common.delete')}
                                     >
                                         <Trash2 className="w-4 h-4" />
                                     </button>

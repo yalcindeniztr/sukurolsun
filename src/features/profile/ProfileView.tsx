@@ -708,19 +708,19 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                     <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('common.notificationSettings')}</h3>
                 </div>
 
-                <div className="flex items-center justify-between">
-                    <div>
-                        <p className={`font-bold ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
+                <div className="flex flex-row items-center justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                        <p className={`font-bold truncate ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
                             {t('profile.dailyVerseNotifications')}
                         </p>
-                        <p className={`text-xs mt-1 ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
+                        <p className={`text-xs mt-1 leading-relaxed ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
                             {t('profile.dailyVerseNotificationsDesc')}
                         </p>
                     </div>
                     {/* Basit Toggle Switch */}
                     <button
                         onClick={() => handleToggleNotifications(!notificationsEnabled)}
-                        className={`w-14 h-8 flex items-center bg-gray-300 rounded-full p-1 transition-all duration-300 
+                        className={`w-14 h-8 shrink-0 flex items-center bg-gray-300 rounded-full p-1 transition-all duration-300 
                             ${notificationsEnabled ? 'bg-emerald-500' : (theme === 'dark' ? 'bg-white/10' : 'bg-slate-300')}
                         `}
                     >
@@ -730,19 +730,19 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                     </button>
                 </div>
 
-                <div className="flex items-center justify-between mt-6 pt-6 border-t border-slate-100">
-                    <div>
-                        <p className={`font-bold ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
+                <div className="flex flex-row items-center justify-between gap-4 mt-8 pt-8 border-t border-slate-100 dark:border-white/5">
+                    <div className="flex-1 min-w-0">
+                        <p className={`font-bold truncate ${theme === 'light' ? 'text-slate-700' : 'text-slate-200'}`}>
                             {t('common.location')}
                         </p>
-                        <p className={`text-xs mt-1 max-w-xs ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
+                        <p className={`text-xs mt-1 leading-relaxed ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}`}>
                             {t('profile.locationDesc')}
                         </p>
                     </div>
                     {/* Basit Toggle Switch */}
                     <button
                         onClick={() => handleToggleLocation(!locationEnabled)}
-                        className={`w-14 h-8 flex items-center bg-gray-300 rounded-full p-1 transition-all duration-300 
+                        className={`w-14 h-8 shrink-0 flex items-center bg-gray-300 rounded-full p-1 transition-all duration-300 
                             ${locationEnabled ? 'bg-emerald-500' : (theme === 'dark' ? 'bg-white/10' : 'bg-slate-300')}
                         `}
                     >

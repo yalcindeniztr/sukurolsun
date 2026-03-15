@@ -12,7 +12,7 @@ import ExtrasView from '../features/extras/ExtrasView';
 import ReligiousDaysView from '../features/religious_days/ReligiousDaysView';
 import PrayerTimesView from '../features/prayer_times/PrayerTimesView';
 import TesbihatView from '../features/tesbihat/TesbihatView';
-import ReligiousPlacesView from '../features/places/ReligiousPlacesView';
+import SpiritualStopsView from '../features/spiritual_stops/SpiritualStopsView';
 import PinLockScreen from '../components/PinLockScreen';
 import UserAgreement from '../components/UserAgreement';
 import Toast from '../components/ui/Toast';
@@ -155,7 +155,7 @@ const RootNavigator: React.FC = () => {
         {activeTab === 'religious_days' && <ReligiousDaysView />}
         {activeTab === 'prayer_times' && <PrayerTimesView profile={profile} />}
         {activeTab === 'tesbihat' && <TesbihatView />}
-        {activeTab === 'places' && <ReligiousPlacesView />}
+        {activeTab === 'manevi_duraklar' && <SpiritualStopsView />}
 
         {activeTab === 'profile' && (
           <div className="animate-fadeIn">

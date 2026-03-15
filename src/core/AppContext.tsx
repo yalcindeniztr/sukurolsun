@@ -3,6 +3,7 @@ import { storageService } from '../services/storage.service';
 import { gamificationService } from '../services/gamification.service';
 import { AdMobService } from '../services/AdMobService';
 import { ReviewService } from '../services/ReviewService';
+import { notificationService } from '../services/NotificationService';
 import { UserProfile, JournalEntry, CustomPrayer, UserMessage } from './types';
 import { DEFAULT_PROFILE } from '../constants';
 
@@ -81,6 +82,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setUserMessages(loadedMessages);
 
         await AdMobService.initialize();
+        await notificationService.init();
         ReviewService.trackFirstOpen();
       } catch (error) {
         console.error("App init error:", error);

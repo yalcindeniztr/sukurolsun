@@ -98,22 +98,24 @@ export class AdMobService {
         }
     }
 
-    private static pageViewCounter = 0;
+    private static lastInterstitialTime = 0;
     private static saveActionCounter = 0;
 
-    private static readonly PAGE_VIEW_CAP = 3;
+    private static readonly AD_COOLDOWN_MS = 2 * 60 * 1000; // 2 Dakika
     private static readonly SAVE_ACTION_CAP = 2;
 
     static async trackPageViewAndShowInterstitial(): Promise<void> {
-        this.pageViewCounter++;
-
-        if (this.pageViewCounter % this.PAGE_VIEW_CAP === 0) {
+        const now = Date.now();
+        
+        // 2 dakikalık cooldown kontrolü
+        if (now - this.lastInterstitialTime > this.AD_COOLDOWN_MS) {
             try {
                 await AdMob.prepareInterstitial({
                     adId: this.INTERSTITIAL_ID,
-                    isTesting: !this.IS_PRODUCTION
+                    isTesting: false
                 });
                 await AdMob.showInterstitial();
+                this.lastInterstitialTime = now;
             } catch {
                 // Sessiz hata
             }
@@ -127,9 +129,10 @@ export class AdMobService {
             try {
                 await AdMob.prepareInterstitial({
                     adId: this.INTERSTITIAL_ID,
-                    isTesting: !this.IS_PRODUCTION
+                    isTesting: false
                 });
                 await AdMob.showInterstitial();
+                this.lastInterstitialTime = Date.now(); // Sayaçlı reklam da cooldown'u sıfırlasın
             } catch {
                 // Sessiz hata
             }

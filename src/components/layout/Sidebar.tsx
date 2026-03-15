@@ -20,7 +20,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
         { id: 'dua', label: t('nav.duas'), icon: Heart },
         { id: 'tesbihat', label: t('nav.tesbihat'), icon: Activity },
         { id: 'prayer_times', label: t('nav.prayerTimes'), icon: Clock },
-        { id: 'places', label: t('nav.places'), icon: Map },
+        { id: 'manevi_duraklar', label: t('maneviDuraklar' as any), icon: Map },
         { id: 'extras', label: t('nav.messages'), icon: Gift },
         { id: 'religious_days', label: t('nav.religiousDays'), icon: Calendar },
         { id: 'history', label: t('nav.archive'), icon: BookOpen },

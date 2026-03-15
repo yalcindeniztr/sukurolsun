@@ -134,7 +134,10 @@ export const translations = {
       removePinConfirm: "PIN korumasını kaldırmak istediğinize emin misiniz?",
       newPin: "Yeni PIN",
       confirmPin: "PIN Onayla",
-      savePin: "PIN'i Kaydet"
+      savePin: "PIN'i Kaydet",
+      avatarSelect: "Bir Profil Resmi Seçin",
+      pinSecurityDesc: "Kişisel verilerinizi 4 haneli bir şifre ile koruyun.",
+      backupDesc: "Verilerinizi güvende tutmak için düzenli yedek alın.",
     },
     prayer: {
       title: "Namaz & Oruç Vakitleri",
@@ -158,6 +161,16 @@ export const translations = {
       visitingHours: "Ziyaret Saatleri",
       viewDetails: "Detayları Gör",
       noResults: "Aradığınız kriterlere uygun mekan bulunamadı."
+    },
+    maneviDuraklar: "Manevi Duraklar",
+    spiritualStops: {
+      title: "Manevi Duraklar",
+      addNew: "Yeni Mekan Ekle",
+      namePlaceholder: "Mekan İsmi",
+      cityPlaceholder: "Şehir",
+      descPlaceholder: "Kısa Açıklama",
+      recommended: "ÖNERİLEN DURAK",
+      userAdded: "SİZİN EKLEMENİZ"
     },
     agreement: {
       title: "Kullanım Koşulları",
@@ -399,7 +412,10 @@ export const translations = {
       removePinConfirm: "Are you sure you want to remove PIN protection?",
       newPin: "New PIN",
       confirmPin: "Confirm PIN",
-      savePin: "Save PIN"
+      savePin: "Save PIN",
+      avatarSelect: "Choose a Profile Picture",
+      pinSecurityDesc: "Protect your personal data with a 4-digit PIN.",
+      backupDesc: "Take regular backups to keep your data safe.",
     },
     prayer: {
       title: "Prayer & Fasting Times",
@@ -527,7 +543,17 @@ export const translations = {
       visitingHours: "Visiting Hours",
       viewDetails: "View Details",
       noResults: "No places found matching your criteria."
-    }
+    },
+    maneviDuraklar: "Spiritual Stops",
+    spiritualStops: {
+      title: "Spiritual Stops",
+      addNew: "Add New Place",
+      namePlaceholder: "Place Name",
+      cityPlaceholder: "City",
+      descPlaceholder: "Short Description",
+      recommended: "RECOMMENDED STOP",
+      userAdded: "USER ADDED"
+    },
   }
 };
 

@@ -169,6 +169,34 @@ class StorageService {
     }
   }
 
+  // ===== Manevi Duraklar (Spiritual Stops) =====
+  async getCustomStops(): Promise<any[]> {
+    try {
+        const data = await storage.get('custom_spiritual_stops');
+        return data ? JSON.parse(data) : [];
+    } catch {
+        return [];
+    }
+  }
+
+  async addCustomStop(stop: any): Promise<void> {
+    try {
+        const current = await this.getCustomStops();
+        await storage.set('custom_spiritual_stops', JSON.stringify([...current, stop]));
+    } catch {
+        // Sessiz hata
+    }
+  }
+
+  async deleteCustomStop(id: string): Promise<void> {
+    try {
+        const current = await this.getCustomStops();
+        await storage.set('custom_spiritual_stops', JSON.stringify(current.filter((s: any) => s.id !== id)));
+    } catch {
+        // Sessiz hata
+    }
+  }
+
   // ===== Custom Prayers =====
   async getCustomPrayers(): Promise<CustomPrayer[]> {
     try {
