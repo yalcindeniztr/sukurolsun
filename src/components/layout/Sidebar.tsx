@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Home, BookOpen, Heart, Gift, User, Share2, Star, Clock, Activity, Map, DownloadCloud, LogOut } from 'lucide-react';
+import { Home, BookOpen, Heart, Gift, User, Share2, Star, Clock, Activity, Map, DownloadCloud, LogOut, ShieldCheck } from 'lucide-react';
 import { Share } from '@capacitor/share';
 import { ReviewService } from '../../services/ReviewService';
 import { App as CapacitorApp } from '@capacitor/app';
@@ -67,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                 </div>
 
                 {/* Navigation - Scrollable Area */}
-                <nav className="px-3 flex-1 overflow-y-auto overflow-x-hidden space-y-1 pb-28 custom-scrollbar">
+                <nav className="px-3 flex-1 overflow-y-auto overflow-x-hidden space-y-1 pb-32 custom-scrollbar">
                     {navItems.map((item) => {
                         const isActive = activeTab === item.id;
                         const Icon = item.icon;
@@ -93,6 +93,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                     })}
 
                     <div className="h-4" /> {/* Spacer */}
+
+                    {/* Privacy Policy */}
+                    <button
+                        onClick={() => window.open('/privacy-policy.html', '_blank')}
+                        className="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 active:bg-slate-200"
+                    >
+                        <ShieldCheck className="w-5 h-5 text-slate-400 dark:text-slate-500 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors" />
+                        <span className="text-sm font-medium">{t('common.privacyPolicy')}</span>
+                    </button>
 
                     {/* Share Button (Special item) */}
                     <button
@@ -164,7 +173,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                 <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-white via-white dark:from-slate-900 dark:via-slate-900 to-transparent">
                     <div className="flex flex-col items-center justify-center">
                         <p className="text-[10px] font-bold tracking-widest uppercase text-emerald-600 dark:text-emerald-500 mb-0.5">by ziberkan</p>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.6.0</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.7.0</p>
                     </div>
                 </div>
             </div>

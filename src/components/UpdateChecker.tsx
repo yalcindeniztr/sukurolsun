@@ -4,9 +4,9 @@ import { useTheme } from '../core/ThemeContext';
 import { ReviewService } from '../services/ReviewService';
 
 // Mevcut versiyon
-const CURRENT_VERSION = '1.6.0';
+const CURRENT_VERSION = '1.7.0';
 // En güncel versiyon bilgisi
-const LATEST_VERSION = '1.6.0';
+const LATEST_VERSION = '1.7.0';
 
 const UpdateChecker: React.FC = () => {
     const { theme } = useTheme();

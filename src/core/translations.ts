@@ -45,7 +45,8 @@ export const translations = {
       add: "Yeni Ekle",
       userAdded: "SİZİN EKLEMENİZ",
       recommended: "ÖNERİLEN DURAK",
-      noResults: "Sonuç bulunamadı."
+      noResults: "Sonuç bulunamadı.",
+      privacyPolicy: "Gizlilik Politikası"
     },
     nav: {
       home: "Ana Sayfa",
@@ -349,7 +350,8 @@ export const translations = {
       add: "Add New",
       userAdded: "YOUR ADDITION",
       recommended: "RECOMMENDED STOP",
-      noResults: "No results found."
+      noResults: "No results found.",
+      privacyPolicy: "Privacy Policy"
     },
     nav: {
       home: "Home",
