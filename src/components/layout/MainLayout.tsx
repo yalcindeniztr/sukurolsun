@@ -95,6 +95,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
                         <button
                             onClick={() => setIsSidebarOpen(true)}
                             className="p-2.5 rounded-2xl bg-white/50 border border-emerald-50 dark:border-white/5 shadow-sm text-slate-500 hover:text-emerald-600 active:scale-95 transition-all"
+                            title={t('nav.home') || 'Menü'}
+                            aria-label="Menü"
                         >
                             <Menu className="w-5 h-5" />
                         </button>
@@ -120,14 +122,18 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
                     {/* Sağ - Aksiyonlar */}
                     <div className="flex justify-end items-center gap-1.5">
                         <button
-                            onClick={() => window.history.length > 2 ? window.history.back() : onTabChange('home')}
+                            onClick={() => window.history.length > 2 ? window.history.back() : onTabChange('prayer_times')}
                             className="p-2 rounded-xl bg-white/50 border border-emerald-50 dark:border-white/5 shadow-sm text-emerald-600 active:scale-95 transition-all"
+                            title="Geri"
+                            aria-label="Geri Dön"
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </button>
                         <button
-                            onClick={() => onTabChange('home')}
+                            onClick={() => onTabChange('prayer_times')}
                             className="p-2 rounded-xl bg-white/50 border border-emerald-50 dark:border-white/5 shadow-sm text-emerald-600 active:scale-95 transition-all"
+                            title="Ana Sayfa"
+                            aria-label="Ana Sayfaya Git"
                         >
                             <Home className="w-5 h-5" />
                         </button>

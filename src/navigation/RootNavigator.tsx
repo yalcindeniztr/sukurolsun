@@ -3,8 +3,6 @@ import { useApp } from '../core/AppContext';
 import MainLayout from '../components/layout/MainLayout';
 import { useLanguage } from '../core/LanguageContext';
 import { useTheme } from '../core/ThemeContext';
-import VerseBanner from '../features/journal/VerseBanner';
-import JournalEntryForm from '../features/journal/JournalEntryForm';
 import JournalHistory from '../features/journal/JournalHistory';
 import ProfileView from '../features/profile/ProfileView';
 import DuaView from '../features/dua/DuaView';
@@ -12,6 +10,9 @@ import ExtrasView from '../features/extras/ExtrasView';
 import PrayerTimesView from '../features/prayer_times/PrayerTimesView';
 import TesbihatView from '../features/tesbihat/TesbihatView';
 import SpiritualStopsView from '../features/spiritual_stops/SpiritualStopsView';
+import SukurVaktiView from '../features/sukur_vakti/SukurVaktiView';
+import BanaHatirlatView from '../features/bana_hatirlat/BanaHatirlatView';
+import OrucZamaniView from '../features/oruc_zamani/OrucZamaniView';
 import PinLockScreen from '../components/PinLockScreen';
 import UserAgreement from '../components/UserAgreement';
 import Toast from '../components/ui/Toast';
@@ -22,10 +23,10 @@ import { storageService } from '../services/storage.service';
 
 const RootNavigator: React.FC = () => {
   const {
-    profile, entries, combinedHistory, selectedEntry, activeTab, 
+    profile, entries, combinedHistory, activeTab, 
     isLoading, isLocked, showAgreement, toast, showReviewModal,
     setActiveTab, setSelectedEntry, setToast, setShowReviewModal, setIsLocked,
-    handleSaveEntry, handleDeleteEntry, handleToggleFavorite, handleUpdateProfile, handleAgreementAccept
+    handleDeleteEntry, handleToggleFavorite, handleUpdateProfile, handleAgreementAccept
   } = useApp();
   const { t } = useLanguage();
   const { theme } = useTheme();
@@ -90,35 +91,10 @@ const RootNavigator: React.FC = () => {
       )}
 
       <div className="space-y-6">
-        {activeTab === 'home' && (
-          <>
-            <VerseBanner />
-            <JournalEntryForm
-              onSave={handleSaveEntry}
-              selectedEntry={selectedEntry}
-              onCancel={() => setSelectedEntry(undefined)}
-            />
-            {entries.length > 0 && (
-              <div className="mt-6">
-                <JournalHistory
-                  entries={entries.slice(0, 3)}
-                  onDelete={handleDeleteEntry}
-                  onEdit={handleSelectEntry}
-                  onToggleFavorite={handleToggleFavorite}
-                  showFilters={false}
-                />
-                {entries.length > 3 && (
-                  <button
-                    onClick={() => setActiveTab('history')}
-                    className="w-full mt-4 py-3 text-sm text-slate-400 hover:text-emerald-400 transition-colors border border-white/10 rounded-xl hover:bg-white/5"
-                  >
-                    {t('common.viewAllHistory')} ({entries.length}) →
-                  </button>
-                )}
-              </div>
-            )}
-          </>
-        )}
+        {activeTab === 'prayer_times' && <PrayerTimesView profile={profile} />}
+        {activeTab === 'sukur_vakti' && <SukurVaktiView />}
+        {activeTab === 'bana_hatirlat' && <BanaHatirlatView />}
+        {activeTab === 'oruc_zamani' && <OrucZamaniView />}
 
         {activeTab === 'history' && (
           <div className="animate-fadeIn">
@@ -151,7 +127,6 @@ const RootNavigator: React.FC = () => {
 
         {activeTab === 'dua' && <DuaView />}
         {activeTab === 'extras' && <ExtrasView />}
-        {activeTab === 'prayer_times' && <PrayerTimesView profile={profile} />}
         {activeTab === 'tesbihat' && <TesbihatView />}
         {activeTab === 'manevi_duraklar' && <SpiritualStopsView />}
 

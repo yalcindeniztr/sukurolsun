@@ -97,4 +97,35 @@ export class PrayerTimeService {
             throw error;
         }
     }
+
+    /**
+     * Aylık namaz vakitlerini getirir (Aladhan API calendarByCity)
+     */
+    static async getMonthlyTimes(city: string, month: number, year: number, country: string = 'Turkey'): Promise<PrayerTimesData[]> {
+        try {
+            const response = await axios.get(`${this.API_URL}ByCity/${year}/${month}`, {
+                params: {
+                    city,
+                    country,
+                    method: 13
+                }
+            });
+
+            const data = response.data.data;
+            return data.map((day: any) => ({
+                imsak: day.timings.Imsak,
+                gunes: day.timings.Sunrise,
+                ogle: day.timings.Dhuhr,
+                ikindi: day.timings.Asr,
+                aksam: day.timings.Maghrib,
+                yatsi: day.timings.Isha,
+                date: day.date.readable,
+                city: city,
+                country: country,
+            }));
+        } catch (error) {
+            console.error('Aylık verisi alınırken hata:', error);
+            throw error;
+        }
+    }
 }

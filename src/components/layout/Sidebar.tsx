@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Home, BookOpen, Heart, Gift, User, Share2, Star, Clock, Activity, Map, DownloadCloud, LogOut, ShieldCheck } from 'lucide-react';
+import { BookOpen, Heart, Gift, User, Share2, Star, Clock, Activity, Map, DownloadCloud, LogOut, ShieldCheck, Bell, Sun } from 'lucide-react';
 import { Share } from '@capacitor/share';
 import { ReviewService } from '../../services/ReviewService';
 import { App as CapacitorApp } from '@capacitor/app';
@@ -16,12 +16,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
     const { t } = useLanguage();
 
     const navItems = [
-        { id: 'home', label: t('nav.home'), icon: Home },
-        { id: 'dua', label: t('nav.duas'), icon: Heart },
-        { id: 'tesbihat', label: t('nav.tesbihat'), icon: Activity },
         { id: 'prayer_times', label: t('nav.prayerTimes'), icon: Clock },
-        { id: 'manevi_duraklar', label: t('nav.maneviDuraklar'), icon: Map },
+        { id: 'tesbihat', label: t('nav.tesbihat'), icon: Activity },
+        { id: 'sukur_vakti', label: t('nav.sukurVakti') || 'Şükür Vakti', icon: Sun },
+        { id: 'bana_hatirlat', label: t('nav.banaHatirlat') || 'Bana Hatırlat', icon: Bell },
         { id: 'extras', label: t('nav.messages'), icon: Gift },
+        { id: 'dua', label: t('nav.duas'), icon: Heart },
+        { id: 'manevi_duraklar', label: t('nav.maneviDuraklar'), icon: Map },
         { id: 'history', label: t('nav.archive'), icon: BookOpen },
         { id: 'profile', label: t('nav.profile'), icon: User },
     ];
@@ -173,7 +174,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                 <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-white via-white dark:from-slate-900 dark:via-slate-900 to-transparent">
                     <div className="flex flex-col items-center justify-center">
                         <p className="text-[10px] font-bold tracking-widest uppercase text-emerald-600 dark:text-emerald-500 mb-0.5">by ziberkan</p>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.7.0</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.8.0</p>
                     </div>
                 </div>
             </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Navigation, Clock, Sunrise, Sun, Sunset, Moon, Activity } from 'lucide-react';
+import { MapPin, Navigation, Clock, Sunrise, Sun, Sunset, Moon, Activity, Bell, Save } from 'lucide-react';
 import { useTheme } from '../../core/ThemeContext';
 import { PrayerTimeService, PrayerTimesData } from '../../services/PrayerTimeService';
 
@@ -26,6 +26,37 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
     const [error, setError] = useState<string | null>(null);
     const [times, setTimes] = useState<PrayerTimesData | null>(null);
     const [selectedCity, setSelectedCity] = useState('İstanbul');
+    const [selectedDistrict, setSelectedDistrict] = useState('');
+    const [savedCity, setSavedCity] = useState<string | null>(null);
+    const [reminderSettings, setReminderSettings] = useState({
+        imsak: false,
+        gunes: false,
+        ogle: false,
+        ikindi: false,
+        aksam: false,
+        yatsi: false,
+    });
+
+    // Kaydedilmiş ayarları yükle
+    useEffect(() => {
+        const loadSettings = () => {
+            const city = localStorage.getItem('prayer_city');
+            const district = localStorage.getItem('prayer_district');
+            const reminders = localStorage.getItem('prayer_reminders');
+            if (city) {
+                setSavedCity(city);
+                setSelectedCity(city);
+                fetchByCity(city);
+            }
+            if (district) {
+                setSelectedDistrict(district);
+            }
+            if (reminders) {
+                setReminderSettings(JSON.parse(reminders));
+            }
+        };
+        loadSettings();
+    }, []);
 
     const fetchByLocation = async () => {
         if (profile && profile.locationEnabled === false) {
@@ -38,8 +69,17 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
         try {
             const data = await PrayerTimeService.getTimesByLocation();
             setTimes(data);
+            
+            // Başarılı olursa konumu otomatik kaydet
+            if (data.city) {
+                localStorage.setItem('prayer_city', data.city);
+                setSavedCity(data.city);
+                setSelectedCity(data.city);
+                console.log('Konum otomatik olarak kaydedildi:', data.city);
+            }
         } catch (err: any) {
-            setError(err.message || 'Konum alınırken bir hata oluştu.');
+            console.error('Konum hatası:', err);
+            setError(err.message || 'Konum alınırken bir hata oluştu. Lütfen cihazınızın konum servislerinin açık olduğundan emin olun.');
         } finally {
             setLoading(false);
         }
@@ -59,18 +99,57 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
         }
     };
 
+    const handleSaveLocation = () => {
+        localStorage.setItem('prayer_city', selectedCity);
+        localStorage.setItem('prayer_district', selectedDistrict);
+        setSavedCity(selectedCity);
+        alert('Konum kaydedildi!');
+    };
+
+    const toggleReminder = (prayer: keyof typeof reminderSettings) => {
+        const newSettings = { ...reminderSettings, [prayer]: !reminderSettings[prayer] };
+        setReminderSettings(newSettings);
+        localStorage.setItem('prayer_reminders', JSON.stringify(newSettings));
+        // Bildirim planlama fonksiyonu buraya eklenecek
+        if (newSettings[prayer] && times) {
+            // Bildirim planla
+            scheduleNotification(prayer, times[prayer]);
+        }
+    };
+
+    const scheduleNotification = (prayer: string, time: string) => {
+        // Bildirim planlama fonksiyonu (Local Notifications)
+        // Bu fonksiyon daha sonra implement edilecek
+        console.log(`Bildirim planlandı: ${prayer} - ${time}`);
+    };
+
     // İlk yüklemede seçili şehri getir
     useEffect(() => {
-        fetchByCity(selectedCity);
+        if (!savedCity) {
+            fetchByCity(selectedCity);
+        }
     }, []);
 
-    const TimeCard = ({ title, time, icon: Icon, isFastingRelated = false, highlightColor }: any) => (
+    const TimeCard = ({ title, time, icon: Icon, isFastingRelated = false, highlightColor, reminderEnabled, onToggleReminder }: any) => (
         <div className={`p-4 rounded-3xl border flex flex-col items-center justify-center gap-2 transition-all duration-300
             ${isFastingRelated
                 ? (theme === 'light' ? `bg-${highlightColor}-50 border-${highlightColor}-200 shadow-sm` : `bg-${highlightColor}-500/10 border-${highlightColor}-500/20`)
                 : (theme === 'light' ? 'bg-white/80 border-slate-200 shadow-sm' : 'bg-white/[0.03] border-white/5')}
         `}>
-            <Icon className={`w-6 h-6 ${isFastingRelated ? `text-${highlightColor}-600 dark:text-${highlightColor}-400` : 'text-slate-500'}`} />
+            <div className="flex items-center gap-2">
+                <Icon className={`w-6 h-6 ${isFastingRelated ? `text-${highlightColor}-600 dark:text-${highlightColor}-400` : 'text-slate-500'}`} />
+                <button
+                    onClick={onToggleReminder}
+                    className={`p-1.5 rounded-full transition-all ${
+                        reminderEnabled
+                            ? 'bg-emerald-500 text-white shadow-lg'
+                            : 'bg-slate-200 text-slate-400'
+                    }`}
+                    title={reminderEnabled ? 'Hatırlatma Açık' : 'Hatırlatma Kapalı'}
+                >
+                    <Bell className="w-4 h-4" />
+                </button>
+            </div>
             <div className="text-center">
                 <p className={`text-[11px] font-bold uppercase tracking-wider mb-1
                     ${isFastingRelated ? `text-${highlightColor}-600 dark:text-${highlightColor}-400` : 'text-slate-400'}
@@ -136,6 +215,8 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
                             value={selectedCity}
                             onChange={(e) => fetchByCity(e.target.value)}
                             disabled={loading}
+                            title="Şehir Seçin"
+                            aria-label="Şehir Seçin"
                             className={`flex-1 p-3.5 rounded-2xl border font-medium outline-none transition-all
                                 ${theme === 'light'
                                     ? 'bg-slate-50 border-slate-200 text-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
@@ -146,6 +227,34 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
                             ))}
                         </select>
                     </div>
+
+                    {/* İlçe Seçimi */}
+                    <div className="flex items-center gap-3">
+                        <MapPin className={`w-6 h-6 shrink-0 ${theme === 'light' ? 'text-slate-400' : 'text-slate-500'}`} />
+                        <input
+                            type="text"
+                            value={selectedDistrict}
+                            onChange={(e) => setSelectedDistrict(e.target.value)}
+                            placeholder="İlçe (Opsiyonel)"
+                            className={`flex-1 p-3.5 rounded-2xl border font-medium outline-none transition-all
+                                ${theme === 'light'
+                                    ? 'bg-slate-50 border-slate-200 text-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
+                                    : 'bg-black/20 border-white/10 text-white focus:border-emerald-500'}`}
+                        />
+                    </div>
+
+                    {/* Kaydet Butonu */}
+                    <button
+                        onClick={handleSaveLocation}
+                        disabled={loading}
+                        className={`flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl font-bold transition-all active:scale-[0.98]
+                            ${theme === 'light'
+                                ? 'bg-blue-500 hover:bg-blue-600 text-white shadow-md shadow-blue-500/20'
+                                : 'bg-blue-600 hover:bg-blue-500 text-white'}`}
+                    >
+                        <Save className="w-5 h-5" />
+                        Kaydet
+                    </button>
                 </div>
 
                 {error && (
@@ -165,12 +274,52 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
                     </div>
 
                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-                        <TimeCard title="İmsak" time={times.imsak} icon={Sunrise} isFastingRelated={true} highlightColor="emerald" />
-                        <TimeCard title="Güneş" time={times.gunes} icon={Sun} />
-                        <TimeCard title="Öğle" time={times.ogle} icon={Sun} />
-                        <TimeCard title="İkindi" time={times.ikindi} icon={Sun} />
-                        <TimeCard title="Akşam" time={times.aksam} icon={Sunset} isFastingRelated={true} highlightColor="orange" />
-                        <TimeCard title="Yatsı" time={times.yatsi} icon={Moon} />
+                        <TimeCard 
+                            title="İmsak" 
+                            time={times.imsak} 
+                            icon={Sunrise} 
+                            isFastingRelated={true} 
+                            highlightColor="emerald"
+                            reminderEnabled={reminderSettings.imsak}
+                            onToggleReminder={() => toggleReminder('imsak')}
+                        />
+                        <TimeCard 
+                            title="Güneş" 
+                            time={times.gunes} 
+                            icon={Sun}
+                            reminderEnabled={reminderSettings.gunes}
+                            onToggleReminder={() => toggleReminder('gunes')}
+                        />
+                        <TimeCard 
+                            title="Öğle" 
+                            time={times.ogle} 
+                            icon={Sun}
+                            reminderEnabled={reminderSettings.ogle}
+                            onToggleReminder={() => toggleReminder('ogle')}
+                        />
+                        <TimeCard 
+                            title="İkindi" 
+                            time={times.ikindi} 
+                            icon={Sun}
+                            reminderEnabled={reminderSettings.ikindi}
+                            onToggleReminder={() => toggleReminder('ikindi')}
+                        />
+                        <TimeCard 
+                            title="Akşam" 
+                            time={times.aksam} 
+                            icon={Sunset} 
+                            isFastingRelated={true} 
+                            highlightColor="orange"
+                            reminderEnabled={reminderSettings.aksam}
+                            onToggleReminder={() => toggleReminder('aksam')}
+                        />
+                        <TimeCard 
+                            title="Yatsı" 
+                            time={times.yatsi} 
+                            icon={Moon}
+                            reminderEnabled={reminderSettings.yatsi}
+                            onToggleReminder={() => toggleReminder('yatsi')}
+                        />
                     </div>
 
                     <div className={`p-4 mt-6 rounded-2xl text-center text-xs
