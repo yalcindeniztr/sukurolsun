@@ -48,8 +48,7 @@ export const translations = {
       noResults: "Sonuç bulunamadı.",
       privacyPolicy: "Gizlilik Politikası"
     },
-    nav: {
-      home: "Ana Sayfa",
+    tabs: {
       archive: "Arşiv",
       duas: "Dua Hazinesi",
       tesbihat: "Tesbihat",
@@ -57,10 +56,14 @@ export const translations = {
       maneviDuraklar: "Manevi Duraklar",
       messages: "Günün Mesajı",
       prayerTimes: "Ezan Vakitleri",
+      orucZamani: "Oruç Vakti",
       sukurVakti: "Şükür Vakti",
       banaHatirlat: "Bana Hatırlat",
       profile: "Profilim",
       agreement: "Kullanım Koşulları",
+      home: "Ana Sayfa",
+      prayerReminder: "Namaz Hatırlatıcısı",
+      fastingReminder: "Oruç Hatırlatıcısı",
     },
     home: {
       verseTitle: "Günün Ayet-i Kerimesi",
@@ -178,6 +181,9 @@ export const translations = {
       ikindi: "İkindi",
       aksam: "Akşam",
       yatsi: "Yatsı",
+      reminderSet: "Hatırlatıcı kuruldu: 5 dakika kala",
+      reminderRemoved: "Hatırlatıcı iptal edildi",
+      saveSuccess: "Konum başarıyla kaydedildi",
     },
     places: {
       title: "Mübarek Yerler Rehberi",
@@ -355,8 +361,7 @@ export const translations = {
       noResults: "No results found.",
       privacyPolicy: "Privacy Policy"
     },
-    nav: {
-      home: "Home",
+    tabs: {
       archive: "Archive",
       duas: "Dua Treasure",
       tesbihat: "Tasbih",
@@ -364,10 +369,14 @@ export const translations = {
       maneviDuraklar: "Spiritual Stops",
       messages: "Daily Messages",
       prayerTimes: "Prayer Times",
+      orucZamani: "Fasting Time",
       sukurVakti: "Shukur Time",
       banaHatirlat: "Remind Me",
       profile: "Profile",
       agreement: "Terms of Use",
+      home: "Home",
+      prayerReminder: "Prayer Reminder",
+      fastingReminder: "Fasting Reminder",
     },
     home: {
       verseTitle: "Verse of the Day",
@@ -477,6 +486,9 @@ export const translations = {
       ikindi: "Asr",
       aksam: "Maghrib",
       yatsi: "Isha",
+      reminderSet: "Reminder set: 5 minutes before",
+      reminderRemoved: "Reminder removed",
+      saveSuccess: "Location saved successfully",
     },
     agreement: {
       title: "Terms of Use",
@@ -597,13 +609,7 @@ export const translations = {
     maneviDuraklar: "Spiritual Stops",
     spiritualStops: {
       title: "Spiritual Stops",
-      addNew: "Add New Place",
-      namePlaceholder: "Place Name",
-      cityPlaceholder: "City",
-      descPlaceholder: "Short Description",
-      recommended: "RECOMMENDED STOP",
-      userAdded: "USER ADDED"
-    },
+    }
   }
 };
 

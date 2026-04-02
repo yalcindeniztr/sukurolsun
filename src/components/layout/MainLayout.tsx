@@ -34,15 +34,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
 
     const { bgImage } = useTheme();
 
-    const getBackgroundStyle = () => {
-        if (bgImage === 'kabe') return { backgroundImage: 'url(/assets/themes/kabe.png)', backgroundSize: 'cover', backgroundAttachment: 'fixed', backgroundPosition: 'center' };
-        if (bgImage === 'nebevi') return { backgroundImage: 'url(/assets/themes/nebevi.png)', backgroundSize: 'cover', backgroundAttachment: 'fixed', backgroundPosition: 'center' };
-        if (bgImage === 'nature') return { backgroundImage: 'url(/assets/themes/nature.png)', backgroundSize: 'cover', backgroundAttachment: 'fixed', backgroundPosition: 'center' };
-        return {}; // default
-    };
-
     return (
-        <div className="min-h-screen w-full relative overflow-x-hidden bg-[#f0fdf4] text-slate-800" style={getBackgroundStyle()}>
+        <div className="min-h-screen w-full relative overflow-x-hidden bg-[#f0fdf4] text-slate-800 theme-bg" data-theme-bg={bgImage}>
 
             {/* Dekoratif Arka Plan (Sadece Default temada belirgin) */}
             {bgImage === 'default' && (

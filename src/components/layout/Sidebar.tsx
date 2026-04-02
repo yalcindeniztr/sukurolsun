@@ -1,5 +1,9 @@
 import React, { useEffect } from 'react';
-import { BookOpen, Heart, Gift, User, Share2, Star, Clock, Activity, Map, DownloadCloud, LogOut, ShieldCheck, Bell, Sun } from 'lucide-react';
+import { 
+    Clock, Heart, Archive, BookOpen, Circle, 
+    Compass, MessageSquare, User, Sunrise,
+    Share2, Star, DownloadCloud, LogOut, ShieldCheck, Bell
+} from 'lucide-react';
 import { Share } from '@capacitor/share';
 import { ReviewService } from '../../services/ReviewService';
 import { App as CapacitorApp } from '@capacitor/app';
@@ -16,15 +20,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
     const { t } = useLanguage();
 
     const navItems = [
-        { id: 'prayer_times', label: t('nav.prayerTimes'), icon: Clock },
-        { id: 'tesbihat', label: t('nav.tesbihat'), icon: Activity },
-        { id: 'sukur_vakti', label: t('nav.sukurVakti') || 'Şükür Vakti', icon: Sun },
-        { id: 'bana_hatirlat', label: t('nav.banaHatirlat') || 'Bana Hatırlat', icon: Bell },
-        { id: 'extras', label: t('nav.messages'), icon: Gift },
-        { id: 'dua', label: t('nav.duas'), icon: Heart },
-        { id: 'manevi_duraklar', label: t('nav.maneviDuraklar'), icon: Map },
-        { id: 'history', label: t('nav.archive'), icon: BookOpen },
-        { id: 'profile', label: t('nav.profile'), icon: User },
+        { id: 'prayer_times', label: t('tabs.prayerTimes'), icon: Clock },
+        { id: 'tesbihat', label: t('tabs.tesbihat'), icon: Circle },
+        { id: 'bana_hatirlat', label: t('tabs.banaHatirlat'), icon: Bell },
+        { id: 'sukur_vakti', label: t('tabs.sukurVakti'), icon: Heart },
+        { id: 'dua', label: t('tabs.duas'), icon: BookOpen },
+        { id: 'oruc_zamani', label: t('tabs.orucZamani'), icon: Sunrise },
+        { id: 'extras', label: t('tabs.messages'), icon: MessageSquare },
+        { id: 'manevi_duraklar', label: t('tabs.maneviDuraklar'), icon: Compass },
+        { id: 'profile', label: t('tabs.profile'), icon: User },
+        { id: 'history', label: t('tabs.archive'), icon: Archive },
     ];
 
     // Body scroll lock
@@ -49,13 +54,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
             {/* Panel */}
             <div
                 className={`fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]
-                    ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+                    ${isOpen ? 'translate-x-0 shadow-[10px_0_40px_-10px_rgba(0,0,0,0.1),20px_0_60px_-15px_rgba(0,0,0,0.05)]' : '-translate-x-full shadow-none'}
                     bg-white/90 dark:bg-slate-900/90 backdrop-blur-3xl border-r border-slate-200/50 dark:border-white/10`}
-                style={{
-                    boxShadow: isOpen
-                        ? '10px 0 40px -10px rgba(0,0,0,0.1), 20px 0 60px -15px rgba(0,0,0,0.05)'
-                        : 'none'
-                }}
             >
                 {/* Header */}
                 <div className="pt-10 pb-6 px-6">
@@ -76,7 +76,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                         return (
                             <button
                                 key={item.id}
-                                onClick={() => onTabChange(item.id)}
+                                onClick={() => {
+                                    onTabChange(item.id);
+                                    onClose();
+                                }}
                                 className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group
                                     ${isActive
                                         ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20 active:scale-95'
@@ -174,7 +177,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                 <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-white via-white dark:from-slate-900 dark:via-slate-900 to-transparent">
                     <div className="flex flex-col items-center justify-center">
                         <p className="text-[10px] font-bold tracking-widest uppercase text-emerald-600 dark:text-emerald-500 mb-0.5">by ziberkan</p>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.8.0</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.8.1</p>
                     </div>
                 </div>
             </div>

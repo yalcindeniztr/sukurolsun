@@ -14,6 +14,9 @@ const STORAGE_KEYS = {
   RELIGIOUS_DAYS: 'sukur_religious_days',
   RELIGIOUS_DAY_ITEMS: 'sukur_religious_day_items',
   HIDDEN_STATIC_MESSAGES: 'sukur_hidden_static_messages',
+  PRAYER_CITY: 'prayer_city',
+  PRAYER_DISTRICT: 'prayer_district',
+  PRAYER_REMINDERS: 'prayer_reminders',
 };
 
 /** Basit XSS temizleme fonksiyonu */

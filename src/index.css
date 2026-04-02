@@ -115,7 +115,29 @@
 
 .scrollbar-hide {
   -ms-overflow-style: none;
-  scrollbar-width: none;
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+.theme-bg[data-theme-bg="kabe"] {
+  background-image: url('/assets/themes/kabe.png') !important;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+.theme-bg[data-theme-bg="nebevi"] {
+  background-image: url('/assets/themes/nebevi.png') !important;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+.theme-bg[data-theme-bg="nature"] {
+  background-image: url('/assets/themes/nature.png') !important;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
 }
 
 ::-webkit-scrollbar {

@@ -38,4 +38,8 @@ export const AVATARS = [
   `${BASE}avatars/avatar_3.png`,
   `${BASE}avatars/avatar_4.png`,
   `${BASE}avatars/avatar_5.png`,
+  `${BASE}avatars/avatar_6.png`,
+  `${BASE}avatars/avatar_7.png`,
+  `${BASE}avatars/avatar_8.png`,
+  `${BASE}avatars/avatar_9.png`,
 ];

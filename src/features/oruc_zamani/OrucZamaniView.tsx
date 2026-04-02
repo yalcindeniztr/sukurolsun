@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MapPin, Calendar, Sunrise, Sunset, Clock, Activity, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTheme } from '../../core/ThemeContext';
 import { PrayerTimeService, PrayerTimesData } from '../../services/PrayerTimeService';
+import { Preferences } from '@capacitor/preferences';
 
 const TURKEY_CITIES = [
     "Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Amasya", "Ankara", "Antalya", "Artvin", "Aydın", "Balıkesir",
@@ -37,6 +38,16 @@ const OrucZamaniView: React.FC = () => {
         { value: 11, label: 'Kasım' },
         { value: 12, label: 'Aralık' },
     ];
+
+    useEffect(() => {
+        const loadInitialCity = async () => {
+            const { value: city } = await Preferences.get({ key: 'prayer_city' });
+            if (city) {
+                setSelectedCity(city);
+            }
+        };
+        loadInitialCity();
+    }, []);
 
     useEffect(() => {
         fetchMonthlyTimes();
@@ -113,8 +124,14 @@ const OrucZamaniView: React.FC = () => {
                         <MapPin className={`w-6 h-6 shrink-0 ${theme === 'light' ? 'text-slate-400' : 'text-slate-500'}`} />
                         <select
                             value={selectedCity}
-                            onChange={(e) => setSelectedCity(e.target.value)}
+                            onChange={async (e) => {
+                                const newCity = e.target.value;
+                                setSelectedCity(newCity);
+                                await Preferences.set({ key: 'prayer_city', value: newCity });
+                            }}
                             disabled={loading}
+                            title="Şehir Seçin"
+                            aria-label="Şehir Seçin"
                             className={`flex-1 p-3.5 rounded-2xl border font-medium outline-none transition-all
                                 ${theme === 'light'
                                     ? 'bg-slate-50 border-slate-200 text-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
@@ -132,6 +149,8 @@ const OrucZamaniView: React.FC = () => {
                             <button
                                 onClick={handlePrevMonth}
                                 disabled={loading}
+                                title="Önceki Ay"
+                                aria-label="Önceki Ay"
                                 className={`p-2 rounded-xl transition-all
                                     ${theme === 'light' ? 'hover:bg-slate-100' : 'hover:bg-white/10'}`}
                             >
@@ -141,6 +160,8 @@ const OrucZamaniView: React.FC = () => {
                                 value={selectedMonth}
                                 onChange={(e) => setSelectedMonth(Number(e.target.value))}
                                 disabled={loading}
+                                title="Ay Seçin"
+                                aria-label="Ay Seçin"
                                 className={`flex-1 p-3.5 rounded-2xl border font-medium outline-none transition-all
                                     ${theme === 'light'
                                         ? 'bg-slate-50 border-slate-200 text-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
@@ -153,6 +174,8 @@ const OrucZamaniView: React.FC = () => {
                             <button
                                 onClick={handleNextMonth}
                                 disabled={loading}
+                                title="Sonraki Ay"
+                                aria-label="Sonraki Ay"
                                 className={`p-2 rounded-xl transition-all
                                     ${theme === 'light' ? 'hover:bg-slate-100' : 'hover:bg-white/10'}`}
                             >

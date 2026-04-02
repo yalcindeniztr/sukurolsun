@@ -99,7 +99,7 @@ const RootNavigator: React.FC = () => {
         {activeTab === 'history' && (
           <div className="animate-fadeIn">
             <div className="flex justify-between items-center mb-6">
-              <h2 className={`text-2xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('nav.archive')}</h2>
+              <h2 className={`text-2xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('tabs.archive')}</h2>
               <button
                 onClick={async () => {
                   const result = await (storageService as any).createNativeBackup();
