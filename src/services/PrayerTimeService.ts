@@ -32,8 +32,8 @@ export class PrayerTimeService {
             }
 
             const position = await Geolocation.getCurrentPosition({
-                enableHighAccuracy: false,
-                timeout: 10000
+                enableHighAccuracy: true,
+                timeout: 20000
             });
 
             const { latitude, longitude } = position.coords;

@@ -105,6 +105,18 @@ export class NotificationService {
     }
 
     /**
+     * Bildirimleri açar veya kapatır
+     */
+    static async toggleNotifications(enabled: boolean) {
+        if (!Capacitor.isNativePlatform()) return;
+        if (enabled) {
+            await this.requestPermissions();
+        } else {
+            await this.cancelAll();
+        }
+    }
+
+    /**
      * Tüm hatırlatıcıları iptal eder
      */
     static async cancelAll() {
