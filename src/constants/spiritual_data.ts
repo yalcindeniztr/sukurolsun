@@ -9,6 +9,8 @@ export interface SpiritualStop {
     featuresTr: string;
     featuresEn: string;
     isCustom?: boolean;
+    imageUrl?: string;
+    googleMapsUrl?: string;
 }
 
 export const STATIC_STOPS: SpiritualStop[] = [

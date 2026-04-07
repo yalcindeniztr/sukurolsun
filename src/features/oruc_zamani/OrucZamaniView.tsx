@@ -49,13 +49,17 @@ const OrucZamaniView: React.FC = () => {
         setMonthlyTimes([]);
         try {
             const allYearData: PrayerTimesData[] = [];
-            // Paralel çekim yaparak hızı artırıyoruz
-            const months = Array.from({ length: 12 }, (_, i) => i + 1);
-            const rawResults = await Promise.all(
-                months.map(m => PrayerTimeService.getMonthlyTimes(selectedCity, m, selectedYear).catch(() => []))
-            );
-            
-            rawResults.forEach(data => allYearData.push(...data));
+            // Sıralı çekim yaparak Rate Limit (429) hatalarını engelliyoruz
+            for (let m = 1; m <= 12; m++) {
+                try {
+                    const data = await PrayerTimeService.getMonthlyTimes(selectedCity, m, selectedYear);
+                    allYearData.push(...data);
+                    // Sunucuyu yormamak için çok kısa bir bekleme
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                } catch (err) {
+                    console.error(`${m}. ay verisi alınamadı:`, err);
+                }
+            }
             setMonthlyTimes(allYearData);
         } catch (err: any) {
             setError(err.message || 'Veriler alınırken bir hata oluştu.');

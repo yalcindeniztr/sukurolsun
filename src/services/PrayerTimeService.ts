@@ -124,11 +124,12 @@ export class PrayerTimeService {
     }
 
     /**
-     * Aylık namaz vakitlerini getirir (Aladhan API calendarByCity)
+     * Aylık namaz vakitleri getirir (Aladhan API calendarByCity)
      */
     static async getMonthlyTimes(city: string, month: number, year: number, country: string = 'Turkey'): Promise<PrayerTimesData[]> {
         try {
-            const response = await axios.get(`${this.API_URL}ByCity/${year}/${month}`, {
+            // calendarByCity endpoint'i kullanılır
+            const response = await axios.get(`https://api.aladhan.com/v1/calendarByCity/${year}/${month}`, {
                 params: {
                     city,
                     country,

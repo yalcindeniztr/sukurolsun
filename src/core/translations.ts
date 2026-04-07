@@ -27,7 +27,7 @@ export const translations = {
       noData: "Veri bulunamadı",
       secureExit: "Güvenli Çıkış",
       notificationSettings: "Bildirim Ayarları",
-      shareApp: "Uygulamayı Paylaş",
+      shareApp: "Paylaş",
       appLatest: "Şu an en güncel sürümü kullanıyorsunuz.",
       exitConfirm: "Uygulamadan çıkmak istediğinize emin misiniz?",
       shareTitle: "Şükür Olsun",
@@ -198,12 +198,18 @@ export const translations = {
       noResults: "Aradığınız kriterlere uygun mekan bulunamadı."
     },
     maneviDuraklar: "Manevi Duraklar",
+    nav: {
+      maneviDuraklar: "Manevi Duraklar",
+    },
     spiritualStops: {
       title: "Manevi Duraklar",
       addNew: "Yeni Mekan Ekle",
       namePlaceholder: "Mekan İsmi",
       cityPlaceholder: "Şehir",
       descPlaceholder: "Kısa Açıklama",
+      imageLabel: "Resim Seç (Küçük)",
+      mapsLabel: "Google Haritalar Linki",
+      viewOnMap: "Haritada Gör",
       recommended: "ÖNERİLEN DURAK",
       userAdded: "SİZİN EKLEMENİZ"
     },
@@ -340,7 +346,7 @@ export const translations = {
       noData: "No data found",
       secureExit: "Secure Exit",
       notificationSettings: "Notification Settings",
-      shareApp: "Share App",
+      shareApp: "Share",
       appLatest: "You are currently using the latest version.",
       exitConfirm: "Are you sure you want to exit the app?",
       shareTitle: "Shukur Olsun",
@@ -607,9 +613,21 @@ export const translations = {
       noResults: "No places found matching your criteria."
     },
     maneviDuraklar: "Spiritual Stops",
+    nav: {
+      maneviDuraklar: "Spiritual Stops",
+    },
     spiritualStops: {
       title: "Spiritual Stops",
-    }
+      addNew: "Add New Place",
+      namePlaceholder: "Place Name",
+      cityPlaceholder: "City",
+      descPlaceholder: "Short Description",
+      imageLabel: "Select Image (Small)",
+      mapsLabel: "Google Maps Link",
+      viewOnMap: "View on Map",
+      recommended: "RECOMMENDED STOP",
+      userAdded: "YOUR ADDITION"
+    },
   }
 };
 
