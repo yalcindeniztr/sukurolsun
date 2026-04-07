@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Navigation, Clock, Sunrise, Sun, Sunset, Moon, Activity, Bell, Save, Check } from 'lucide-react';
+import { MapPin, Navigation, Clock, Sunrise, Sun, Sunset, Moon, Activity, Bell, Save } from 'lucide-react';
 import { useTheme } from '../../core/ThemeContext';
 import { PrayerTimeService, PrayerTimesData } from '../../services/PrayerTimeService';
 import { Preferences } from '@capacitor/preferences';
@@ -121,60 +121,84 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
         fetchByCity(selectedCity);
     };
 
+    const getPrayerId = (prayer: string) => {
+        const ids: Record<string, number> = { imsak: 100, gunes: 200, ogle: 300, ikindi: 400, aksam: 500, yatsi: 600 };
+        return ids[prayer] || 700;
+    };
+
     const toggleReminder = async (prayer: string) => {
-        const newSettings = { ...reminderSettings, [prayer]: !reminderSettings[prayer] };
+        const newState = !reminderSettings[prayer as keyof typeof reminderSettings];
+        const newSettings = { ...reminderSettings, [prayer]: newState };
         setReminderSettings(newSettings);
         await Preferences.set({ key: 'prayer_reminders', value: JSON.stringify(newSettings) });
         
-        if (newSettings[prayer] && times) {
+        const prayerId = getPrayerId(prayer);
+
+        if (newState && times) {
             const prayerTime = (times as any)[prayer];
             const prayerLabel = prayer.charAt(0).toUpperCase() + prayer.slice(1);
             
-            // Generate a more unique numeric ID
-            const notificationId = Math.floor(Math.random() * 10000);
-            
-            await NotificationService.schedulePrayerReminder(
-                notificationId,
-                `Ezan Vakti Yaklaşıyor: ${prayerLabel}`,
-                `${prayerLabel} vaktine 5 dakika kaldı. Hazırlanmaya ne dersiniz?`,
-                prayerTime
-            );
+            // Bildirim izni kontrolü
+            const hasPermission = await NotificationService.requestPermissions();
+            if (!hasPermission) {
+                alert("Bildirim izni verilmediği için hatırlatıcı kurulamadı. Lütfen ayarlardan izin verin.");
+                return;
+            }
+
+            // Önümüzdeki 7 gün için planla ki bildirimler kesilmesin
+            for (let i = 0; i < 7; i++) {
+                await NotificationService.schedulePrayerReminder(
+                    prayerId,
+                    `Ezan Vakti Yaklaşıyor: ${prayerLabel}`,
+                    `${prayerLabel} vaktine 5 dakika kaldı. Hazırlanmaya ne dersiniz?`,
+                    prayerTime,
+                    i
+                );
+            }
+        } else {
+            // 7 günlük tüm bildirimleri iptal et
+            for (let i = 0; i < 7; i++) {
+                await NotificationService.cancelNotification(prayerId + i);
+            }
         }
     };
 
     const TimeCard = ({ title, time, icon: Icon, reminderEnabled, onToggleReminder }: any) => (
         <div className={`p-4 rounded-3xl border flex flex-col items-center justify-center gap-2 transition-all duration-300 relative
             ${reminderEnabled
-                ? (theme === 'light' ? 'bg-emerald-50 border-emerald-200 shadow-sm' : 'bg-emerald-500/10 border-emerald-500/20')
-                : (theme === 'light' ? 'bg-white/80 border-slate-200 shadow-sm' : 'bg-white/[0.03] border-white/5')}
+                ? (theme === 'light' ? 'bg-rose-50 border-rose-100 shadow-depth-light' : 'bg-rose-500/10 border-rose-500/20')
+                : (theme === 'light' ? 'bg-white border-slate-100 shadow-sm' : 'bg-white/[0.03] border-white/5')}
         `}>
-            {/* Reminder Toggle (Tik) */}
+            {/* Reminder Toggle (Kırmızı Switch - Çok Belirgin) */}
             <button
                 onClick={onToggleReminder}
-                className={`absolute top-2 right-2 w-7 h-7 rounded-lg flex items-center justify-center transition-all border
+                className={`absolute -top-1 -right-1 w-12 h-7 rounded-full transition-all duration-300 flex items-center px-1 border-2 z-10
                     ${reminderEnabled
-                        ? 'bg-emerald-500 border-emerald-400 text-white shadow-lg scale-110'
-                        : 'bg-slate-100 border-slate-200 text-transparent hover:border-emerald-300 dark:bg-white/5 dark:border-white/10'}`}
+                        ? 'bg-red-500 border-red-400 shadow-lg shadow-red-500/40'
+                        : 'bg-slate-300 border-slate-400 dark:bg-white/20 dark:border-white/30'}`}
                 title="5 Dakika Önce Hatırlat"
             >
-                <Check className={`w-4 h-4 ${reminderEnabled ? 'opacity-100' : 'opacity-0'}`} />
+                <div className={`w-4 h-4 rounded-full transition-all duration-300 shadow-md
+                    ${reminderEnabled ? 'bg-white translate-x-5' : 'bg-slate-100 translate-x-0'}`} />
             </button>
 
-            <Icon className={`w-6 h-6 mb-1 ${reminderEnabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500'}`} />
+            <Icon className={`w-7 h-7 mb-1 ${reminderEnabled ? 'text-red-600 dark:text-red-400' : 'text-slate-400'}`} />
             
             <div className="text-center">
-                <p className={`text-[10px] font-bold uppercase tracking-widest mb-1
-                    ${reminderEnabled ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-400'}
+                <p className={`text-[10px] font-black uppercase tracking-widest mb-1
+                    ${reminderEnabled ? 'text-red-700 dark:text-red-300' : 'text-slate-500'}
                 `}>{title}</p>
-                <p className={`text-2xl font-black
-                    ${theme === 'light' ? 'text-slate-800' : 'text-white'}
+                <p className={`text-2xl font-black transition-colors
+                    ${reminderEnabled 
+                        ? (theme === 'light' ? 'text-red-900' : 'text-white')
+                        : (theme === 'light' ? 'text-slate-800' : 'text-slate-200')}
                 `}>{time || '--:--'}</p>
             </div>
             
             {reminderEnabled && (
-                <div className="flex items-center gap-1 text-[9px] font-bold text-emerald-600 dark:text-emerald-400 animate-pulse">
-                    <Bell className="w-3 h-3" />
-                    <span>5 DK ÖNCE</span>
+                <div className="flex items-center gap-1 text-[9px] font-black text-red-600 dark:text-red-400 animate-pulse bg-red-50 dark:bg-red-500/10 px-2 py-0.5 rounded-full border border-red-100 dark:border-red-500/20">
+                    <Bell className="w-2.5 h-2.5" />
+                    <span>HATIRLATMA AKTİF</span>
                 </div>
             )}
         </div>
@@ -188,11 +212,11 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
             `}>
                 <div className="flex flex-col md:flex-row md:items-end gap-6">
                     <div className="flex-1 space-y-3">
-                        <label className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest px-1
+                        <label className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest px-1
                             ${theme === 'light' ? 'text-slate-500' : 'text-slate-400'}
                         `}>
-                            <MapPin className="w-4 h-4 text-emerald-500" />
-                            Bulunduğunuz Şehir
+                            <MapPin className="w-3.5 h-3.5 text-emerald-500" />
+                            Şehir
                         </label>
                         <select
                             title="Şehir Seçin"
@@ -204,7 +228,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
                             `}
                         >
                             {TURKEY_CITIES.map(city => (
-                                <option key={city} value={city} className="text-black">{city}</option>
+                                <option key={city} value={city}>{city}</option>
                             ))}
                         </select>
                     </div>

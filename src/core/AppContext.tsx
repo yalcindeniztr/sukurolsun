@@ -98,6 +98,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         await AdMobService.initialize();
         await notificationService.init();
+        
+        // Günlük Ayet, Dua ve Mesaj bildirimlerini kur (Her gün otomatik saat 13:00)
+        await notificationService.scheduleRecurringDaily(
+            999, 
+            "Günün Ayeti", 
+            "Bugünün ayetini okuyup şükretmeye ne dersiniz? ✨", 
+            13, 0
+        );
+        await notificationService.scheduleRecurringDaily(
+            888, 
+            "Günün Duası", 
+            "Kalbinize ferahlık verecek bugünün duasını gördünüz mü? 🙏", 
+            13, 0
+        );
+        await notificationService.scheduleRecurringDaily(
+            777, 
+            "Günün Mesajı", 
+            "Sizin için bir mesajımız var. Güne güzel bir başlangıç yapın! 💌", 
+            13, 0
+        );
+
         ReviewService.trackFirstOpen();
       } catch (error) {
         console.error("App init error:", error);

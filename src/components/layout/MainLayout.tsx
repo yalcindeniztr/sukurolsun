@@ -148,8 +148,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
                 onTabChange={handleSidebarTabChange}
             />
 
-            {/* İçerik */}
-            <main className="relative z-10 px-4 md:px-8 lg:px-12 pt-[210px] pb-12 max-w-4xl mx-auto">
+            {/* İçerik - Banner için alt boşluk artırıldı (pb-28) */}
+            <main className="relative z-10 px-4 md:px-8 lg:px-12 pt-[210px] pb-28 max-w-4xl mx-auto">
                 {children}
             </main>
         </div>

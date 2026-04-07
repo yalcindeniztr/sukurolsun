@@ -18,11 +18,16 @@ const getReviewState = async (): Promise<ReviewState> => {
     try {
         const { value } = await Preferences.get({ key: STORAGE_KEY });
         if (value) return JSON.parse(value);
-    } catch {
-        try {
-            const data = localStorage.getItem(STORAGE_KEY);
-            if (data) return JSON.parse(data);
-        } catch { /* sessiz */ }
+        
+        // Legacy migration from localStorage
+        const data = localStorage.getItem(STORAGE_KEY);
+        if (data) {
+            const parsed = JSON.parse(data);
+            await saveReviewState(parsed);
+            return parsed;
+        }
+    } catch (error) {
+        console.error('Review state error:', error);
     }
     return {
         firstOpenDate: null,
@@ -35,11 +40,11 @@ const getReviewState = async (): Promise<ReviewState> => {
 
 const saveReviewState = async (state: ReviewState): Promise<void> => {
     try {
-        await Preferences.set({ key: STORAGE_KEY, value: JSON.stringify(state) });
+        const value = JSON.stringify(state);
+        await Preferences.set({ key: STORAGE_KEY, value });
+        localStorage.setItem(STORAGE_KEY, value); // Fallback
     } catch {
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        } catch { /* sessiz */ }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 };
 

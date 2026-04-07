@@ -35,28 +35,50 @@ const hashPin = async (pin: string): Promise<string> => {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 };
 
-/** Capacitor Preferences wrapper - native kalıcı depolama */
+/** Capacitor Preferences wrapper - native kalıcı depolama ve otomatik taşıma */
 const storage = {
   async get(key: string): Promise<string | null> {
     try {
       const { value } = await Preferences.get({ key });
+      
+      // Eğer Preferences'ta yoksa ama localStorage'da varsa, taşı
+      if (value === null && !Capacitor.isNativePlatform()) {
+        const localValue = localStorage.getItem(key);
+        if (localValue !== null) {
+          await this.set(key, localValue);
+          return localValue;
+        }
+      }
+      
+      // Native platformda Preferences'ta yoksa ve localStorage'da varsa (Legacy migration)
+      if (value === null && Capacitor.isNativePlatform()) {
+        const localValue = localStorage.getItem(key);
+        if (localValue !== null) {
+          await this.set(key, localValue);
+          return localValue;
+        }
+      }
+
       return value;
     } catch {
-      // Web fallback
       return localStorage.getItem(key);
     }
   },
   async set(key: string, value: string): Promise<void> {
     try {
       await Preferences.set({ key, value });
+      // Yedek olarak localStorage'da da tut (Web için)
+      if (!Capacitor.isNativePlatform()) {
+        localStorage.setItem(key, value);
+      }
     } catch {
-      // Web fallback
       localStorage.setItem(key, value);
     }
   },
   async remove(key: string): Promise<void> {
     try {
       await Preferences.remove({ key });
+      localStorage.removeItem(key);
     } catch {
       localStorage.removeItem(key);
     }

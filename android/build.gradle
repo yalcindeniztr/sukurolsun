@@ -1,14 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '2.0.21'
+    ext.kotlin_version = '2.1.10'
     
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.7.2'
+        classpath 'com.android.tools.build:gradle:8.7.0'
         classpath 'com.google.gms:google-services:4.4.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
@@ -32,7 +32,7 @@ allprojects {
         }
     }
 
-    // Tüm modüllerde Java 17 uyumluluğunu zorla (AdMob dahil)
+    // Tüm modüllerde Java 21 uyumluluğunu zorla (AdMob ve Pluginler dahil)
     afterEvaluate {
         if (it.hasProperty('android')) {
             android {

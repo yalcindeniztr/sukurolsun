@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Edit2, Save, X, Bell, Clock } from 'lucide-react';
 import { useTheme } from '../../core/ThemeContext';
+import { notificationService } from '../../services/NotificationService';
+import { Preferences } from '@capacitor/preferences';
 
 interface Reminder {
   id: string;
@@ -28,20 +30,35 @@ const BanaHatirlatView: React.FC = () => {
     loadReminders();
   }, []);
 
-  const loadReminders = () => {
-    const stored = localStorage.getItem('bana_hatirlat_reminders');
+  const loadReminders = async () => {
+    const { value: stored } = await Preferences.get({ key: 'bana_hatirlat_reminders' });
     if (stored) {
       setReminders(JSON.parse(stored));
     }
   };
 
-  const saveReminders = (newReminders: Reminder[]) => {
-    localStorage.setItem('bana_hatirlat_reminders', JSON.stringify(newReminders));
+  const saveReminders = async (newReminders: Reminder[]) => {
+    await Preferences.set({ key: 'bana_hatirlat_reminders', value: JSON.stringify(newReminders) });
     setReminders(newReminders);
   };
 
-  const handleAdd = () => {
-    if (!formData.name.trim()) return;
+  const syncNotification = async (reminder: Reminder) => {
+    if (reminder.enabled) {
+      await notificationService.scheduleGeneralReminder(
+        reminder.id,
+        "Şükür Olsun Hatırlatıcısı",
+        reminder.name,
+        reminder.time,
+        reminder.date,
+        reminder.repeat
+      );
+    } else {
+      await notificationService.cancelGeneralReminder(reminder.id);
+    }
+  };
+
+  const handleAdd = async () => {
+    if (!formData.name.trim() || !formData.time) return;
     const newReminder: Reminder = {
       id: Date.now().toString(36) + Math.random().toString(36).substring(2),
       name: formData.name.trim(),
@@ -50,32 +67,46 @@ const BanaHatirlatView: React.FC = () => {
       repeat: formData.repeat,
       enabled: formData.enabled,
     };
-    saveReminders([newReminder, ...reminders]);
+    const updated = [newReminder, ...reminders];
+    await saveReminders(updated);
+    await syncNotification(newReminder);
     resetForm();
   };
 
-  const handleUpdate = () => {
-    if (!formData.name.trim() || !editingId) return;
-    const updated = reminders.map(r =>
-      r.id === editingId
-        ? { ...r, name: formData.name.trim(), date: formData.date, time: formData.time, repeat: formData.repeat, enabled: formData.enabled }
-        : r
-    );
-    saveReminders(updated);
+  const handleUpdate = async () => {
+    if (!formData.name.trim() || !editingId || !formData.time) return;
+    const updatedReminder: Reminder = {
+        id: editingId,
+        name: formData.name.trim(),
+        date: formData.date,
+        time: formData.time,
+        repeat: formData.repeat,
+        enabled: formData.enabled
+    };
+    const updated = reminders.map(r => r.id === editingId ? updatedReminder : r);
+    await saveReminders(updated);
+    await syncNotification(updatedReminder);
     resetForm();
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm('Bu hatırlatıcıyı silmek istediğinize emin misiniz?')) {
-      saveReminders(reminders.filter(r => r.id !== id));
+      const updated = reminders.filter(r => r.id !== id);
+      await saveReminders(updated);
+      await notificationService.cancelGeneralReminder(id);
     }
   };
 
-  const toggleEnabled = (id: string) => {
-    const updated = reminders.map(r =>
-      r.id === id ? { ...r, enabled: !r.enabled } : r
-    );
-    saveReminders(updated);
+  const toggleEnabled = async (id: string) => {
+    const updated = reminders.map(r => {
+      if (r.id === id) {
+        const nr = { ...r, enabled: !r.enabled };
+        syncNotification(nr);
+        return nr;
+      }
+      return r;
+    });
+    await saveReminders(updated);
   };
 
   const startEdit = (reminder: Reminder) => {
@@ -172,6 +203,7 @@ const BanaHatirlatView: React.FC = () => {
                   type="date"
                   value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  title="Tarih seçin"
                   className={`w-full p-3 rounded-xl border transition-all text-sm
                     ${theme === 'light'
                       ? 'bg-slate-50 border-slate-200 text-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
@@ -186,6 +218,7 @@ const BanaHatirlatView: React.FC = () => {
                   type="time"
                   value={formData.time}
                   onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                  title="Saat seçin"
                   className={`w-full p-3 rounded-xl border transition-all text-sm
                     ${theme === 'light'
                       ? 'bg-slate-50 border-slate-200 text-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
@@ -200,6 +233,7 @@ const BanaHatirlatView: React.FC = () => {
               <select
                 value={formData.repeat}
                 onChange={(e) => setFormData({ ...formData, repeat: e.target.value as any })}
+                title="Tekrar periyodu seçin"
                 className={`w-full p-3 rounded-xl border transition-all text-sm
                   ${theme === 'light'
                     ? 'bg-slate-50 border-slate-200 text-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
@@ -216,6 +250,7 @@ const BanaHatirlatView: React.FC = () => {
                 type="checkbox"
                 checked={formData.enabled}
                 onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })}
+                title="Bildirimi etkinleştir"
                 className="w-4 h-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-500"
               />
               <label className={`text-sm ${theme === 'light' ? 'text-slate-700' : 'text-slate-300'}`}>
@@ -300,6 +335,7 @@ const BanaHatirlatView: React.FC = () => {
                   </button>
                   <button
                     onClick={() => startEdit(reminder)}
+                    title="Düzenle"
                     className={`p-2 rounded-lg transition-colors ${
                       theme === 'light' ? 'text-slate-400 hover:text-blue-500' : 'text-slate-500 hover:text-blue-400'
                     }`}
@@ -308,6 +344,7 @@ const BanaHatirlatView: React.FC = () => {
                   </button>
                   <button
                     onClick={() => handleDelete(reminder.id)}
+                    title="Sil"
                     className={`p-2 rounded-lg transition-colors ${
                       theme === 'light' ? 'text-slate-400 hover:text-red-500' : 'text-slate-500 hover:text-red-400'
                     }`}

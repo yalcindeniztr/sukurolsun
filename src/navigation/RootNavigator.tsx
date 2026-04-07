@@ -16,7 +16,6 @@ import OrucZamaniView from '../features/oruc_zamani/OrucZamaniView';
 import PinLockScreen from '../components/PinLockScreen';
 import UserAgreement from '../components/UserAgreement';
 import Toast from '../components/ui/Toast';
-import UpdateChecker from '../components/UpdateChecker';
 import { AdMobService } from '../services/AdMobService';
 import { ReviewService } from '../services/ReviewService';
 import { storageService } from '../services/storage.service';
@@ -31,14 +30,11 @@ const RootNavigator: React.FC = () => {
   const { t } = useLanguage();
   const { theme } = useTheme();
 
-  // Sekme değişimlerinde AdMob banner kontrolü
+  // Sekme değişimlerinde AdMob banner kontrolü (Tüm sekmelerde gösterim için optimize edildi)
   useEffect(() => {
     if (!isLoading && !isLocked && !showAgreement) {
-      if (activeTab === 'home') {
-        AdMobService.showBanner();
-      } else {
-        AdMobService.hideBanner();
-      }
+      // Artık tüm sekmelerde banner gösteriyoruz (Gelir maksimizasyonu)
+      AdMobService.showBanner();
     }
   }, [activeTab, isLoading, isLocked, showAgreement]);
 
@@ -81,7 +77,6 @@ const RootNavigator: React.FC = () => {
       onTabChange={handleTabChange}
       profile={profile}
     >
-      <UpdateChecker />
       {toast && (
         <Toast
           message={toast.message}
