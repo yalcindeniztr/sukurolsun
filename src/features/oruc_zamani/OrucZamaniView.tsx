@@ -120,6 +120,7 @@ const OrucZamaniView: React.FC = () => {
                 <div className="space-y-1">
                     <label className="text-[9px] font-black uppercase text-slate-400 px-1">Şehir</label>
                     <select
+                        title="Şehir Seçiniz"
                         value={selectedCity}
                         onChange={async (e) => {
                             const newCity = e.target.value;
@@ -139,6 +140,7 @@ const OrucZamaniView: React.FC = () => {
                 <div className="space-y-1">
                     <label className="text-[9px] font-black uppercase text-slate-400 px-1">Yıl</label>
                     <select
+                        title="Yıl Seçiniz"
                         value={selectedYear}
                         onChange={(e) => setSelectedYear(Number(e.target.value))}
                         disabled={loading}
