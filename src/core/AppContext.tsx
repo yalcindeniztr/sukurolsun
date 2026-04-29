@@ -4,16 +4,12 @@ import { gamificationService } from '../services/gamification.service';
 import { AdMobService } from '../services/AdMobService';
 import { ReviewService } from '../services/ReviewService';
 import { notificationService } from '../services/NotificationService';
-import { UserProfile, JournalEntry, CustomPrayer, UserMessage, MoodType, PromptType } from './types';
+import { UserProfile, JournalEntry } from './types';
 import { DEFAULT_PROFILE } from '../constants';
-import { ANNUAL_DUAS } from './duas_data';
-import { Preferences } from '@capacitor/preferences';
 
 interface AppContextType {
   profile: UserProfile | null;
   entries: JournalEntry[];
-  customPrayers: CustomPrayer[];
-  userMessages: UserMessage[];
   combinedHistory: JournalEntry[];
   selectedEntry: JournalEntry | undefined;
   activeTab: string;
@@ -44,9 +40,6 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [entries, setEntries] = useState<JournalEntry[]>([]);
-  const [customPrayers, setCustomPrayers] = useState<CustomPrayer[]>([]);
-  const [userMessages, setUserMessages] = useState<UserMessage[]>([]);
-  const [duaFavorites, setDuaFavorites] = useState<number[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | undefined>(undefined);
   const [activeTab, setActiveTab] = useState('prayer_times');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -72,52 +65,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const hasPin = await storageService.hasPin();
         if (hasPin) setIsLocked(true);
 
-        const [loadedProfile, loadedEntries, loadedPrayers, loadedMessages] = await Promise.all([
+        const [loadedProfile, loadedEntries] = await Promise.all([
           storageService.getProfile(),
           storageService.getEntries(),
-          storageService.getCustomPrayers(),
-          storageService.getUserMessages(),
         ]);
-        
-        let loadedDuaFavorites: number[] = [];
-        try {
-          const { value } = await Preferences.get({ key: 'sukurolsun_dua_favorites' });
-          if (value) loadedDuaFavorites = JSON.parse(value);
-        } catch {
-          const saved = localStorage.getItem('sukurolsun_dua_favorites');
-          if (saved) {
-            try { loadedDuaFavorites = JSON.parse(saved); } catch { /* */ }
-          }
-        }
 
         setProfile(loadedProfile || DEFAULT_PROFILE);
         setEntries(loadedEntries);
-        setCustomPrayers(loadedPrayers);
-        setUserMessages(loadedMessages);
-        setDuaFavorites(loadedDuaFavorites);
 
         await AdMobService.initialize();
         await notificationService.init();
         
-        // Günlük Ayet, Dua ve Mesaj bildirimlerini kur (Her gün otomatik saat 13:00)
-        await notificationService.scheduleRecurringDaily(
-            999, 
-            "Günün Ayeti", 
-            "Bugünün ayetini okuyup şükretmeye ne dersiniz? ✨", 
-            13, 0
-        );
-        await notificationService.scheduleRecurringDaily(
-            888, 
-            "Günün Duası", 
-            "Kalbinize ferahlık verecek bugünün duasını gördünüz mü? 🙏", 
-            13, 0
-        );
-        await notificationService.scheduleRecurringDaily(
-            777, 
-            "Günün Mesajı", 
-            "Sizin için bir mesajımız var. Güne güzel bir başlangıç yapın! 💌", 
-            13, 0
-        );
+        // Günde yalnızca tek genel hatırlatma gönderilir.
+        if ((loadedProfile || DEFAULT_PROFILE).notificationsEnabled !== false) {
+          await notificationService.scheduleRecurringDaily(
+              999,
+              "Günlük Şükür",
+              "Bugün şükrettiğiniz bir nimeti kaydetmeye ne dersiniz?",
+              13, 0
+          );
+        } else {
+          await notificationService.cancelAll();
+        }
 
         ReviewService.trackFirstOpen();
       } catch (error) {
@@ -173,35 +142,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const handleDeleteEntry = useCallback(async (id: string) => {
     if (confirm('Bu kaydı silmek istediğinden emin misin?')) {
-      if (customPrayers.some(p => p.id === id)) {
-        const up = await storageService.deleteCustomPrayer(id);
-        setCustomPrayers(up);
-        showToast('Dua silindi.', 'success');
-      } else if (userMessages.some(m => m.id === id)) {
-        const um = await storageService.deleteUserMessage(id);
-        setUserMessages(um);
-        showToast('Mesaj silindi.', 'success');
-      } else {
-        const updatedEntries = await storageService.deleteEntry(id);
-        setEntries(updatedEntries);
-        if (selectedEntry?.id === id) setSelectedEntry(undefined);
-        showToast('Kayıt silindi.', 'success');
-        if (profile) {
-          const currentStreak = gamificationService.calculateStreak(updatedEntries);
-          const updatedProfile = { ...profile, streak: currentStreak };
-          setProfile(updatedProfile);
-          await storageService.saveProfile(updatedProfile);
-        }
+      const updatedEntries = await storageService.deleteEntry(id);
+      setEntries(updatedEntries);
+      if (selectedEntry?.id === id) setSelectedEntry(undefined);
+      showToast('Kayıt silindi.', 'success');
+      if (profile) {
+        const currentStreak = gamificationService.calculateStreak(updatedEntries);
+        const updatedProfile = { ...profile, streak: currentStreak };
+        setProfile(updatedProfile);
+        await storageService.saveProfile(updatedProfile);
       }
     }
-  }, [selectedEntry, profile, showToast, customPrayers, userMessages]);
+  }, [selectedEntry, profile, showToast]);
 
   const handleToggleFavorite = useCallback(async (id: string) => {
-    if (!customPrayers.some(p => p.id === id) && !userMessages.some(m => m.id === id)) {
-      const updatedEntries = await storageService.toggleFavorite(id);
-      setEntries(updatedEntries);
-    }
-  }, [customPrayers, userMessages]);
+    const updatedEntries = await storageService.toggleFavorite(id);
+    setEntries(updatedEntries);
+  }, []);
 
   const handleUpdateProfile = useCallback(async (updatedProfile: UserProfile) => {
     setProfile(updatedProfile);
@@ -225,49 +182,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   const combinedHistory = useMemo(() => {
-    const prayersAsEntries: JournalEntry[] = customPrayers.map(p => ({
-      id: p.id,
-      title: 'Özel Dua',
-      content: p.text,
-      mood: 'peaceful',
-      promptType: 'allah_action',
-      category: 'dua',
-      timestamp: p.timestamp,
-    }));
-    const messagesAsEntries: JournalEntry[] = userMessages.map(m => ({
-      id: m.id,
-      title: m.category || 'Mesaj',
-      content: m.text,
-      mood: 'grateful',
-      promptType: 'gratitude',
-      category: 'mesaj',
-      timestamp: m.timestamp,
-    }));
-    
-    // Dua favorilerini JournalEntry formatına dönüştür
-    const duaFavoritesAsEntries: JournalEntry[] = duaFavorites.map((duaIndex) => {
-      const dua = ANNUAL_DUAS[duaIndex];
-      if (!dua) return null;
-      return {
-        id: `dua_fav_${duaIndex}`,
-        title: dua.sourceTr || 'Dua',
-        content: dua.textTr + '\n\n' + dua.textEn,
-        mood: 'peaceful' as MoodType,
-        promptType: 'allah_action' as PromptType,
-        category: 'dua_favori',
-        timestamp: new Date().toISOString(),
-        isFavorite: true,
-      } as JournalEntry;
-    }).filter((entry): entry is JournalEntry => entry !== null);
-    
-    return [...entries, ...prayersAsEntries, ...messagesAsEntries, ...duaFavoritesAsEntries].sort((a, b) =>
+    return [...entries].sort((a, b) =>
       new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
-  }, [entries, customPrayers, userMessages, duaFavorites]);
+  }, [entries]);
 
   return (
     <AppContext.Provider value={{
-      profile, entries, customPrayers, userMessages, combinedHistory, selectedEntry, 
+      profile, entries, combinedHistory, selectedEntry, 
       activeTab, isLoading, isLocked, showAgreement, toast, showReviewModal,
       setProfile, setActiveTab, setSelectedEntry, setToast, setShowReviewModal, setIsLocked, setShowAgreement,
       handleSaveEntry, handleDeleteEntry, handleToggleFavorite, handleUpdateProfile, handleAgreementAccept, showToast

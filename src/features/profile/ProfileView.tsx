@@ -213,7 +213,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                     notifications: [{
                         title: 'Şükür Olsun - Sistem Testi',
                         body: 'Bildirim sistemi başarıyla çalışıyor! 🤲',
-                        id: 999,
+                        id: 990,
                         schedule: { at: new Date(Date.now() + 1000) }
                     }]
                 });

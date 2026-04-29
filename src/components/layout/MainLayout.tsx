@@ -132,9 +132,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
                         </button>
                         <button
                             onClick={() => handleSidebarTabChange('profile')}
-                            className="w-9 h-9 ml-1.5 rounded-full overflow-hidden border-2 border-white shadow-md active:scale-95 transition-all"
+                            className="w-12 h-12 ml-1.5 rounded-full overflow-hidden border-[3px] border-white bg-white shadow-lg shadow-emerald-900/10 ring-2 ring-emerald-200/70 active:scale-95 transition-all"
+                            aria-label="Profil"
                         >
-                            <img src={avatarUrl} alt="Profile" className="w-full h-full object-cover bg-white rounded-full" />
+                            <img src={avatarUrl} alt="Profile" className="w-full h-full aspect-square object-cover rounded-full" />
                         </button>
                     </div>
                 </header>

@@ -6,7 +6,17 @@ import { storageService } from '../../services/storage.service';
 
 import { STATIC_STOPS as SPIRITUAL_DATA_CORE, SpiritualStop } from '../../constants/spiritual_data';
 
-const STATIC_STOPS = SPIRITUAL_DATA_CORE;
+const RELIGIOUS_PLACE_KEYWORDS = [
+    'cami', 'camii', 'mescit', 'türbe', 'makam', 'külliye',
+    'mevlevi', 'mevlevihane', 'sahabe', 'hz.', 'hacı', 'tekke', 'dergah'
+];
+
+const STATIC_STOPS = SPIRITUAL_DATA_CORE.filter((stop) => {
+    const haystack = `${stop.name} ${stop.descriptionTr} ${stop.featuresTr}`.toLocaleLowerCase('tr-TR');
+    return RELIGIOUS_PLACE_KEYWORDS.some(keyword => haystack.includes(keyword));
+});
+
+const DEFAULT_STOP_IMAGE = `${import.meta.env.BASE_URL || '/'}assets/themes/kabe.png`;
 
 const SpiritualStopsView: React.FC = () => {
     const { theme } = useTheme();
@@ -109,6 +119,10 @@ const SpiritualStopsView: React.FC = () => {
         s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
         s.city.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const getStopImage = (stop: SpiritualStop) => stop.imageUrl || DEFAULT_STOP_IMAGE;
+    const getDirectionsUrl = (stop: SpiritualStop) =>
+        stop.googleMapsUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${stop.name} ${stop.city}`)}`;
 
     return (
         <div className="space-y-6 animate-fade-in pb-20">
@@ -254,40 +268,30 @@ const SpiritualStopsView: React.FC = () => {
                         ${expandedId === stop.id ? 'border-emerald-500/50 scale-[1.01]' : 'hover:border-emerald-500/30'}
                         ${theme === 'light' ? 'bg-white shadow-soft' : 'bg-slate-900/40'}`}>
                         
-                        {/* Image Header if exists */}
-                        {stop.imageUrl && (
-                            <div className="w-full h-48 overflow-hidden relative rounded-t-[2rem]">
-                                <img src={stop.imageUrl} alt={stop.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-5">
-                                    <span className="text-[10px] font-black text-white uppercase tracking-widest bg-emerald-500 px-3 py-1 rounded-full shadow-lg">
-                                        {stop.city}
-                                    </span>
-                                </div>
+                        <div className="w-full h-36 overflow-hidden relative rounded-t-[2rem]">
+                            <img src={getStopImage(stop)} alt={stop.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-5">
+                                <span className="text-[10px] font-black text-white uppercase tracking-widest bg-emerald-500 px-3 py-1 rounded-full shadow-lg">
+                                    {stop.city}
+                                </span>
                             </div>
-                        )}
+                        </div>
 
                         <div className="p-6 flex-1">
                             <div className="flex justify-between items-start mb-3" onClick={() => setExpandedId(expandedId === stop.id ? null : stop.id)}>
                                 <div className="flex-1 cursor-pointer">
-                                    {!stop.imageUrl && (
-                                        <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 mb-2 inline-block`}>
-                                            {stop.city}
-                                        </span>
-                                    )}
                                     <h4 className={`text-lg font-bold leading-tight ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>
                                         {stop.name}
                                     </h4>
                                 </div>
                                 <div className="flex items-center gap-1">
-                                    {stop.googleMapsUrl && (
-                                        <button 
-                                            onClick={(e) => { e.stopPropagation(); window.open(stop.googleMapsUrl, '_blank'); }}
-                                            className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all shadow-sm"
-                                            title={t('spiritualStops.viewOnMap')}
-                                        >
-                                            <ExternalLink className="w-4 h-4" />
-                                        </button>
-                                    )}
+                                    <button 
+                                        onClick={(e) => { e.stopPropagation(); window.open(getDirectionsUrl(stop), '_blank'); }}
+                                        className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all shadow-sm"
+                                        title={t('spiritualStops.viewOnMap') || 'Yol tarifi'}
+                                    >
+                                        <ExternalLink className="w-4 h-4" />
+                                    </button>
                                     {stop.isCustom && (
                                         <button 
                                             onClick={(e) => { e.stopPropagation(); handleDeleteStop(stop.id); }}
@@ -313,7 +317,7 @@ const SpiritualStopsView: React.FC = () => {
                                     {((language === 'tr' ? stop.featuresTr : stop.featuresEn)) && (
                                         <div>
                                             <h5 className="text-[10px] font-black tracking-widest text-emerald-500 uppercase mb-1">
-                                                {language === 'tr' ? 'ÖNE ÇIKAN ÖZELLİKLER' : 'KEY FEATURES'}
+                                                {language === 'tr' ? 'KISA BİLGİ' : 'SHORT INFO'}
                                             </h5>
                                             <p className="text-xs text-slate-500 leading-relaxed italic">
                                                 {language === 'tr' ? stop.featuresTr : stop.featuresEn}
@@ -335,7 +339,12 @@ const SpiritualStopsView: React.FC = () => {
 
                             <div className="mt-auto pt-4 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
                                 <span>{stop.isCustom ? t('spiritualStops.userAdded') : t('spiritualStops.recommended')}</span>
-                                {!stop.imageUrl && stop.city && <span>{stop.city}</span>}
+                                <button
+                                    onClick={() => window.open(getDirectionsUrl(stop), '_blank')}
+                                    className="text-emerald-600 dark:text-emerald-400"
+                                >
+                                    {language === 'tr' ? 'YOL TARİFİ' : 'DIRECTIONS'}
+                                </button>
                             </div>
                         </div>
                     </div>

@@ -24,22 +24,19 @@ export class NotificationService {
     /**
      * Namaz vaktinden 5 dakika önce hatırlatıcı planlar
      */
-    static async schedulePrayerReminder(id: number, title: string, body: string, timeStr: string, dateOffset: number = 0) {
+    static async schedulePrayerReminder(id: number, title: string, body: string, timeStr: string, minutesBefore: number = 5) {
         if (!Capacitor.isNativePlatform()) {
-            console.log(`Web simülasyonu: Bildirim planlandı [${id}] - ${title}: ${body} at ${timeStr} (Offset: ${dateOffset})`);
+            console.log(`Web simülasyonu: Bildirim planlandı [${id}] - ${title}: ${body} at ${timeStr} (${minutesBefore} dk önce)`);
             return;
         }
 
         try {
+            await this.cancelNotification(id);
             const [hours, minutes] = timeStr.split(':').map(Number);
             const scheduledTime = new Date();
             scheduledTime.setHours(hours, minutes, 0, 0);
-            
-            // Gün ofsetini ekle
-            scheduledTime.setDate(scheduledTime.getDate() + dateOffset);
 
-            // 5 dakika öncesine çek
-            scheduledTime.setMinutes(scheduledTime.getMinutes() - 5);
+            scheduledTime.setMinutes(scheduledTime.getMinutes() - Math.max(0, minutesBefore));
 
             // Eğer vakit geçmişse planlama
             if (scheduledTime.getTime() <= new Date().getTime()) {
@@ -49,7 +46,7 @@ export class NotificationService {
             await LocalNotifications.schedule({
                 notifications: [
                     {
-                        id: id + dateOffset, // Örn: 100, 101, 102...
+                        id,
                         title,
                         body,
                         schedule: { 
@@ -73,8 +70,8 @@ export class NotificationService {
         if (!Capacitor.isNativePlatform()) return;
 
         try {
-            // Önce varsa eskiyi sil ki çakışmasın
-            await this.cancelNotification(id);
+            // Eski üçlü günlük bildirimleri temizle, tek günlük bildirim bırak.
+            await Promise.all([777, 888, 999].map(notificationId => this.cancelNotification(notificationId)));
 
             await LocalNotifications.schedule({
                 notifications: [
@@ -207,7 +204,16 @@ export class NotificationService {
     static async toggleNotifications(enabled: boolean) {
         if (!Capacitor.isNativePlatform()) return;
         if (enabled) {
-            await this.requestPermissions();
+            const hasPermission = await this.requestPermissions();
+            if (hasPermission) {
+                await this.scheduleRecurringDaily(
+                    999,
+                    'Günlük Şükür',
+                    'Bugün şükrettiğiniz bir nimeti kaydetmeye ne dersiniz?',
+                    13,
+                    0
+                );
+            }
         } else {
             await this.cancelAll();
         }

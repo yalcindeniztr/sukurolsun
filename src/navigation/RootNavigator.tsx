@@ -5,14 +5,11 @@ import { useLanguage } from '../core/LanguageContext';
 import { useTheme } from '../core/ThemeContext';
 import JournalHistory from '../features/journal/JournalHistory';
 import ProfileView from '../features/profile/ProfileView';
-import DuaView from '../features/dua/DuaView';
-import ExtrasView from '../features/extras/ExtrasView';
 import PrayerTimesView from '../features/prayer_times/PrayerTimesView';
 import TesbihatView from '../features/tesbihat/TesbihatView';
 import SpiritualStopsView from '../features/spiritual_stops/SpiritualStopsView';
 import SukurVaktiView from '../features/sukur_vakti/SukurVaktiView';
 import BanaHatirlatView from '../features/bana_hatirlat/BanaHatirlatView';
-import OrucZamaniView from '../features/oruc_zamani/OrucZamaniView';
 import PinLockScreen from '../components/PinLockScreen';
 import UserAgreement from '../components/UserAgreement';
 import Toast from '../components/ui/Toast';
@@ -89,7 +86,6 @@ const RootNavigator: React.FC = () => {
         {activeTab === 'prayer_times' && <PrayerTimesView profile={profile} />}
         {activeTab === 'sukur_vakti' && <SukurVaktiView />}
         {activeTab === 'bana_hatirlat' && <BanaHatirlatView />}
-        {activeTab === 'oruc_zamani' && <OrucZamaniView />}
 
         {activeTab === 'history' && (
           <div className="animate-fadeIn">
@@ -120,8 +116,6 @@ const RootNavigator: React.FC = () => {
           </div>
         )}
 
-        {activeTab === 'dua' && <DuaView />}
-        {activeTab === 'extras' && <ExtrasView />}
         {activeTab === 'tesbihat' && <TesbihatView />}
         {activeTab === 'manevi_duraklar' && <SpiritualStopsView />}
 

@@ -37,6 +37,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
         aksam: false,
         yatsi: false,
     });
+    const [reminderMinutes, setReminderMinutes] = useState(5);
 
     // Sıradaki vakti hesapla
     useEffect(() => {
@@ -78,6 +79,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
             try {
                 const { value: city } = await Preferences.get({ key: 'prayer_city' });
                 const { value: reminders } = await Preferences.get({ key: 'prayer_reminders' });
+                const { value: minutes } = await Preferences.get({ key: 'prayer_reminder_minutes' });
                 
                 if (city) {
                     setSelectedCity(city);
@@ -91,6 +93,12 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
                         setReminderSettings(JSON.parse(reminders));
                     } catch (e) {
                         console.error("Hatırlatıcı ayarları okunamadı:", e);
+                    }
+                }
+                if (minutes) {
+                    const parsedMinutes = Number(minutes);
+                    if (Number.isFinite(parsedMinutes)) {
+                        setReminderMinutes(Math.min(120, Math.max(0, parsedMinutes)));
                     }
                 }
             } catch (err) {
@@ -151,6 +159,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
         await Preferences.set({ key: 'prayer_reminders', value: JSON.stringify(newSettings) });
         
         const prayerId = getPrayerId(prayer);
+        await NotificationService.cancelNotification(prayerId);
 
         if (newState && times) {
             const prayerTime = (times as any)[prayer];
@@ -162,20 +171,24 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
                 return;
             }
 
-            for (let i = 0; i < 7; i++) {
-                await NotificationService.schedulePrayerReminder(
-                    prayerId,
-                    `Ezan Vakti Yaklaşıyor: ${prayerLabel}`,
-                    `${prayerLabel} vaktine 5 dakika kaldı. Hazırlanmaya ne dersiniz?`,
-                    prayerTime,
-                    i
-                );
-            }
+            await NotificationService.schedulePrayerReminder(
+                prayerId,
+                `Ezan Vakti Yaklaşıyor: ${prayerLabel}`,
+                `${prayerLabel} vaktine ${reminderMinutes} dakika kaldı. Hazırlanmaya ne dersiniz?`,
+                prayerTime,
+                reminderMinutes
+            );
         } else {
             for (let i = 0; i < 7; i++) {
                 await NotificationService.cancelNotification(prayerId + i);
             }
         }
+    };
+
+    const handleReminderMinutesChange = async (value: number) => {
+        const safeValue = Math.min(120, Math.max(0, Number.isFinite(value) ? Math.round(value) : 5));
+        setReminderMinutes(safeValue);
+        await Preferences.set({ key: 'prayer_reminder_minutes', value: String(safeValue) });
     };
 
     const TimeCard = ({ title, time, icon: Icon, prayerKey, isNext, colorScheme }: any) => {
@@ -191,7 +204,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
                     ${colorScheme.shadowColor}`} 
                 />
 
-                <div className={`relative p-5 rounded-[2rem] border overflow-hidden transition-all duration-500
+                <div className={`relative p-3.5 sm:p-5 rounded-[1.35rem] sm:rounded-[2rem] border overflow-hidden transition-all duration-500
                     active:translate-y-1 active:shadow-inner h-full flex flex-col justify-between
                     ${isNext ? 'shadow-2xl' : 'shadow-lg'}
                     ${theme === 'light' 
@@ -202,22 +215,22 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
                     <div className={`absolute -right-8 -top-8 w-24 h-24 rounded-full blur-3xl opacity-20 ${colorScheme.accentColor}`} />
                     
                     {/* Header Row */}
-                    <div className="flex justify-between items-start mb-4">
-                        <div className={`p-2.5 rounded-2xl transition-all duration-300
+                    <div className="flex justify-between items-start mb-3 sm:mb-4">
+                        <div className={`p-2 sm:p-2.5 rounded-2xl transition-all duration-300
                             ${isNext ? 'bg-white shadow-sm' : (theme === 'light' ? 'bg-slate-50' : 'bg-white/5')}
                         `}>
-                            <Icon className={`w-5 h-5 ${isNext ? colorScheme.textColor : 'text-slate-400'}`} />
+                            <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${isNext ? colorScheme.textColor : 'text-slate-400'}`} />
                         </div>
                         
                         <button
                             onClick={() => toggleReminder(prayerKey)}
                             title="Hatırlatıcı"
-                            className={`w-10 h-6 rounded-full transition-all duration-300 flex items-center px-0.5 border
+                            className={`w-9 h-5 sm:w-10 sm:h-6 rounded-full transition-all duration-300 flex items-center px-0.5 border
                                 ${reminderEnabled
                                     ? 'bg-emerald-500 border-emerald-400'
                                     : 'bg-slate-200 border-slate-300 dark:bg-white/10 dark:border-white/20'}`}
                         >
-                            <div className={`w-4 h-4 rounded-full transition-all duration-300 shadow-sm
+                            <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full transition-all duration-300 shadow-sm
                                 ${reminderEnabled ? 'bg-white translate-x-4' : 'bg-white/60 translate-x-0'}`} />
                         </button>
                     </div>
@@ -229,7 +242,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
                             {title}
                         </p>
                         <div className="flex items-baseline gap-1">
-                            <p className={`text-2xl font-black tracking-tight
+                            <p className={`text-xl sm:text-2xl font-black tracking-tight
                                 ${isNext 
                                     ? (theme === 'light' ? 'text-slate-900' : 'text-white')
                                     : (theme === 'light' ? 'text-slate-800' : 'text-slate-200')}
@@ -241,7 +254,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
 
                     {/* Next Indicator */}
                     {isNext && (
-                        <div className="mt-4 flex items-center gap-1.5">
+                        <div className="mt-3 sm:mt-4 flex items-center gap-1.5">
                             <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${colorScheme.accentColor}`} />
                             <span className={`text-[8px] font-black uppercase tracking-widest ${colorScheme.textColor}`}> SIRADAKİ </span>
                         </div>
@@ -261,19 +274,19 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
     };
 
     return (
-        <div className="space-y-8 pb-32 animate-fadeIn max-w-2xl mx-auto px-1">
+        <div className="space-y-4 sm:space-y-6 pb-32 animate-fadeIn max-w-2xl mx-auto px-0">
             {/* Elegant Header with Location Selection */}
-            <div className={`p-6 rounded-[2.5rem] border backdrop-blur-3xl transition-all duration-500 relative overflow-hidden
+            <div className={`p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border backdrop-blur-3xl transition-all duration-500 relative overflow-hidden
                 ${theme === 'light' ? 'bg-white/80 border-slate-100 shadow-xl shadow-slate-200/40' : 'bg-slate-900/60 border-white/5 shadow-2xl'}
             `}>
                 <div className="absolute top-0 right-0 p-8 opacity-5">
                     <MapPin className="w-32 h-32" />
                 </div>
 
-                <div className="flex flex-col gap-6 relative z-10">
+                <div className="flex flex-col gap-4 relative z-10">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
-                            <MapPin className="w-6 h-6 text-emerald-600" />
+                        <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
+                            <MapPin className="w-5 h-5 text-emerald-600" />
                         </div>
                         <div>
                             <h2 className={`text-xl font-black ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>
@@ -289,7 +302,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
                                 title="Şehir Seçin"
                                 value={selectedCity}
                                 onChange={(e) => fetchByCity(e.target.value)}
-                                className={`w-full h-14 px-5 rounded-2xl border bg-transparent text-sm font-bold appearance-none transition-all outline-none pr-10
+                                className={`w-full h-12 px-4 rounded-2xl border bg-transparent text-sm font-bold appearance-none transition-all outline-none pr-10
                                     ${theme === 'light' ? 'border-slate-200 text-slate-800' : 'border-white/10 text-white'}
                                 `}
                             >
@@ -306,7 +319,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
                             onClick={fetchByLocation}
                             disabled={loading}
                             title={t('prayer.autoLocation') || 'Konumumu Bul'}
-                            className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all active:scale-90
+                            className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all active:scale-90
                                 ${theme === 'light' ? 'bg-slate-100 hover:bg-slate-200 text-slate-600' : 'bg-white/5 hover:bg-white/10 text-white'}
                             `}
                         >
@@ -317,7 +330,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
             </div>
 
             {/* Vakit Izgarası - 3D Görünüm */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
                 <TimeCard
                     title="İmsak"
                     time={times?.imsak}
@@ -369,22 +382,37 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
             </div>
 
             {/* Premium Info Banner */}
-            <div className={`p-6 rounded-[2.5rem] border transition-all duration-300 relative overflow-hidden group
+            <div className={`p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border transition-all duration-300 relative overflow-hidden group
                 ${theme === 'light' 
                     ? 'bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-100 shadow-lg' 
                     : 'bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border-emerald-500/20'}
             `}>
                 <div className="flex gap-5 relative z-10">
-                    <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center flex-shrink-0 animate-bounce-slow">
-                        <Bell className="w-6 h-6 text-emerald-500" />
+                    <div className="w-11 h-11 rounded-2xl bg-white shadow-sm flex items-center justify-center flex-shrink-0 animate-bounce-slow">
+                        <Bell className="w-5 h-5 text-emerald-500" />
                     </div>
-                    <div className="space-y-1">
+                    <div className="space-y-3 flex-1">
                         <p className={`text-sm font-black ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>
                             Hatırlatıcılar Aktif
                         </p>
                         <p className={`text-[11px] font-bold leading-relaxed opacity-60 ${theme === 'light' ? 'text-slate-600' : 'text-slate-300'}`}>
-                            Namaz vakitlerine <span className="text-emerald-500 font-black">5 dakika kala</span> size özel derinlikli bildirimler gönderiyoruz.
+                            Namaz vakitlerine kaç dakika kala bildirim almak istediğinizi siz belirleyin.
                         </p>
+                        <label className="flex items-center gap-3">
+                            <input
+                                type="number"
+                                min={0}
+                                max={120}
+                                value={reminderMinutes}
+                                onChange={(e) => handleReminderMinutesChange(Number(e.target.value))}
+                                className={`w-20 h-10 rounded-xl border px-3 text-sm font-black outline-none
+                                    ${theme === 'light' ? 'bg-white border-emerald-100 text-slate-800' : 'bg-white/5 border-white/10 text-white'}`}
+                                aria-label="Ezan hatırlatma dakikası"
+                            />
+                            <span className={`text-xs font-bold ${theme === 'light' ? 'text-slate-600' : 'text-slate-300'}`}>
+                                dakika önce
+                            </span>
+                        </label>
                     </div>
                 </div>
             </div>

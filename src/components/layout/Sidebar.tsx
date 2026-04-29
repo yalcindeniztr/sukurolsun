@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { 
-    Clock, Heart, Archive, BookOpen, Circle, 
-    Compass, MessageSquare, User, Sunrise,
-    Share2, Star, DownloadCloud, LogOut, ShieldCheck, Bell
+    Clock, Heart, Archive, Circle, 
+    Compass, User,
+    Share2, Star, LogOut, ShieldCheck, Bell
 } from 'lucide-react';
 import { Share } from '@capacitor/share';
 import { ReviewService } from '../../services/ReviewService';
@@ -21,12 +21,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
 
     const navItems = [
         { id: 'prayer_times', label: t('tabs.prayerTimes'), icon: Clock },
+        { id: 'sukur_vakti', label: t('tabs.sukurVakti'), icon: Heart },
         { id: 'tesbihat', label: t('tabs.tesbihat'), icon: Circle },
         { id: 'bana_hatirlat', label: t('tabs.banaHatirlat'), icon: Bell },
-        { id: 'sukur_vakti', label: t('tabs.sukurVakti'), icon: Heart },
-        { id: 'dua', label: t('tabs.duas'), icon: BookOpen },
-        { id: 'oruc_zamani', label: t('tabs.orucZamani'), icon: Sunrise },
-        { id: 'extras', label: t('tabs.messages'), icon: MessageSquare },
         { id: 'manevi_duraklar', label: t('tabs.maneviDuraklar'), icon: Compass },
         { id: 'profile', label: t('tabs.profile'), icon: User },
         { id: 'history', label: t('tabs.archive'), icon: Archive },
@@ -144,16 +141,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                         <span className="text-sm font-medium">{t('common.rateUs')}</span>
                     </button>
 
-                    {/* Update Check Button */}
-                    <button
-                        onClick={() => {
-                            alert(t('common.appLatest'));
-                        }}
-                        className="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 active:bg-slate-200"
-                    >
-                        <DownloadCloud className="w-5 h-5 text-slate-400 dark:text-slate-500 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors" />
-                        <span className="text-sm font-medium">{t('common.updateCheck')}</span>
-                    </button>
                     {/* Exit App Button */}
                     <button
                         onClick={async () => {
@@ -177,7 +164,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                 <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-white via-white dark:from-slate-900 dark:via-slate-900 to-transparent">
                     <div className="flex flex-col items-center justify-center">
                         <p className="text-[10px] font-bold tracking-widest uppercase text-emerald-600 dark:text-emerald-500 mb-0.5">by ziberkan</p>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.8.1</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.10.0</p>
                     </div>
                 </div>
             </div>

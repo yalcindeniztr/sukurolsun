@@ -10,9 +10,10 @@ interface JournalEntryFormProps {
     onSave: (entry: Omit<JournalEntry, 'id' | 'timestamp'>) => void;
     selectedEntry?: JournalEntry;
     onCancel?: () => void;
+    forcedPromptType?: PromptType;
 }
 
-const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEntry, onCancel }) => {
+const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEntry, onCancel, forcedPromptType }) => {
     const { theme } = useTheme();
     const { language, t } = useLanguage();
     const [title, setTitle] = useState('');
@@ -33,18 +34,18 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
             setContent(selectedEntry.content);
             setMood(selectedEntry.mood);
             setCategory(selectedEntry.category);
-            setPromptType(selectedEntry.promptType || 'gratitude');
+            setPromptType(forcedPromptType || selectedEntry.promptType || 'gratitude');
         } else {
             resetForm();
         }
-    }, [selectedEntry]);
+    }, [selectedEntry, forcedPromptType]);
 
     const resetForm = () => {
         setTitle('');
         setContent('');
         setMood('grateful');
         setCategory('general');
-        setPromptType('gratitude');
+        setPromptType(forcedPromptType || 'gratitude');
     };
 
     const handleSave = (e: React.FormEvent) => {
@@ -87,6 +88,7 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
             `} />
 
             {/* Prompt Type Tabs - 3D */}
+            {!forcedPromptType && (
             <div className={`flex mb-6 p-1 rounded-2xl relative z-10 w-fit transition-colors
                 ${theme === 'light' ? 'bg-slate-100 border border-slate-200' : 'bg-black/20 border border-white/[0.04]'}
             `}>
@@ -109,6 +111,7 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
                     <span>{t('journal.allahAction')}</span>
                 </button>
             </div>
+            )}
 
             <form onSubmit={handleSave} className="space-y-6 relative z-10">
 
