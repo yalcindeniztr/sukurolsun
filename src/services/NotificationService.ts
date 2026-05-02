@@ -22,7 +22,7 @@ export class NotificationService {
     }
 
     /**
-     * Namaz vaktinden 5 dakika önce hatırlatıcı planlar
+     * Namaz vaktinden kullanıcının belirlediği dakika kadar önce hatırlatıcı planlar
      */
     static async schedulePrayerReminder(id: number, title: string, body: string, timeStr: string, minutesBefore: number = 5) {
         if (!Capacitor.isNativePlatform()) {
@@ -53,13 +53,48 @@ export class NotificationService {
                             at: scheduledTime,
                             allowWhileIdle: true 
                         },
+                        channelId: 'shukur-olsun-ezan',
+                    }
+                ]
+            });
+        } catch (error) {
+            console.error('Bildirim planlanırken hata:', error);
+        }
+    }
+
+    static async schedulePrayerTimeAlert(id: number, prayerLabel: string, timeStr: string) {
+        if (!Capacitor.isNativePlatform()) {
+            console.log(`Web simülasyonu: Ezan vakti bildirimi planlandı [${id}] - ${prayerLabel} at ${timeStr}`);
+            return;
+        }
+
+        try {
+            await this.cancelNotification(id);
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            const scheduledTime = new Date();
+            scheduledTime.setHours(hours, minutes, 0, 0);
+
+            if (scheduledTime.getTime() <= new Date().getTime()) {
+                return;
+            }
+
+            await LocalNotifications.schedule({
+                notifications: [
+                    {
+                        id,
+                        title: `${prayerLabel} Vakti`,
+                        body: `${prayerLabel} vakti girdi. Allah kabul etsin.`,
+                        schedule: {
+                            at: scheduledTime,
+                            allowWhileIdle: true
+                        },
                         sound: 'bell.wav',
                         channelId: 'shukur-olsun-alerts',
                     }
                 ]
             });
         } catch (error) {
-            console.error('Bildirim planlanırken hata:', error);
+            console.error('Ezan vakti bildirimi planlanırken hata:', error);
         }
     }
 
@@ -192,6 +227,15 @@ export class NotificationService {
                 importance: 5, // Android 'Extreme' importance
                 visibility: 1,
                 sound: 'bell.wav',
+                vibration: true,
+            });
+
+            await LocalNotifications.createChannel({
+                id: 'shukur-olsun-ezan',
+                name: 'Ezan Vakti Uyarıları',
+                description: 'Ezan vakti geldiğinde sesli ve titreşimli uyarılar',
+                importance: 5,
+                visibility: 1,
                 vibration: true,
             });
             

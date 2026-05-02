@@ -100,9 +100,7 @@ const JournalEntryForm: React.FC<JournalEntryFormProps> = ({ onSave, selectedEnt
                     <span>{t('journal.gratitudeReason')}</span>
                 </button>
                 <button
-                    onClick={async () => {
-                        await AdMobService.trackPageViewAndShowInterstitial();
-                        AdMobService.prepareInterstitial();
+                    onClick={() => {
                         setPromptType('allah_action');
                     }}
                     className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 active:scale-95 ${promptType === 'allah_action' ? activeTabClass : inactiveTabClass}`}

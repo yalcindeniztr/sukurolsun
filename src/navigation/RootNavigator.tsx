@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApp } from '../core/AppContext';
 import MainLayout from '../components/layout/MainLayout';
 import { useLanguage } from '../core/LanguageContext';
 import { useTheme } from '../core/ThemeContext';
 import JournalHistory from '../features/journal/JournalHistory';
+import JournalEntryForm from '../features/journal/JournalEntryForm';
 import ProfileView from '../features/profile/ProfileView';
 import PrayerTimesView from '../features/prayer_times/PrayerTimesView';
 import TesbihatView from '../features/tesbihat/TesbihatView';
 import SpiritualStopsView from '../features/spiritual_stops/SpiritualStopsView';
+import ReadyMessagesView from '../features/ready_messages/ReadyMessagesView';
 import SukurVaktiView from '../features/sukur_vakti/SukurVaktiView';
 import BanaHatirlatView from '../features/bana_hatirlat/BanaHatirlatView';
 import PinLockScreen from '../components/PinLockScreen';
@@ -19,13 +21,14 @@ import { storageService } from '../services/storage.service';
 
 const RootNavigator: React.FC = () => {
   const {
-    profile, entries, combinedHistory, activeTab, 
+    profile, entries, combinedHistory, selectedEntry, activeTab, 
     isLoading, isLocked, showAgreement, toast, showReviewModal,
     setActiveTab, setSelectedEntry, setToast, setShowReviewModal, setIsLocked,
-    handleDeleteEntry, handleToggleFavorite, handleUpdateProfile, handleAgreementAccept
+    handleSaveEntry, handleDeleteEntry, handleToggleFavorite, handleUpdateProfile, handleAgreementAccept
   } = useApp();
   const { t } = useLanguage();
   const { theme } = useTheme();
+  const [isBackupSaving, setIsBackupSaving] = useState(false);
 
   // Sekme değişimlerinde AdMob banner kontrolü (Tüm sekmelerde gösterim için optimize edildi)
   useEffect(() => {
@@ -37,12 +40,28 @@ const RootNavigator: React.FC = () => {
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
-    AdMobService.trackPageViewAndShowInterstitial();
   };
 
   const handleSelectEntry = (entry: any) => {
     setSelectedEntry(entry);
-    setActiveTab('home');
+    setActiveTab('history');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleArchiveBackup = async () => {
+    if (isBackupSaving) return;
+    setIsBackupSaving(true);
+    try {
+      const result = await (storageService as any).createNativeBackup();
+      setToast({ message: result.message, type: result.success ? 'success' : 'error' });
+    } finally {
+      setIsBackupSaving(false);
+    }
+  };
+
+  const handleArchiveSave = async (entry: Parameters<typeof handleSaveEntry>[0]) => {
+    await handleSaveEntry(entry);
+    setActiveTab('history');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -92,20 +111,27 @@ const RootNavigator: React.FC = () => {
             <div className="flex justify-between items-center mb-6">
               <h2 className={`text-2xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('tabs.archive')}</h2>
               <button
-                onClick={async () => {
-                  const result = await (storageService as any).createNativeBackup();
-                  setToast({ message: result.message, type: result.success ? 'success' : 'error' });
-                }}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-sm font-bold hover:bg-emerald-500/20 transition-all active:scale-95"
+                onClick={handleArchiveBackup}
+                disabled={isBackupSaving}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-sm font-bold hover:bg-emerald-500/20 transition-all active:scale-95 disabled:opacity-60 disabled:cursor-wait"
               >
                 <div className="p-1 bg-emerald-500 rounded-lg text-white">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                   </svg>
                 </div>
-                {t('common.oneClickBackup')}
+                {isBackupSaving ? 'Kaydediliyor...' : t('common.oneClickBackup')}
               </button>
             </div>
+            {selectedEntry && (
+              <div className="mb-6">
+                <JournalEntryForm
+                  onSave={handleArchiveSave}
+                  selectedEntry={selectedEntry}
+                  onCancel={() => setSelectedEntry(undefined)}
+                />
+              </div>
+            )}
             <JournalHistory
               entries={combinedHistory}
               onDelete={handleDeleteEntry}
@@ -118,6 +144,7 @@ const RootNavigator: React.FC = () => {
 
         {activeTab === 'tesbihat' && <TesbihatView />}
         {activeTab === 'manevi_duraklar' && <SpiritualStopsView />}
+        {activeTab === 'hazir_mesajlar' && <ReadyMessagesView />}
 
         {activeTab === 'profile' && (
           <div className="animate-fadeIn">

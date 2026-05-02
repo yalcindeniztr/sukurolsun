@@ -68,23 +68,30 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
                 </div>
 
                 {/* Tarih & Saat */}
-                <div className="relative z-10 text-center pt-8 pb-3">
-                    <p className="text-[11px] font-black tracking-[0.2em] text-emerald-600/80 uppercase">
+                <div className="relative z-10 text-center pt-4 pb-1">
+                    <p className="text-[10px] font-bold tracking-[0.16em] text-emerald-600/80 uppercase">
                         {new Date().toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US', { day: 'numeric', month: 'long', weekday: 'long' }).toUpperCase()}
                     </p>
-                    <div className="flex items-center justify-center gap-4 mt-1">
-                        <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-emerald-200/50" />
-                        <p className="text-5xl font-light text-slate-800 tracking-tighter font-mono">
+                    <div className="flex items-center justify-center gap-3 mt-0.5">
+                        <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-emerald-200/50" />
+                        <p className="text-3xl font-light text-slate-800 tracking-tighter font-mono">
                             {new Date().toLocaleTimeString(language === 'tr' ? 'tr-TR' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                         </p>
-                        <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-emerald-200/50" />
+                        <div className="h-[1px] w-8 bg-gradient-to-l from-transparent to-emerald-200/50" />
                     </div>
                 </div>
 
                 {/* Header (Navigasyon) */}
-                <header className="relative z-10 px-4 pt-1 pb-4 grid grid-cols-3 items-center">
+                <header className="relative z-10 px-3 pt-0 pb-2 grid grid-cols-[auto_1fr_auto] items-center gap-2">
                     {/* Sol - Menu */}
-                    <div className="flex justify-start">
+                    <div className="flex justify-start items-center gap-2 min-w-0">
+                        <button
+                            onClick={() => handleSidebarTabChange('profile')}
+                            className="w-12 h-12 min-w-12 min-h-12 aspect-square rounded-full overflow-hidden border-[3px] border-white bg-white shadow-lg shadow-emerald-900/10 ring-2 ring-emerald-200/70 active:scale-95 transition-all"
+                            aria-label="Profil"
+                        >
+                            <img src={avatarUrl} alt="Profile" className="block w-full h-full aspect-square object-cover rounded-full" />
+                        </button>
                         <button
                             onClick={() => setIsSidebarOpen(true)}
                             className="p-2.5 rounded-2xl bg-white/50 border border-emerald-50 dark:border-white/5 shadow-sm text-slate-500 hover:text-emerald-600 active:scale-95 transition-all"
@@ -96,16 +103,16 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
                     </div>
 
                     {/* Orta - Logo & Motif */}
-                    <div className="flex flex-col items-center justify-center">
-                        <div className="flex items-center gap-2">
+                    <div className="flex flex-col items-center justify-center min-w-0">
+                        <div className="flex items-center gap-1.5 min-w-0">
                              {/* Küçük Motif Süslemesi */}
-                            <svg className="w-4 h-4 text-emerald-600/30" viewBox="0 0 24 24" fill="currentColor">
+                            <svg className="w-3.5 h-3.5 shrink-0 text-emerald-600/30" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M12 2L14.85 9.15L22 12L14.85 14.85L12 22L9.15 14.85L2 12L9.15 9.15L12 2Z" />
                             </svg>
-                            <h1 className="text-lg font-serif font-black text-emerald-800 tracking-tight leading-none uppercase">
+                            <h1 className="text-sm sm:text-base font-serif font-bold text-emerald-800 tracking-tight leading-none uppercase truncate">
                                 {t('common.appName')}
                             </h1>
-                            <svg className="w-4 h-4 text-emerald-600/30" viewBox="0 0 24 24" fill="currentColor">
+                            <svg className="w-3.5 h-3.5 shrink-0 text-emerald-600/30" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M12 2L14.85 9.15L22 12L14.85 14.85L12 22L9.15 14.85L2 12L9.15 9.15L12 2Z" />
                             </svg>
                         </div>
@@ -130,13 +137,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
                         >
                             <Home className="w-5 h-5" />
                         </button>
-                        <button
-                            onClick={() => handleSidebarTabChange('profile')}
-                            className="w-12 h-12 ml-1.5 rounded-full overflow-hidden border-[3px] border-white bg-white shadow-lg shadow-emerald-900/10 ring-2 ring-emerald-200/70 active:scale-95 transition-all"
-                            aria-label="Profil"
-                        >
-                            <img src={avatarUrl} alt="Profile" className="w-full h-full aspect-square object-cover rounded-full" />
-                        </button>
                     </div>
                 </header>
             </div>
@@ -150,7 +150,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
             />
 
             {/* İçerik - Banner için alt boşluk artırıldı (pb-28) */}
-            <main className="relative z-10 px-4 md:px-8 lg:px-12 pt-[210px] pb-28 max-w-4xl mx-auto">
+            <main className="relative z-10 px-3 md:px-8 lg:px-12 pt-[132px] pb-28 max-w-4xl mx-auto">
                 {children}
             </main>
         </div>

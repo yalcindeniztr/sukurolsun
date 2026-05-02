@@ -20,9 +20,9 @@ export class AdMobService {
     private static lastInterstitialTime = 0;
     private static appStartTime = Date.now();
     private static saveActionCounter = 0;
-    private static readonly AD_COOLDOWN_MS = 90000; // 1.5 Dakika (Gelir için ideal)
-    private static readonly APP_START_DELAY_MS = 30000; // İlk 30 saniye geçiş reklamı yok (Play Store kuralı)
-    private static readonly SAVE_ACTION_CAP = 2;
+    private static readonly AD_COOLDOWN_MS = 600000; // Kullanıcıyı yormamak için en az 10 dakika ara.
+    private static readonly APP_START_DELAY_MS = 120000; // İlk 2 dakika geçiş reklamı yok.
+    private static readonly SAVE_ACTION_CAP = 5;
 
     static async initialize(): Promise<void> {
         if (this.initialised) return;
@@ -114,19 +114,20 @@ export class AdMobService {
         }
     }
 
-    static async trackPageViewAndShowInterstitial(): Promise<void> {
+    private static canShowInterstitial(): boolean {
         const now = Date.now();
-        // Hem Cooldown hem de Uygulama Başı Gecikmesi kontrolü
-        if (now - this.lastInterstitialTime > this.AD_COOLDOWN_MS && 
-            now - this.appStartTime > this.APP_START_DELAY_MS) {
-            await this.showInterstitial();
-            this.lastInterstitialTime = Date.now();
-        }
+        return now - this.lastInterstitialTime > this.AD_COOLDOWN_MS &&
+            now - this.appStartTime > this.APP_START_DELAY_MS;
+    }
+
+    static async trackPageViewAndShowInterstitial(): Promise<void> {
+        // Sekme ve form geçişlerinde geçiş reklamı göstermiyoruz.
+        await this.prepareInterstitial();
     }
 
     static async trackSaveAndShowInterstitial(): Promise<void> {
         this.saveActionCounter++;
-        if (this.saveActionCounter % this.SAVE_ACTION_CAP === 0) {
+        if (this.saveActionCounter % this.SAVE_ACTION_CAP === 0 && this.canShowInterstitial()) {
             await this.showInterstitial();
             this.lastInterstitialTime = Date.now();
         }
