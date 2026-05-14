@@ -27,6 +27,10 @@ const PRAYERS = [
     { key: 'yatsi', title: 'Yatsı', icon: Moon, color: 'violet' },
 ] as const;
 
+const PRAYER_SCHEDULE_DAYS = 14;
+const PRAYER_ALERT_OFFSET = 1000;
+const PRAYER_NOTIFICATION_CLEANUP_KEY = 'prayer_notifications_cleanup_v1108';
+
 const COLOR_CLASSES: Record<string, { bg: string; text: string; darkBg: string; shadow: string; dot: string }> = {
     indigo: { bg: 'bg-indigo-50 border-indigo-100', text: 'text-indigo-600', darkBg: 'bg-indigo-900/20 border-indigo-500/30', shadow: 'bg-indigo-900', dot: 'bg-indigo-400' },
     amber: { bg: 'bg-amber-50 border-amber-100', text: 'text-amber-600', darkBg: 'bg-amber-900/20 border-amber-500/30', shadow: 'bg-amber-900', dot: 'bg-amber-400' },
@@ -113,13 +117,15 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
 
                 const cityToLoad = city || 'İstanbul';
                 setSelectedCity(cityToLoad);
+                await cleanupOldPrayerNotificationsOnce();
                 await fetchByCity(cityToLoad, false);
 
-                if (reminders) setReminderSettings(JSON.parse(reminders));
-                if (minutes) {
-                    const parsed = Number(minutes);
-                    if (Number.isFinite(parsed)) setReminderMinutes(Math.min(120, Math.max(0, parsed)));
-                }
+                const parsedReminders = reminders ? JSON.parse(reminders) : reminderSettings;
+                const parsedMinutes = Number(minutes);
+                const safeMinutes = Number.isFinite(parsedMinutes) ? Math.min(120, Math.max(0, parsedMinutes)) : reminderMinutes;
+
+                setReminderSettings(parsedReminders);
+                setReminderMinutes(safeMinutes);
             } catch (error) {
                 console.error('Ezan ayarları yüklenirken hata:', error);
             } finally {
@@ -144,6 +150,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
             if (data.city) {
                 await Preferences.set({ key: 'prayer_city', value: data.city });
                 setSelectedCity(data.city);
+                await rescheduleEnabledReminders(data.city);
             }
         } catch (error) {
             console.error('Konum hatası:', error);
@@ -152,14 +159,18 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
         }
     };
 
-    const fetchByCity = async (city: string, updateState = true) => {
+    const fetchByCity = async (city: string, updateState = true): Promise<PrayerTimesData | null> => {
         setLoading(true);
         if (updateState) setSelectedCity(city);
         try {
             await Preferences.set({ key: 'prayer_city', value: city });
-            setTimes(await PrayerTimeService.getTimesByCity(city));
+            const data = await PrayerTimeService.getTimesByCity(city);
+            setTimes(data);
+            if (updateState) await rescheduleEnabledReminders(city);
+            return data;
         } catch (error) {
             console.error('Vakitler alınamadı:', error);
+            return null;
         } finally {
             setLoading(false);
         }
@@ -170,36 +181,120 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
         return ids[prayer] || 700;
     };
 
-    const cancelPrayerReminder = async (prayer: string) => {
+    const getPrayerNotificationIds = (prayer: string) => {
         const prayerId = getPrayerId(prayer);
-        await Promise.all([
-            ...Array.from({ length: 7 }, (_, index) => NotificationService.cancelNotification(prayerId + index)),
-            NotificationService.cancelNotification(prayerId + 50)
-        ]);
+        return [
+            ...Array.from({ length: PRAYER_SCHEDULE_DAYS }, (_, index) => prayerId + index),
+            ...Array.from({ length: PRAYER_SCHEDULE_DAYS }, (_, index) => prayerId + PRAYER_ALERT_OFFSET + index),
+            prayerId + 50,
+        ];
     };
 
-    const scheduleReminder = async (prayer: string, minutesBefore: number) => {
-        if (!times) return;
+    const cleanupOldPrayerNotificationsOnce = async () => {
+        const { value } = await Preferences.get({ key: PRAYER_NOTIFICATION_CLEANUP_KEY });
+        if (value === 'done') return;
 
-        const prayerId = getPrayerId(prayer);
-        const prayerTime = (times as any)[prayer];
-        const prayerLabel = PRAYERS.find((item) => item.key === prayer)?.title || prayer;
+        await NotificationService.purgeNotifications(PRAYERS.flatMap((prayer) => getPrayerNotificationIds(prayer.key)));
+        await Preferences.set({ key: PRAYER_NOTIFICATION_CLEANUP_KEY, value: 'done' });
+    };
 
-        await cancelPrayerReminder(prayer);
-        if (minutesBefore > 0) {
-            await NotificationService.schedulePrayerReminder(
-                prayerId,
-                `Ezan Vakti Yaklaşıyor: ${prayerLabel}`,
-                `${prayerLabel} vaktine ${minutesBefore} dakika kaldı. Hazırlanmaya ne dersiniz?`,
-                prayerTime,
-                minutesBefore
-            );
+    const buildPrayerDate = (targetDate: Date, time: string, minutesBefore = 0) => {
+        const clock = NotificationService.parseClockTime(time);
+        if (!clock) return null;
+
+        const scheduled = new Date(targetDate);
+        scheduled.setHours(clock.hours, clock.minutes, 0, 0);
+        scheduled.setMinutes(scheduled.getMinutes() - minutesBefore);
+        return Number.isNaN(scheduled.getTime()) ? null : scheduled;
+    };
+
+    const loadPrayerScheduleDays = async (city: string) => {
+        const today = new Date();
+        const currentMonth = today.getMonth() + 1;
+        const currentYear = today.getFullYear();
+        const nextMonthDate = new Date(currentYear, currentMonth, 1);
+
+        const currentMonthTimes = await PrayerTimeService.getMonthlyTimes(city, currentMonth, currentYear);
+        const needsNextMonth = Array.from({ length: PRAYER_SCHEDULE_DAYS }, (_, offset) => {
+            const date = new Date(today);
+            date.setDate(today.getDate() + offset);
+            return date.getMonth() + 1 !== currentMonth || date.getFullYear() !== currentYear;
+        }).some(Boolean);
+        const nextMonthTimes = needsNextMonth
+            ? await PrayerTimeService.getMonthlyTimes(city, nextMonthDate.getMonth() + 1, nextMonthDate.getFullYear())
+            : [];
+
+        return Array.from({ length: PRAYER_SCHEDULE_DAYS }, (_, offset) => {
+            const date = new Date(today);
+            date.setDate(today.getDate() + offset);
+            const source = date.getMonth() + 1 === currentMonth && date.getFullYear() === currentYear
+                ? currentMonthTimes
+                : nextMonthTimes;
+            return { date, times: source[date.getDate() - 1] };
+        }).filter((item) => item.times);
+    };
+
+    const cancelPrayerReminder = async (prayer: string) => {
+        await NotificationService.purgeNotifications(getPrayerNotificationIds(prayer));
+    };
+
+    const scheduleReminder = async (prayer: string, minutesBefore: number, cityForSchedule = selectedCity) => {
+        const ready = await NotificationService.prepareScheduling();
+        if (!ready) {
+            alert('Bildirim izni veya kesin alarm izni verilmediği için hatırlatıcı kurulamadı. Lütfen telefon ayarlarından izin verin.');
+            return;
         }
 
-        await NotificationService.schedulePrayerTimeAlert(
-            prayerId + 50,
-            prayerLabel,
-            prayerTime
+        const prayerId = getPrayerId(prayer);
+        const prayerLabel = PRAYERS.find((item) => item.key === prayer)?.title || prayer;
+        const safeMinutes = Math.min(120, Math.max(0, Math.round(minutesBefore)));
+        const scheduleDays = await loadPrayerScheduleDays(cityForSchedule);
+
+        await cancelPrayerReminder(prayer);
+
+        await Promise.all(scheduleDays.flatMap(({ date, times: dayTimes }, index) => {
+            const prayerTime = (dayTimes as any)[prayer];
+            const alertTime = buildPrayerDate(date, prayerTime);
+            if (!alertTime || alertTime.getTime() <= Date.now()) return [];
+
+            const jobs = [
+                NotificationService.scheduleAtDate(
+                    prayerId + PRAYER_ALERT_OFFSET + index,
+                    `${prayerLabel} Vakti`,
+                    `${prayerLabel} vakti girdi. Allah kabul etsin.`,
+                    alertTime,
+                    'alert',
+                    true
+                )
+            ];
+
+            if (safeMinutes > 0) {
+                const reminderTime = buildPrayerDate(date, prayerTime, safeMinutes);
+                if (!reminderTime || reminderTime.getTime() <= Date.now()) return jobs;
+
+                jobs.push(NotificationService.scheduleAtDate(
+                    prayerId + index,
+                    `Ezan Vakti Yaklaşıyor: ${prayerLabel}`,
+                    `${prayerLabel} vaktine ${safeMinutes} dakika kaldı. Hazırlanmaya ne dersiniz?`,
+                    reminderTime,
+                    'ezan',
+                    true
+                ));
+            }
+
+            return jobs;
+        }));
+    };
+
+    const rescheduleEnabledReminders = async (
+        cityForSchedule = selectedCity,
+        minutesForSchedule = reminderMinutes,
+        settingsForSchedule = reminderSettings
+    ) => {
+        await Promise.all(
+            Object.entries(settingsForSchedule)
+                .filter(([, enabled]) => enabled)
+                .map(([prayer]) => scheduleReminder(prayer, minutesForSchedule, cityForSchedule))
         );
     };
 

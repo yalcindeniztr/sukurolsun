@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Edit2, Save, Award, User, Download, Upload, Check, AlertCircle, Lock, ShieldCheck, Trash2, Activity } from 'lucide-react';
+import { Edit2, Save, Award, User, Download, Upload, Check, AlertCircle, Lock, ShieldCheck, Trash2 } from 'lucide-react';
 import { UserProfile } from '../../core/types';
 import { AVATARS } from '../../constants';
 import { storageService } from '../../services/storage.service';
@@ -7,8 +7,6 @@ import { useTheme } from '../../core/ThemeContext';
 import { Capacitor } from '@capacitor/core';
 import { notificationService } from '../../services/NotificationService';
 import { useLanguage } from '../../core/LanguageContext';
-import { Geolocation } from '@capacitor/geolocation';
-import { LocalNotifications } from '@capacitor/local-notifications';
 
 // Rozetler artık t() ile her renderda güncelleniyor, burası sadece Stil veriyor
 const BADGE_STYLES: Record<string, { color: string }> = {
@@ -41,10 +39,6 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
     const [newPin, setNewPin] = useState('');
     const [confirmPin, setConfirmPin] = useState('');
     const [pinError, setPinError] = useState('');
-
-    // System Test States
-    const [testStatus, setTestStatus] = useState<{ type: 'info' | 'success' | 'error'; message: string } | null>(null);
-    const [isTesting, setIsTesting] = useState(false);
 
     useEffect(() => {
         storageService.hasPin().then(setHasPinSet);
@@ -191,43 +185,6 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
         setLanguage(lang);
         if (profile) {
             onUpdateProfile({ ...profile, language: lang as any });
-        }
-    };
-
-    const runSystemTest = async () => {
-        setIsTesting(true);
-        setTestStatus({ type: 'info', message: t('profile.testStarted') });
-        
-        try {
-            // 1. Konum Testi
-            const locPerm = await Geolocation.checkPermissions();
-            const locStatus = locPerm.location === 'granted' ? t('profile.granted') : t('profile.denied');
-            
-            // 2. Bildirim Testi
-            const notPerm = await LocalNotifications.checkPermissions();
-            const notStatus = notPerm.display === 'granted' ? t('profile.granted') : t('profile.denied');
-            
-            // 3. Test Bildirimi Gönder
-            if (notPerm.display === 'granted') {
-                await LocalNotifications.schedule({
-                    notifications: [{
-                        title: 'Şükür Olsun - Sistem Testi',
-                        body: 'Bildirim sistemi başarıyla çalışıyor! 🤲',
-                        id: 990,
-                        schedule: { at: new Date(Date.now() + 1000) }
-                    }]
-                });
-            }
-
-            setTestStatus({ 
-                type: 'success', 
-                message: `${t('profile.testComplete')}\n${t('profile.locationStatus')}: ${locStatus}\n${t('profile.notificationStatus')}: ${notStatus}` 
-            });
-        } catch (error) {
-            setTestStatus({ type: 'error', message: t('profile.testError') });
-        } finally {
-            setIsTesting(false);
-            setTimeout(() => setTestStatus(null), 10000);
         }
     };
 
@@ -416,8 +373,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                 entries.forEach(e => { moodCounts[e.mood] = (moodCounts[e.mood] || 0) + 1; });
                                 const topMood = Object.keys(moodCounts).reduce((a, b) => moodCounts[a] > moodCounts[b] ? a : b);
                                 const moodEmojiMap: Record<string, string> = { 
-                                    grateful: '🥰', peaceful: '😌', happy: '😊', blessed: '✨', reflective: '🤔', 
-                                    anxious: '😰', sad: '😔', tired: '😮‍💨', hopeful: '🤲', joyful: '😊' 
+                                    grateful: '🥰', peaceful: '😌', happy: '😊', blessed: '✨', reflective: '🤔',
+                                    anxious: '😰', sad: '😔', tired: '😮‍💨', hopeful: '🤲', joyful: '😊'
                                 };
                                 return moodEmojiMap[topMood] || topMood;
                             })()}
@@ -443,7 +400,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                     happy: { emoji: '😊', color: 'bg-amber-400' },
                                     blessed: { emoji: '✨', color: 'bg-purple-400' },
                                     reflective: { emoji: '🤔', color: 'bg-slate-400' },
-                                    anxious: { emoji: '😰', color: 'bg-orange-400' }, 
+                                    anxious: { emoji: '😰', color: 'bg-orange-400' },
                                     sad: { emoji: '😔', color: 'bg-blue-400' },
                                     tired: { emoji: '😮‍💨', color: 'bg-slate-500' },
                                     hopeful: { emoji: '🤲', color: 'bg-emerald-400' },
@@ -696,52 +653,6 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                         + {t('profile.setPin')}
                     </button>
                 )}
-            </div>
-
-            {/* Sistem Tanı Araçları (Test) - 3D Card */}
-            <div className={`glass-card p-8
-                ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
-                <div className="flex items-center gap-3 mb-6">
-                    <Activity className={`w-6 h-6 ${theme === 'light' ? 'text-blue-600' : 'text-blue-400'}`} />
-                    <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>
-                        {t('profile.systemDiagnostics')}
-                    </h3>
-                </div>
-
-                <p className={`text-sm mb-6 ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'}`}>
-                    {t('profile.systemDiagnosticsDesc')}
-                </p>
-
-                {testStatus && (
-                    <div className={`mb-6 p-4 rounded-2xl whitespace-pre-line text-sm font-medium animate-scale-in
-                        ${testStatus.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 
-                          testStatus.type === 'error' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 
-                          'bg-blue-500/10 text-blue-400 border border-blue-500/20'}`}>
-                        {testStatus.message}
-                    </div>
-                )}
-
-                <button
-                    onClick={runSystemTest}
-                    disabled={isTesting}
-                    className={`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all active:scale-95
-                        ${isTesting ? 'opacity-50 cursor-not-allowed' : ''}
-                        ${theme === 'light'
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 shadow-sm'
-                            : 'bg-blue-500/10 text-blue-400 border border-blue-500/30 hover:bg-blue-500/20'}`}
-                >
-                    {isTesting ? (
-                        <>
-                            <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                            {t('profile.testingInProgress')}
-                        </>
-                    ) : (
-                        <>
-                            <Check className="w-5 h-5" />
-                            {t('profile.runSystemTest')}
-                        </>
-                    )}
-                </button>
             </div>
 
             {/* Dil Ayarları - 3D Card */}

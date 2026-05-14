@@ -37,6 +37,19 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+const normalizeNotificationProfile = async (loadedProfile: UserProfile | null): Promise<UserProfile> => {
+  const baseProfile = loadedProfile || DEFAULT_PROFILE;
+
+  // Eski sürümlerde varsayılan false kaydedildiği için günlük bildirim hiç kurulmuyordu.
+  if (baseProfile.notificationsEnabled === false) {
+    const repairedProfile = { ...baseProfile, notificationsEnabled: true };
+    await storageService.saveProfile(repairedProfile);
+    return repairedProfile;
+  }
+
+  return { ...baseProfile, notificationsEnabled: baseProfile.notificationsEnabled ?? true };
+};
+
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [entries, setEntries] = useState<JournalEntry[]>([]);
@@ -70,14 +83,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           storageService.getEntries(),
         ]);
 
-        setProfile(loadedProfile || DEFAULT_PROFILE);
+        const activeProfile = await normalizeNotificationProfile(loadedProfile);
+
+        setProfile(activeProfile);
         setEntries(loadedEntries);
 
         await AdMobService.initialize();
         await notificationService.init();
         
         // Günde yalnızca tek genel hatırlatma gönderilir.
-        if ((loadedProfile || DEFAULT_PROFILE).notificationsEnabled !== false) {
+        if (activeProfile.notificationsEnabled !== false) {
           await notificationService.scheduleRecurringDaily(
               999,
               "Günlük Şükür",
@@ -137,7 +152,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         await ReviewService.markPromptShown();
       }
     }
-    AdMobService.trackSaveAndShowInterstitial();
+    await AdMobService.trackSaveAndShowInterstitial();
   }, [selectedEntry, profile, showToast]);
 
   const handleDeleteEntry = useCallback(async (id: string) => {
@@ -174,9 +189,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       storageService.getProfile(),
       storageService.getEntries(),
     ]);
-    setProfile(loadedProfile || DEFAULT_PROFILE);
+    const activeProfile = await normalizeNotificationProfile(loadedProfile);
+    setProfile(activeProfile);
     setEntries(loadedEntries);
-    AdMobService.initialize();
+    await AdMobService.initialize();
+    await notificationService.init();
+    if (activeProfile.notificationsEnabled !== false) {
+      await notificationService.scheduleRecurringDaily(
+        999,
+        "Günlük Şükür",
+        "Bugün şükrettiğiniz bir nimeti kaydetmeye ne dersiniz?",
+        13, 0
+      );
+    }
     ReviewService.trackFirstOpen();
     setIsLoading(false);
   }, []);

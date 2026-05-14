@@ -165,7 +165,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                 <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-white via-white dark:from-slate-900 dark:via-slate-900 to-transparent">
                     <div className="flex flex-col items-center justify-center">
                         <p className="text-[10px] font-bold tracking-widest uppercase text-emerald-600 dark:text-emerald-500 mb-0.5">by ziberkan</p>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.10.4</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.10.9</p>
                     </div>
                 </div>
             </div>

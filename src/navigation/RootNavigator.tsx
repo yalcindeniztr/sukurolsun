@@ -15,6 +15,7 @@ import BanaHatirlatView from '../features/bana_hatirlat/BanaHatirlatView';
 import PinLockScreen from '../components/PinLockScreen';
 import UserAgreement from '../components/UserAgreement';
 import Toast from '../components/ui/Toast';
+import AdIntroWidget from '../components/AdIntroWidget';
 import { AdMobService } from '../services/AdMobService';
 import { ReviewService } from '../services/ReviewService';
 import { storageService } from '../services/storage.service';
@@ -100,6 +101,7 @@ const RootNavigator: React.FC = () => {
           onClose={() => setToast(null)}
         />
       )}
+      <AdIntroWidget />
 
       <div className="space-y-6">
         {activeTab === 'prayer_times' && <PrayerTimesView profile={profile} />}

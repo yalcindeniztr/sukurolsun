@@ -1,13 +1,28 @@
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { Capacitor } from '@capacitor/core';
 
+const ALERT_CHANNEL_ID = 'shukur-olsun-alerts-v2';
+const EZAN_CHANNEL_ID = 'shukur-olsun-ezan-v2';
+const DAILY_NOTIFICATION_IDS = [777, 888, 999];
+
+type NotificationChannelKind = 'alert' | 'ezan';
+
 export class NotificationService {
-    /**
-     * Bildirim izinlerini kontrol eder ve ister
-     */
+    static parseClockTime(time: string): { hours: number; minutes: number } | null {
+        const match = time.trim().match(/^(\d{1,2}):(\d{2})/);
+        if (!match) return null;
+
+        const hours = Number(match[1]);
+        const minutes = Number(match[2]);
+        if (!Number.isInteger(hours) || !Number.isInteger(minutes)) return null;
+        if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) return null;
+
+        return { hours, minutes };
+    }
+
     static async requestPermissions(): Promise<boolean> {
         if (!Capacitor.isNativePlatform()) return true;
-        
+
         try {
             const status = await LocalNotifications.checkPermissions();
             if (status.display !== 'granted') {
@@ -21,92 +36,118 @@ export class NotificationService {
         }
     }
 
-    /**
-     * Namaz vaktinden kullanıcının belirlediği dakika kadar önce hatırlatıcı planlar
-     */
-    static async schedulePrayerReminder(id: number, title: string, body: string, timeStr: string, minutesBefore: number = 5) {
-        if (!Capacitor.isNativePlatform()) {
-            console.log(`Web simülasyonu: Bildirim planlandı [${id}] - ${title}: ${body} at ${timeStr} (${minutesBefore} dk önce)`);
-            return;
-        }
+    static async ensureExactAlarmPermission(): Promise<boolean> {
+        if (!Capacitor.isNativePlatform() || Capacitor.getPlatform() !== 'android') return true;
 
         try {
-            await this.cancelNotification(id);
-            const [hours, minutes] = timeStr.split(':').map(Number);
-            const scheduledTime = new Date();
-            scheduledTime.setHours(hours, minutes, 0, 0);
+            const status = await LocalNotifications.checkExactNotificationSetting();
+            if (status.exact_alarm === 'granted') return true;
 
-            scheduledTime.setMinutes(scheduledTime.getMinutes() - Math.max(0, minutesBefore));
+            const request = await LocalNotifications.changeExactNotificationSetting();
+            return request.exact_alarm === 'granted';
+        } catch (error) {
+            console.warn('Exact alarm izni kontrol edilemedi:', error);
+            return true;
+        }
+    }
 
-            // Eğer vakit geçmişse planlama
-            if (scheduledTime.getTime() <= new Date().getTime()) {
-                return;
+    private static async ensureSchedulingReady(): Promise<boolean> {
+        const hasPermission = await this.requestPermissions();
+        if (!hasPermission) return false;
+
+        await this.init();
+        return this.ensureExactAlarmPermission();
+    }
+
+    static async prepareScheduling(): Promise<boolean> {
+        if (!Capacitor.isNativePlatform()) return true;
+        return this.ensureSchedulingReady();
+    }
+
+    private static getChannelId(kind: NotificationChannelKind): string {
+        return kind === 'ezan' ? EZAN_CHANNEL_ID : ALERT_CHANNEL_ID;
+    }
+
+    static async scheduleAtDate(
+        id: number,
+        title: string,
+        body: string,
+        scheduledTime: Date,
+        channel: NotificationChannelKind = 'alert',
+        skipPrepare = false
+    ): Promise<boolean> {
+        if (!Capacitor.isNativePlatform()) return true;
+        if (Number.isNaN(scheduledTime.getTime())) return false;
+        if (scheduledTime.getTime() <= Date.now()) return false;
+
+        try {
+            if (!skipPrepare) {
+                const ready = await this.ensureSchedulingReady();
+                if (!ready) return false;
             }
 
+            await this.cancelNotification(id);
             await LocalNotifications.schedule({
                 notifications: [
                     {
                         id,
                         title,
                         body,
-                        schedule: { 
-                            at: scheduledTime,
-                            allowWhileIdle: true 
-                        },
-                        channelId: 'shukur-olsun-ezan',
-                    }
-                ]
-            });
-        } catch (error) {
-            console.error('Bildirim planlanırken hata:', error);
-        }
-    }
-
-    static async schedulePrayerTimeAlert(id: number, prayerLabel: string, timeStr: string) {
-        if (!Capacitor.isNativePlatform()) {
-            console.log(`Web simülasyonu: Ezan vakti bildirimi planlandı [${id}] - ${prayerLabel} at ${timeStr}`);
-            return;
-        }
-
-        try {
-            await this.cancelNotification(id);
-            const [hours, minutes] = timeStr.split(':').map(Number);
-            const scheduledTime = new Date();
-            scheduledTime.setHours(hours, minutes, 0, 0);
-
-            if (scheduledTime.getTime() <= new Date().getTime()) {
-                return;
-            }
-
-            await LocalNotifications.schedule({
-                notifications: [
-                    {
-                        id,
-                        title: `${prayerLabel} Vakti`,
-                        body: `${prayerLabel} vakti girdi. Allah kabul etsin.`,
                         schedule: {
                             at: scheduledTime,
                             allowWhileIdle: true
                         },
                         sound: 'bell.wav',
-                        channelId: 'shukur-olsun-alerts',
+                        channelId: this.getChannelId(channel),
                     }
                 ]
             });
+            return true;
         } catch (error) {
-            console.error('Ezan vakti bildirimi planlanırken hata:', error);
+            console.error('Bildirim planlanırken hata:', error);
+            return false;
         }
     }
 
-    /**
-     * Günlük Ayet ve Dua bildirimlerini planlar (Her gün aynı saatte tekrar eder)
-     */
+    static async schedulePrayerReminder(id: number, title: string, body: string, timeStr: string, minutesBefore = 5) {
+        if (!Capacitor.isNativePlatform()) return;
+
+        const clock = this.parseClockTime(timeStr);
+        if (!clock) return;
+
+        const scheduledTime = new Date();
+        scheduledTime.setHours(clock.hours, clock.minutes, 0, 0);
+        scheduledTime.setMinutes(scheduledTime.getMinutes() - Math.max(0, minutesBefore));
+
+        await this.scheduleAtDate(id, title, body, scheduledTime, 'ezan');
+    }
+
+    static async schedulePrayerTimeAlert(id: number, prayerLabel: string, timeStr: string) {
+        if (!Capacitor.isNativePlatform()) return;
+
+        const clock = this.parseClockTime(timeStr);
+        if (!clock) return;
+
+        const scheduledTime = new Date();
+        scheduledTime.setHours(clock.hours, clock.minutes, 0, 0);
+
+        await this.scheduleAtDate(
+            id,
+            `${prayerLabel} Vakti`,
+            `${prayerLabel} vakti girdi. Allah kabul etsin.`,
+            scheduledTime,
+            'alert'
+        );
+    }
+
     static async scheduleRecurringDaily(id: number, title: string, body: string, hour: number, minute: number) {
         if (!Capacitor.isNativePlatform()) return;
 
         try {
-            // Eski üçlü günlük bildirimleri temizle, tek günlük bildirim bırak.
-            await Promise.all([777, 888, 999].map(notificationId => this.cancelNotification(notificationId)));
+            const ready = await this.ensureSchedulingReady();
+            if (!ready) return;
+
+            await Promise.all(DAILY_NOTIFICATION_IDS.map(notificationId => this.cancelNotification(notificationId)));
 
             await LocalNotifications.schedule({
                 notifications: [
@@ -115,54 +156,50 @@ export class NotificationService {
                         title,
                         body,
                         schedule: {
-                            on: {
-                                hour,
-                                minute
-                            },
+                            on: { hour, minute, second: 0 },
                             repeats: true,
                             allowWhileIdle: true
                         },
                         sound: 'bell.wav',
-                        channelId: 'shukur-olsun-alerts',
+                        channelId: ALERT_CHANNEL_ID,
                     }
                 ]
             });
-            console.log(`Günlük tekrarlı bildirim kuruldu: ${title} saat ${hour}:${minute}`);
         } catch (error) {
             console.error('Tekrarlı bildirim hatası:', error);
         }
     }
 
-    /**
-     * Belirli bir tarih ve saat için genel hatırlatıcı planlar
-     */
     static async scheduleGeneralReminder(id: string, title: string, body: string, time: string, date?: string, repeat?: 'none' | 'daily' | 'weekly' | 'monthly') {
-        if (!Capacitor.isNativePlatform()) {
-            console.log(`Web simülasyonu: Genel bildirim planlandı [${id}] - ${title}: ${body} at ${time} ${date || ''}`);
-            return;
-        }
+        if (!Capacitor.isNativePlatform()) return;
 
         try {
+            const ready = await this.ensureSchedulingReady();
+            if (!ready) return;
+
             const numericId = this.stringToId(id);
-            const [hours, minutes] = time.split(':').map(Number);
-            
-            // Önce temizle
+            const clock = this.parseClockTime(time);
+            if (!clock) return;
+
             await this.cancelNotification(numericId);
 
-            let schedule: any = {};
-            
+            let schedule: any;
             if (repeat === 'daily') {
-                schedule = { on: { hour: hours, minute: minutes }, repeats: true, allowWhileIdle: true };
+                schedule = { on: { hour: clock.hours, minute: clock.minutes, second: 0 }, repeats: true, allowWhileIdle: true };
             } else {
                 const scheduledDate = date ? new Date(date) : new Date();
-                scheduledDate.setHours(hours, minutes, 0, 0);
+                scheduledDate.setHours(clock.hours, clock.minutes, 0, 0);
 
-                if (scheduledDate.getTime() <= new Date().getTime() && repeat === 'none') {
+                if (!date && scheduledDate.getTime() <= Date.now()) {
+                    scheduledDate.setDate(scheduledDate.getDate() + 1);
+                }
+
+                if (date && scheduledDate.getTime() <= Date.now() && repeat === 'none') {
                     return;
                 }
-                
+
                 schedule = { at: scheduledDate, allowWhileIdle: true };
-                
+
                 if (repeat === 'weekly') {
                     schedule.repeats = true;
                     schedule.every = 'week';
@@ -180,7 +217,7 @@ export class NotificationService {
                         body,
                         schedule,
                         sound: 'bell.wav',
-                        channelId: 'shukur-olsun-alerts',
+                        channelId: ALERT_CHANNEL_ID,
                     }
                 ]
             });
@@ -203,8 +240,23 @@ export class NotificationService {
         if (!Capacitor.isNativePlatform()) return;
         try {
             await LocalNotifications.cancel({ notifications: [{ id }] });
-        } catch (e) {
-            console.error('Bildirim iptal hatası:', e);
+        } catch (error) {
+            console.error('Bildirim iptal hatası:', error);
+        }
+    }
+
+    static async purgeNotifications(ids: number[]) {
+        if (!Capacitor.isNativePlatform()) return;
+        const notifications = ids.map((id) => ({ id }));
+        try {
+            await LocalNotifications.cancel({ notifications });
+            const delivered = await LocalNotifications.getDeliveredNotifications();
+            const deliveredMatches = delivered.notifications.filter((notification) => ids.includes(notification.id));
+            if (deliveredMatches.length > 0) {
+                await LocalNotifications.removeDeliveredNotifications({ notifications: deliveredMatches });
+            }
+        } catch (error) {
+            console.error('Bildirim temizleme hatası:', error);
         }
     }
 
@@ -217,29 +269,25 @@ export class NotificationService {
         if (!Capacitor.isNativePlatform()) return;
 
         try {
-            await this.requestPermissions();
-            
-            // Kanallar oluşturulurken en yüksek önem seviyesi kullanılıyor
             await LocalNotifications.createChannel({
-                id: 'shukur-olsun-alerts',
+                id: ALERT_CHANNEL_ID,
                 name: 'Şükür Olsun Hatırlatıcılar',
-                description: 'Namaz ve Oruç vakti hatırlatıcı sesli bildirimleri',
-                importance: 5, // Android 'Extreme' importance
+                description: 'Günlük şükür, ezan vakti ve genel hatırlatıcı bildirimleri',
+                importance: 5,
                 visibility: 1,
                 sound: 'bell.wav',
                 vibration: true,
             });
 
             await LocalNotifications.createChannel({
-                id: 'shukur-olsun-ezan',
+                id: EZAN_CHANNEL_ID,
                 name: 'Ezan Vakti Uyarıları',
-                description: 'Ezan vakti geldiğinde sesli ve titreşimli uyarılar',
+                description: 'Ezan vaktinden önce sesli ve titreşimli uyarılar',
                 importance: 5,
                 visibility: 1,
+                sound: 'bell.wav',
                 vibration: true,
             });
-            
-            console.log('Bildirim kanalı en yüksek öncelikle oluşturuldu.');
         } catch (error) {
             console.error('Bildirim başlatılırken hata:', error);
         }
@@ -248,16 +296,13 @@ export class NotificationService {
     static async toggleNotifications(enabled: boolean) {
         if (!Capacitor.isNativePlatform()) return;
         if (enabled) {
-            const hasPermission = await this.requestPermissions();
-            if (hasPermission) {
-                await this.scheduleRecurringDaily(
-                    999,
-                    'Günlük Şükür',
-                    'Bugün şükrettiğiniz bir nimeti kaydetmeye ne dersiniz?',
-                    13,
-                    0
-                );
-            }
+            await this.scheduleRecurringDaily(
+                999,
+                'Günlük Şükür',
+                'Bugün şükrettiğiniz bir nimeti kaydetmeye ne dersiniz?',
+                13,
+                0
+            );
         } else {
             await this.cancelAll();
         }
@@ -270,8 +315,8 @@ export class NotificationService {
             if (pending.notifications.length > 0) {
                 await LocalNotifications.cancel(pending);
             }
-        } catch (e) {
-            console.error('Tüm bildirimler iptal edilirken hata:', e);
+        } catch (error) {
+            console.error('Tüm bildirimler iptal edilirken hata:', error);
         }
     }
 }

@@ -20,9 +20,9 @@ export class AdMobService {
     private static lastInterstitialTime = 0;
     private static appStartTime = Date.now();
     private static saveActionCounter = 0;
-    private static readonly AD_COOLDOWN_MS = 600000; // Kullanıcıyı yormamak için en az 10 dakika ara.
-    private static readonly APP_START_DELAY_MS = 120000; // İlk 2 dakika geçiş reklamı yok.
-    private static readonly SAVE_ACTION_CAP = 5;
+    private static readonly AD_COOLDOWN_MS = 120000;
+    private static readonly APP_START_DELAY_MS = 0;
+    private static readonly SAVE_ACTION_CAP = 1;
 
     static async initialize(): Promise<void> {
         if (this.initialised) return;
@@ -125,12 +125,15 @@ export class AdMobService {
         await this.prepareInterstitial();
     }
 
-    static async trackSaveAndShowInterstitial(): Promise<void> {
+    static async trackSaveAndShowInterstitial(): Promise<boolean> {
         this.saveActionCounter++;
         if (this.saveActionCounter % this.SAVE_ACTION_CAP === 0 && this.canShowInterstitial()) {
             await this.showInterstitial();
             this.lastInterstitialTime = Date.now();
+            return true;
         }
+        await this.prepareInterstitial();
+        return false;
     }
 
     static async prepareRewardVideo(): Promise<void> {

@@ -98,15 +98,13 @@ const BanaHatirlatView: React.FC = () => {
   };
 
   const toggleEnabled = async (id: string) => {
-    const updated = reminders.map(r => {
-      if (r.id === id) {
-        const nr = { ...r, enabled: !r.enabled };
-        syncNotification(nr);
-        return nr;
-      }
-      return r;
-    });
+    const target = reminders.find(r => r.id === id);
+    if (!target) return;
+
+    const updatedReminder = { ...target, enabled: !target.enabled };
+    const updated = reminders.map(r => r.id === id ? updatedReminder : r);
     await saveReminders(updated);
+    await syncNotification(updatedReminder);
   };
 
   const startEdit = (reminder: Reminder) => {
