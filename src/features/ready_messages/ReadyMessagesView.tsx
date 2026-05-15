@@ -3,6 +3,7 @@ import { Preferences } from '@capacitor/preferences';
 import { MessageCircle, Search, Send, ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react';
 import { useTheme } from '../../core/ThemeContext';
 import { READY_MESSAGE_CATEGORIES } from './readyMessagesData';
+import { AdMobService } from '../../services/AdMobService';
 
 const CUSTOM_READY_MESSAGES_KEY = 'custom_ready_messages';
 
@@ -80,7 +81,9 @@ const ReadyMessagesView: React.FC = () => {
     await saveCustomMessages(nextMessages);
   };
 
-  const sendViaWhatsApp = (message: string) => {
+  const sendViaWhatsApp = async (message: string) => {
+    await AdMobService.showInterstitialForAction('ready_message_send');
+
     const encodedMessage = encodeURIComponent(message);
     const appUrl = `whatsapp://send?text=${encodedMessage}`;
     const webUrl = `https://wa.me/?text=${encodedMessage}`;

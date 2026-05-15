@@ -3,6 +3,7 @@ import { RotateCcw, Activity, ChevronRight } from 'lucide-react';
 import { useTheme } from '../../core/ThemeContext';
 import { useLanguage } from '../../core/LanguageContext';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { AdMobService } from '../../services/AdMobService';
 
 interface Zikir {
     id: string;
@@ -35,6 +36,10 @@ const TesbihatView: React.FC = () => {
     const handleTap = async () => {
         const newCount = count + 1;
         setCount(newCount);
+
+        if (newCount > 0 && newCount % 33 === 0) {
+            await AdMobService.showInterstitialForAction('tesbihat_33');
+        }
 
         if (vibrationEnabled) {
             try {

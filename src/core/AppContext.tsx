@@ -4,6 +4,7 @@ import { gamificationService } from '../services/gamification.service';
 import { AdMobService } from '../services/AdMobService';
 import { ReviewService } from '../services/ReviewService';
 import { notificationService } from '../services/NotificationService';
+import { WidgetService } from '../services/WidgetService';
 import { UserProfile, JournalEntry } from './types';
 import { DEFAULT_PROFILE } from '../constants';
 
@@ -90,6 +91,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         await AdMobService.initialize();
         await notificationService.init();
+        await notificationService.repairStoredGeneralRemindersOnce();
+        await WidgetService.update();
         
         // Günde yalnızca tek genel hatırlatma gönderilir.
         if (activeProfile.notificationsEnabled !== false) {
@@ -100,7 +103,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               13, 0
           );
         } else {
-          await notificationService.cancelAll();
+          await notificationService.cancelDailyNotifications();
         }
 
         ReviewService.trackFirstOpen();
@@ -194,6 +197,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setEntries(loadedEntries);
     await AdMobService.initialize();
     await notificationService.init();
+    await notificationService.repairStoredGeneralRemindersOnce();
+    await WidgetService.update();
     if (activeProfile.notificationsEnabled !== false) {
       await notificationService.scheduleRecurringDaily(
         999,

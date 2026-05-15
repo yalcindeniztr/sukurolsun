@@ -5,6 +5,7 @@ import { useTheme } from '../../core/ThemeContext';
 import { useLanguage } from '../../core/LanguageContext';
 import { PrayerTimeService, PrayerTimesData } from '../../services/PrayerTimeService';
 import { NotificationService } from '../../services/NotificationService';
+import { WidgetService } from '../../services/WidgetService';
 import { UserProfile } from '../../core/types';
 
 const TURKEY_CITIES = [
@@ -29,7 +30,7 @@ const PRAYERS = [
 
 const PRAYER_SCHEDULE_DAYS = 14;
 const PRAYER_ALERT_OFFSET = 1000;
-const PRAYER_NOTIFICATION_CLEANUP_KEY = 'prayer_notifications_cleanup_v1108';
+const PRAYER_NOTIFICATION_CLEANUP_KEY = 'prayer_notifications_cleanup_v1110';
 
 const COLOR_CLASSES: Record<string, { bg: string; text: string; darkBg: string; shadow: string; dot: string }> = {
     indigo: { bg: 'bg-indigo-50 border-indigo-100', text: 'text-indigo-600', darkBg: 'bg-indigo-900/20 border-indigo-500/30', shadow: 'bg-indigo-900', dot: 'bg-indigo-400' },
@@ -71,12 +72,18 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
             const now = new Date();
             const currentTime = now.getHours() * 60 + now.getMinutes();
             const parseTime = (value: string) => {
-                const [hours, minutes] = value.split(':').map(Number);
-                return hours * 60 + minutes;
+                const clock = NotificationService.parseClockTime(value);
+                return clock ? clock.hours * 60 + clock.minutes : Number.POSITIVE_INFINITY;
             };
 
             const next = PRAYERS.find((prayer) => parseTime((times as any)[prayer.key]) > currentTime);
-            setNextPrayer(next?.key || 'imsak');
+            const nextKey = next?.key || 'imsak';
+            setNextPrayer(nextKey);
+            const nextInfo = PRAYERS.find((prayer) => prayer.key === nextKey);
+            WidgetService.update({
+                nextPrayer: nextInfo?.title || 'İmsak',
+                nextPrayerTime: (times as any)[nextKey] || '--:--',
+            });
         };
 
         checkNextPrayer();
@@ -140,7 +147,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
     const fetchByLocation = async () => {
         if (profile && profile.locationEnabled === false) {
             alert('Konum izniniz Profil / Ayarlar sekmesinden kapatılmıştır.');
-            return;
+            return false;
         }
 
         setLoading(true);
@@ -252,7 +259,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
 
         await cancelPrayerReminder(prayer);
 
-        await Promise.all(scheduleDays.flatMap(({ date, times: dayTimes }, index) => {
+        const results = await Promise.all(scheduleDays.flatMap(({ date, times: dayTimes }, index) => {
             const prayerTime = (dayTimes as any)[prayer];
             const alertTime = buildPrayerDate(date, prayerTime);
             if (!alertTime || alertTime.getTime() <= Date.now()) return [];
@@ -263,7 +270,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
                     `${prayerLabel} Vakti`,
                     `${prayerLabel} vakti girdi. Allah kabul etsin.`,
                     alertTime,
-                    'alert',
+                    'ezan',
                     true
                 )
             ];
@@ -284,6 +291,8 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
 
             return jobs;
         }));
+
+        return results.some(Boolean);
     };
 
     const rescheduleEnabledReminders = async (
@@ -311,7 +320,12 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
                 alert('Bildirim izni verilmediği için hatırlatıcı kurulamadı. Lütfen ayarlardan izin verin.');
                 return;
             }
-            await scheduleReminder(prayer, reminderMinutes);
+            const scheduled = await scheduleReminder(prayer, reminderMinutes);
+            if (!scheduled) {
+                const revertedSettings = { ...newSettings, [prayer]: false };
+                setReminderSettings(revertedSettings);
+                await Preferences.set({ key: 'prayer_reminders', value: JSON.stringify(revertedSettings) });
+            }
         }
     };
 
@@ -328,11 +342,14 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
 
         setReminderMinutes(safeValue);
         await Preferences.set({ key: 'prayer_reminder_minutes', value: String(safeValue) });
-        await Promise.all(
+        const results = await Promise.all(
             Object.entries(reminderSettings)
                 .filter(([, enabled]) => enabled)
                 .map(([prayer]) => scheduleReminder(prayer, safeValue))
         );
+        if (results.length > 0 && !results.some(Boolean)) {
+            alert('Aktif ezan hatırlatmaları Android alarm kuyruğuna kurulamadı. Lütfen bildirim ve kesin alarm izinlerini kontrol edin.');
+        }
         setIsReminderSaving(false);
     };
 

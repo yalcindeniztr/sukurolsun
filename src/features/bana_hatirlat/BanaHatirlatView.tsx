@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Edit2, Save, X, Bell, Clock } from 'lucide-react';
 import { useTheme } from '../../core/ThemeContext';
 import { notificationService } from '../../services/NotificationService';
+import { AdMobService } from '../../services/AdMobService';
 import { Preferences } from '@capacitor/preferences';
 
 interface Reminder {
@@ -42,9 +43,9 @@ const BanaHatirlatView: React.FC = () => {
     setReminders(newReminders);
   };
 
-  const syncNotification = async (reminder: Reminder) => {
+  const syncNotification = async (reminder: Reminder): Promise<boolean> => {
     if (reminder.enabled) {
-      await notificationService.scheduleGeneralReminder(
+      const scheduled = await notificationService.scheduleGeneralReminder(
         reminder.id,
         "Şükür Olsun Hatırlatıcısı",
         reminder.name,
@@ -52,8 +53,13 @@ const BanaHatirlatView: React.FC = () => {
         reminder.date,
         reminder.repeat
       );
+      if (!scheduled) {
+        window.alert('Bildirim kurulamadı. Lütfen bildirim ve kesin alarm izinlerini kontrol edin.');
+      }
+      return scheduled;
     } else {
       await notificationService.cancelGeneralReminder(reminder.id);
+      return true;
     }
   };
 
@@ -69,7 +75,8 @@ const BanaHatirlatView: React.FC = () => {
     };
     const updated = [newReminder, ...reminders];
     await saveReminders(updated);
-    await syncNotification(newReminder);
+    const scheduled = await syncNotification(newReminder);
+    if (scheduled) await AdMobService.showInterstitialForAction('bana_hatirlat_save');
     resetForm();
   };
 
@@ -85,7 +92,8 @@ const BanaHatirlatView: React.FC = () => {
     };
     const updated = reminders.map(r => r.id === editingId ? updatedReminder : r);
     await saveReminders(updated);
-    await syncNotification(updatedReminder);
+    const scheduled = await syncNotification(updatedReminder);
+    if (scheduled) await AdMobService.showInterstitialForAction('bana_hatirlat_update');
     resetForm();
   };
 

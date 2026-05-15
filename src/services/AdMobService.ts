@@ -17,12 +17,10 @@ export class AdMobService {
     // Ad State tracking
     private static lastInterstitialLoadTime = 0;
     private static lastRewardedLoadTime = 0;
-    private static lastInterstitialTime = 0;
-    private static appStartTime = Date.now();
     private static saveActionCounter = 0;
-    private static readonly AD_COOLDOWN_MS = 120000;
-    private static readonly APP_START_DELAY_MS = 0;
+    private static navigationCounter = 0;
     private static readonly SAVE_ACTION_CAP = 1;
+    private static readonly NAVIGATION_ACTION_CAP = 10;
 
     static async initialize(): Promise<void> {
         if (this.initialised) return;
@@ -97,7 +95,7 @@ export class AdMobService {
         }
     }
 
-    static async showInterstitial(): Promise<void> {
+    static async showInterstitial(): Promise<boolean> {
         if (!this.initialised) await this.initialize();
 
         if (!this.isAdValid(this.lastInterstitialLoadTime)) {
@@ -108,16 +106,12 @@ export class AdMobService {
             await AdMob.showInterstitial();
             this.lastInterstitialLoadTime = 0; 
             this.prepareInterstitial();
+            return true;
         } catch (error) {
             console.error('Show Interstitial failed:', error);
             this.prepareInterstitial();
+            return false;
         }
-    }
-
-    private static canShowInterstitial(): boolean {
-        const now = Date.now();
-        return now - this.lastInterstitialTime > this.AD_COOLDOWN_MS &&
-            now - this.appStartTime > this.APP_START_DELAY_MS;
     }
 
     static async trackPageViewAndShowInterstitial(): Promise<void> {
@@ -127,13 +121,36 @@ export class AdMobService {
 
     static async trackSaveAndShowInterstitial(): Promise<boolean> {
         this.saveActionCounter++;
-        if (this.saveActionCounter % this.SAVE_ACTION_CAP === 0 && this.canShowInterstitial()) {
-            await this.showInterstitial();
-            this.lastInterstitialTime = Date.now();
-            return true;
+        return this.showInterstitialForAction('journal_save', this.saveActionCounter % this.SAVE_ACTION_CAP === 0);
+    }
+
+    static async showInterstitialForAction(actionName: string, shouldShow = true): Promise<boolean> {
+        if (!shouldShow) {
+            await this.prepareInterstitial();
+            return false;
         }
-        await this.prepareInterstitial();
-        return false;
+
+        try {
+            const shown = await this.showInterstitial();
+            if (!shown) return false;
+            console.info(`Interstitial shown for ${actionName}`);
+            return true;
+        } catch (error) {
+            console.warn(`Interstitial action failed for ${actionName}:`, error);
+            await this.prepareInterstitial();
+            return false;
+        }
+    }
+
+    static async trackNavigationAndShowInterstitial(): Promise<boolean> {
+        this.navigationCounter++;
+        if (this.navigationCounter < this.NAVIGATION_ACTION_CAP) {
+            await this.prepareInterstitial();
+            return false;
+        }
+
+        this.navigationCounter = 0;
+        return this.showInterstitialForAction('navigation_10th');
     }
 
     static async prepareRewardVideo(): Promise<void> {

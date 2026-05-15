@@ -40,6 +40,9 @@ const RootNavigator: React.FC = () => {
   }, [activeTab, isLoading, isLocked, showAgreement]);
 
   const handleTabChange = (tab: string) => {
+    if (tab !== activeTab) {
+      AdMobService.trackNavigationAndShowInterstitial();
+    }
     setActiveTab(tab);
   };
 
