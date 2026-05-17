@@ -4,9 +4,9 @@ export class AdMobService {
     private static initialised = false;
 
     // Ad IDs
-    private static readonly BANNER_ID = import.meta.env.VITE_ADMOB_BANNER_ID || 'ca-app-pub-3940256099942544/6300978111';
-    private static readonly INTERSTITIAL_ID = import.meta.env.VITE_ADMOB_INTERSTITIAL_ID || 'ca-app-pub-3940256099942544/1033173712';
-    private static readonly REWARDED_ID = import.meta.env.VITE_ADMOB_REWARDED_ID || 'ca-app-pub-3940256099942544/5224354917';
+    private static readonly BANNER_ID = import.meta.env.VITE_ADMOB_BANNER_ID || 'ca-app-pub-2742233269558530/5920257382';
+    private static readonly INTERSTITIAL_ID = import.meta.env.VITE_ADMOB_INTERSTITIAL_ID || 'ca-app-pub-2742233269558530/2520068427';
+    private static readonly REWARDED_ID = import.meta.env.VITE_ADMOB_REWARDED_ID || '';
 
     // Production settings
     private static readonly IS_PRODUCTION = true;
@@ -154,6 +154,7 @@ export class AdMobService {
     }
 
     static async prepareRewardVideo(): Promise<void> {
+        if (!this.REWARDED_ID) return;
         if (this.isAdValid(this.lastRewardedLoadTime)) return;
 
         const options: RewardAdOptions = {
@@ -171,6 +172,7 @@ export class AdMobService {
     }
 
     static async showRewardVideo(): Promise<AdMobRewardItem | undefined> {
+        if (!this.REWARDED_ID) return undefined;
         if (!this.initialised) await this.initialize();
 
         if (!this.isAdValid(this.lastRewardedLoadTime)) {
