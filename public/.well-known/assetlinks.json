@@ -1,0 +1,11 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.yalcin.sukurolsun",
+      "sha256_cert_fingerprints":
+        ["20:CC:70:53:EE:3F:6C:72:38:1D:D0:6D:F5:19:E9:04:F6:07:C1:DE:A9:1A:76:B6:88:33:AA:04:01:E7:CE:40"]
+    }
+  }
+]

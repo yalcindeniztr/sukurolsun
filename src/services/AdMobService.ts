@@ -4,8 +4,8 @@ export class AdMobService {
     private static initialised = false;
 
     // Ad IDs
-    private static readonly BANNER_ID = import.meta.env.VITE_ADMOB_BANNER_ID || 'ca-app-pub-2742233269558530/5920257382';
-    private static readonly INTERSTITIAL_ID = import.meta.env.VITE_ADMOB_INTERSTITIAL_ID || 'ca-app-pub-2742233269558530/2520068427';
+    private static readonly BANNER_ID = import.meta.env.VITE_ADMOB_BANNER_ID || '';
+    private static readonly INTERSTITIAL_ID = import.meta.env.VITE_ADMOB_INTERSTITIAL_ID || '';
     private static readonly REWARDED_ID = import.meta.env.VITE_ADMOB_REWARDED_ID || '';
 
     // Production settings

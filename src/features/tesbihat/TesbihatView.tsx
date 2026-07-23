@@ -33,6 +33,24 @@ const TesbihatView: React.FC = () => {
     // Ses ve Titreşim ayarları
     const [vibrationEnabled, setVibrationEnabled] = useState(true);
 
+    // Ekranı uyanık tutma (Screen Wake Lock)
+    React.useEffect(() => {
+        let wakeLock: any = null;
+        const requestWakeLock = async () => {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await (navigator as any).wakeLock.request('screen');
+                }
+            } catch { }
+        };
+        requestWakeLock();
+        return () => {
+            if (wakeLock) {
+                wakeLock.release().catch(() => { });
+            }
+        };
+    }, []);
+
     const handleTap = async () => {
         const newCount = count + 1;
         setCount(newCount);
