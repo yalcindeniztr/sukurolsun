@@ -14,8 +14,17 @@
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
--keepattributes SourceFile,LineNumberTable
+-keepattributes SourceFile,LineNumberTable,Signature,*Annotation*,InnerClasses,EnclosingMethod
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Keep Capacitor Bridge & Plugins for R8 Full Mode
+-keep public class com.getcapacitor.** { *; }
+-keep public class * extends com.getcapacitor.Plugin { *; }
+-keepclasseswithmembers class * {
+    @com.getcapacitor.PluginMethod <methods>;
+    @com.getcapacitor.annotation.CapacitorPlugin <methods>;
+}
+
+# Keep Google AdMob SDK
+-keep class com.google.android.gms.ads.** { *; }
+-keep class com.google.ads.** { *; }
+
