@@ -248,8 +248,8 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
     const scheduleReminder = async (prayer: string, minutesBefore: number, cityForSchedule = selectedCity) => {
         const ready = await NotificationService.prepareScheduling();
         if (!ready) {
-            alert('Bildirim izni veya kesin alarm izni verilmediği için hatırlatıcı kurulamadı. Lütfen telefon ayarlarından izin verin.');
-            return;
+            alert('Bildirim izni verilmediği için hatırlatıcı kurulamadı. Lütfen telefon ayarlarından bildirim iznini etkinleştirin.');
+            return false;
         }
 
         const prayerId = getPrayerId(prayer);
@@ -259,40 +259,45 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
 
         await cancelPrayerReminder(prayer);
 
-        const results = await Promise.all(scheduleDays.flatMap(({ date, times: dayTimes }, index) => {
+        const batchItems: Array<{
+            id: number;
+            title: string;
+            body: string;
+            scheduledTime: Date;
+            channel: 'ezan';
+        }> = [];
+
+        scheduleDays.forEach(({ date, times: dayTimes }, index) => {
             const prayerTime = (dayTimes as any)[prayer];
             const alertTime = buildPrayerDate(date, prayerTime);
-            if (!alertTime || alertTime.getTime() <= Date.now()) return [];
-
-            const jobs = [
-                NotificationService.scheduleAtDate(
-                    prayerId + PRAYER_ALERT_OFFSET + index,
-                    `${prayerLabel} Vakti`,
-                    `${prayerLabel} vakti girdi. Allah kabul etsin.`,
-                    alertTime,
-                    'ezan',
-                    true
-                )
-            ];
+            if (alertTime && alertTime.getTime() > Date.now()) {
+                batchItems.push({
+                    id: prayerId + PRAYER_ALERT_OFFSET + index,
+                    title: `${prayerLabel} Vakti`,
+                    body: `${prayerLabel} vakti girdi. Allah kabul etsin.`,
+                    scheduledTime: alertTime,
+                    channel: 'ezan',
+                });
+            }
 
             if (safeMinutes > 0) {
                 const reminderTime = buildPrayerDate(date, prayerTime, safeMinutes);
-                if (!reminderTime || reminderTime.getTime() <= Date.now()) return jobs;
-
-                jobs.push(NotificationService.scheduleAtDate(
-                    prayerId + index,
-                    `Ezan Vakti Yaklaşıyor: ${prayerLabel}`,
-                    `${prayerLabel} vaktine ${safeMinutes} dakika kaldı. Hazırlanmaya ne dersiniz?`,
-                    reminderTime,
-                    'ezan',
-                    true
-                ));
+                if (reminderTime && reminderTime.getTime() > Date.now()) {
+                    batchItems.push({
+                        id: prayerId + index,
+                        title: `Ezan Vakti Yaklaşıyor: ${prayerLabel}`,
+                        body: `${prayerLabel} vaktine ${safeMinutes} dakika kaldı. Hazırlanmaya ne dersiniz?`,
+                        scheduledTime: reminderTime,
+                        channel: 'ezan',
+                    });
+                }
             }
+        });
 
-            return jobs;
-        }));
-
-        return results.some(Boolean);
+        if (batchItems.length > 0) {
+            return NotificationService.scheduleBatch(batchItems);
+        }
+        return true;
     };
 
     const rescheduleEnabledReminders = async (

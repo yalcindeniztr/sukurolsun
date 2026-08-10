@@ -92,6 +92,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         await AdMobService.initialize();
         await notificationService.init();
         await notificationService.repairStoredGeneralRemindersOnce();
+        await notificationService.syncPrayerTimesOnAppStart();
+        await notificationService.registerNotificationListener((targetTab) => {
+          setActiveTab(targetTab);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
         await WidgetService.update();
         
         // Günde yalnızca tek genel hatırlatma gönderilir.

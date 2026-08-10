@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { 
-    Clock, Heart, Archive, Circle, 
+    Clock, Heart, Archive, Circle, BookOpen,
     Compass, User, MessageCircle,
     Share2, Star, LogOut, ShieldCheck, Bell
 } from 'lucide-react';
@@ -23,6 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
         { id: 'prayer_times', label: t('tabs.prayerTimes'), icon: Clock },
         { id: 'sukur_vakti', label: t('tabs.sukurVakti'), icon: Heart },
         { id: 'tesbihat', label: t('tabs.tesbihat'), icon: Circle },
+        { id: 'quran', label: t('tabs.quran'), icon: BookOpen },
         { id: 'bana_hatirlat', label: t('tabs.banaHatirlat'), icon: Bell },
         { id: 'manevi_duraklar', label: t('tabs.maneviDuraklar'), icon: Compass },
         { id: 'hazir_mesajlar', label: 'Hazır Mesajlar', icon: MessageCircle },
@@ -165,7 +166,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                 <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-white via-white dark:from-slate-900 dark:via-slate-900 to-transparent">
                     <div className="flex flex-col items-center justify-center">
                         <p className="text-[10px] font-bold tracking-widest uppercase text-emerald-600 dark:text-emerald-500 mb-0.5">by ziberkan</p>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.11.0</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.37.0</p>
                     </div>
                 </div>
             </div>

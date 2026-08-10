@@ -8,6 +8,7 @@ import JournalEntryForm from '../features/journal/JournalEntryForm';
 import ProfileView from '../features/profile/ProfileView';
 import PrayerTimesView from '../features/prayer_times/PrayerTimesView';
 import TesbihatView from '../features/tesbihat/TesbihatView';
+import QuranView from '../features/quran/QuranView';
 import SpiritualStopsView from '../features/spiritual_stops/SpiritualStopsView';
 import ReadyMessagesView from '../features/ready_messages/ReadyMessagesView';
 import SukurVaktiView from '../features/sukur_vakti/SukurVaktiView';
@@ -19,6 +20,8 @@ import AdIntroWidget from '../components/AdIntroWidget';
 import { AdMobService } from '../services/AdMobService';
 import { ReviewService } from '../services/ReviewService';
 import { storageService } from '../services/storage.service';
+import UpdateModal from '../components/UpdateModal';
+import { UpdateService, UpdateInfo } from '../services/UpdateService';
 
 const RootNavigator: React.FC = () => {
   const {
@@ -30,12 +33,20 @@ const RootNavigator: React.FC = () => {
   const { t } = useLanguage();
   const { theme } = useTheme();
   const [isBackupSaving, setIsBackupSaving] = useState(false);
+  const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
 
   // Sekme değişimlerinde AdMob banner kontrolü (Tüm sekmelerde gösterim için optimize edildi)
   useEffect(() => {
     if (!isLoading && !isLocked && !showAgreement) {
       // Artık tüm sekmelerde banner gösteriyoruz (Gelir maksimizasyonu)
       AdMobService.showBanner();
+
+      // Play Store yeni sürüm kontrolü
+      UpdateService.checkForUpdate().then((info) => {
+        if (info && info.hasUpdate) {
+          setUpdateInfo(info);
+        }
+      });
     }
   }, [activeTab, isLoading, isLocked, showAgreement]);
 
@@ -148,6 +159,7 @@ const RootNavigator: React.FC = () => {
         )}
 
         {activeTab === 'tesbihat' && <TesbihatView />}
+        {activeTab === 'quran' && <QuranView />}
         {activeTab === 'manevi_duraklar' && <SpiritualStopsView />}
         {activeTab === 'hazir_mesajlar' && <ReadyMessagesView />}
 
@@ -188,6 +200,13 @@ const RootNavigator: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+      {/* Update Modal */}
+      {updateInfo && (
+        <UpdateModal
+          updateInfo={updateInfo}
+          onClose={() => setUpdateInfo(null)}
+        />
       )}
     </MainLayout>
   );

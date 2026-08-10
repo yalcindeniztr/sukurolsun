@@ -1,9 +1,10 @@
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { Capacitor } from '@capacitor/core';
 import { Preferences } from '@capacitor/preferences';
+import { PrayerTimeService } from './PrayerTimeService';
 
-const ALERT_CHANNEL_ID = 'shukur-olsun-alerts-v3';
-const EZAN_CHANNEL_ID = 'shukur-olsun-ezan-v3';
+const ALERT_CHANNEL_ID = 'shukur-olsun-alerts-v5';
+const EZAN_CHANNEL_ID = 'shukur-olsun-ezan-v5';
 const DAILY_NOTIFICATION_IDS = [777, 888, 999];
 const GENERAL_REMINDER_REPAIR_KEY = 'bana_hatirlat_schedule_fix_v1110_at_daily';
 const DAILY_SCHEDULE_DAYS = 30;
@@ -60,18 +61,7 @@ export class NotificationService {
     }
 
     static async ensureExactAlarmPermission(): Promise<boolean> {
-        if (!Capacitor.isNativePlatform() || Capacitor.getPlatform() !== 'android') return true;
-
-        try {
-            const status = await LocalNotifications.checkExactNotificationSetting();
-            if (status.exact_alarm === 'granted') return true;
-
-            const request = await LocalNotifications.changeExactNotificationSetting();
-            return request.exact_alarm === 'granted';
-        } catch (error) {
-            console.warn('Exact alarm izni kontrol edilemedi:', error);
-            return true;
-        }
+        return true;
     }
 
     private static async ensureSchedulingReady(): Promise<boolean> {
@@ -79,7 +69,7 @@ export class NotificationService {
         if (!hasPermission) return false;
 
         await this.init();
-        return this.ensureExactAlarmPermission();
+        return true;
     }
 
     static async prepareScheduling(): Promise<boolean> {
@@ -137,7 +127,8 @@ export class NotificationService {
         body: string,
         scheduledTime: Date,
         channel: NotificationChannelKind = 'alert',
-        skipPrepare = false
+        skipPrepare = false,
+        extraPayload?: Record<string, any>
     ): Promise<boolean> {
         if (!Capacitor.isNativePlatform()) return true;
         if (Number.isNaN(scheduledTime.getTime())) return false;
@@ -150,6 +141,7 @@ export class NotificationService {
             }
 
             await this.cancelNotification(id);
+            const defaultTargetTab = channel === 'ezan' ? 'prayer_times' : 'sukur_vakti';
             await LocalNotifications.schedule({
                 notifications: [
                     {
@@ -160,8 +152,12 @@ export class NotificationService {
                             at: scheduledTime,
                             allowWhileIdle: true,
                         },
-                        sound: 'bell.wav',
+                        sound: 'bell',
                         channelId: this.getChannelId(channel),
+                        extra: {
+                            targetTab: defaultTargetTab,
+                            ...extraPayload
+                        }
                     },
                 ],
             });
@@ -225,7 +221,7 @@ export class NotificationService {
                         at: scheduledDate,
                         allowWhileIdle: true,
                     },
-                    sound: 'bell.wav',
+                    sound: 'bell',
                     channelId: ALERT_CHANNEL_ID,
                 };
             }).filter((notification): notification is NonNullable<typeof notification> => notification !== null);
@@ -280,7 +276,7 @@ export class NotificationService {
                         title,
                         body,
                         schedule: { at: scheduledDate, allowWhileIdle: true },
-                        sound: 'bell.wav',
+                        sound: 'bell',
                         channelId: ALERT_CHANNEL_ID,
                     };
                 }).filter((notification): notification is NonNullable<typeof notification> => notification !== null);
@@ -313,7 +309,7 @@ export class NotificationService {
                         title,
                         body,
                         schedule: { at: nextDate, allowWhileIdle: true },
-                        sound: 'bell.wav',
+                        sound: 'bell',
                         channelId: ALERT_CHANNEL_ID,
                     };
                 }).filter((notification): notification is NonNullable<typeof notification> => notification !== null);
@@ -421,7 +417,7 @@ export class NotificationService {
                 description: 'Gunluk sukur ve genel hatirlatici bildirimleri',
                 importance: 5,
                 visibility: 1,
-                sound: 'bell.wav',
+                sound: 'bell',
                 vibration: true,
             });
 
@@ -431,7 +427,7 @@ export class NotificationService {
                 description: 'Ezan vakti ve ezan oncesi sesli uyarilar',
                 importance: 5,
                 visibility: 1,
-                sound: 'bell.wav',
+                sound: 'bell',
                 vibration: true,
             });
         } catch (error) {
@@ -455,6 +451,188 @@ export class NotificationService {
         return true;
     }
 
+    static async registerNotificationListener(onNavigate: (targetTab: string, openWriting?: boolean) => void): Promise<void> {
+        if (!Capacitor.isNativePlatform()) return;
+
+        try {
+            await LocalNotifications.addListener('localNotificationActionPerformed', (notificationAction) => {
+                const extra = notificationAction.notification.extra;
+                const title = notificationAction.notification.title || '';
+                let targetTab = extra?.targetTab || 'sukur_vakti';
+
+                if (title.toLowerCase().includes('ezan') || title.toLowerCase().includes('vakti')) {
+                    targetTab = 'prayer_times';
+                } else if (title.toLowerCase().includes('şükür') || title.toLowerCase().includes('sukur')) {
+                    targetTab = 'sukur_vakti';
+                }
+
+                onNavigate(targetTab, true);
+            });
+        } catch (error) {
+            console.error('Bildirim dinleyicisi kaydedilirken hata:', error);
+        }
+    }
+
+    static async scheduleBatch(
+        items: Array<{
+            id: number;
+            title: string;
+            body: string;
+            scheduledTime: Date;
+            channel?: NotificationChannelKind;
+            extraPayload?: Record<string, any>;
+        }>
+    ): Promise<boolean> {
+        if (!Capacitor.isNativePlatform() || items.length === 0) return true;
+
+        const validItems = items.filter(
+            (item) => !Number.isNaN(item.scheduledTime.getTime()) && item.scheduledTime.getTime() > Date.now()
+        );
+        if (validItems.length === 0) return true;
+
+        try {
+            const ready = await this.ensureSchedulingReady();
+            if (!ready) return false;
+
+            const notifications = validItems.map((item) => ({
+                id: item.id,
+                title: item.title,
+                body: item.body,
+                schedule: {
+                    at: item.scheduledTime,
+                    allowWhileIdle: true,
+                },
+                sound: 'bell',
+                channelId: this.getChannelId(item.channel || 'alert'),
+                extra: {
+                    targetTab: item.channel === 'ezan' ? 'prayer_times' : 'sukur_vakti',
+                    ...item.extraPayload,
+                },
+            }));
+
+            await LocalNotifications.schedule({ notifications });
+            return true;
+        } catch (error) {
+            console.error('Batch bildirim planlanirken hata:', error);
+            return false;
+        }
+    }
+
+    static async syncPrayerTimesOnAppStart(): Promise<void> {
+        if (!Capacitor.isNativePlatform()) return;
+
+        try {
+            const { value: city } = await Preferences.get({ key: 'prayer_city' });
+            const { value: reminders } = await Preferences.get({ key: 'prayer_reminders' });
+            const { value: minutes } = await Preferences.get({ key: 'prayer_reminder_minutes' });
+
+            const selectedCity = city || 'İstanbul';
+            const reminderSettings: Record<string, boolean> = reminders ? JSON.parse(reminders) : {};
+            const parsedMinutes = Number(minutes);
+            const reminderMinutes = Number.isFinite(parsedMinutes) ? Math.min(120, Math.max(0, parsedMinutes)) : 5;
+
+            const activePrayers = Object.entries(reminderSettings).filter(([, enabled]) => enabled).map(([key]) => key);
+            if (activePrayers.length === 0) return;
+
+            const PRAYERS_DEF: Record<string, { title: string; id: number }> = {
+                imsak: { title: 'İmsak', id: 100 },
+                gunes: { title: 'Güneş', id: 200 },
+                ogle: { title: 'Öğle', id: 300 },
+                ikindi: { title: 'İkindi', id: 400 },
+                aksam: { title: 'Akşam', id: 500 },
+                yatsi: { title: 'Yatsı', id: 600 },
+            };
+
+            // Purge old prayer IDs
+            const allPrayerIds = Object.values(PRAYERS_DEF).flatMap((p) => [
+                ...Array.from({ length: 14 }, (_, i) => p.id + i),
+                ...Array.from({ length: 14 }, (_, i) => p.id + 1000 + i),
+            ]);
+            await this.purgeNotifications(allPrayerIds);
+
+            // Fetch correct data dynamically per targetDate month
+            const today = new Date();
+            const cachedMonths: Record<string, any[]> = {};
+            const getTimesForDate = async (d: Date) => {
+                const m = d.getMonth() + 1;
+                const y = d.getFullYear();
+                const cacheKey = `${y}-${m}`;
+                if (!cachedMonths[cacheKey]) {
+                    try {
+                        cachedMonths[cacheKey] = await PrayerTimeService.getMonthlyTimes(selectedCity, m, y);
+                    } catch (e) {
+                        console.error(`Monthly times fetch failed for ${cacheKey}:`, e);
+                        cachedMonths[cacheKey] = [];
+                    }
+                }
+                const dayIndex = d.getDate() - 1;
+                return cachedMonths[cacheKey][dayIndex] || null;
+            };
+
+            const batchItems: Array<{
+                id: number;
+                title: string;
+                body: string;
+                scheduledTime: Date;
+                channel: NotificationChannelKind;
+            }> = [];
+
+            for (let dayOffset = 0; dayOffset < 14; dayOffset++) {
+                const targetDate = new Date(today);
+                targetDate.setDate(today.getDate() + dayOffset);
+                const dayTimes = await getTimesForDate(targetDate);
+                if (!dayTimes) continue;
+
+                for (const prayerKey of activePrayers) {
+                    const prayerInfo = PRAYERS_DEF[prayerKey];
+                    if (!prayerInfo) continue;
+
+                    const timeStr = (dayTimes as any)[prayerKey];
+                    if (!timeStr) continue;
+
+                    const clock = this.parseClockTime(timeStr);
+                    if (!clock) continue;
+
+                    // Prayer Exact Time Alert
+                    const alertTime = new Date(targetDate);
+                    alertTime.setHours(clock.hours, clock.minutes, 0, 0);
+
+                    if (alertTime.getTime() > Date.now()) {
+                        batchItems.push({
+                            id: prayerInfo.id + 1000 + dayOffset,
+                            title: `${prayerInfo.title} Vakti`,
+                            body: `${prayerInfo.title} vakti girdi. Allah kabul etsin.`,
+                            scheduledTime: alertTime,
+                            channel: 'ezan',
+                        });
+                    }
+
+                    // Pre-reminder Time Alert
+                    if (reminderMinutes > 0) {
+                        const reminderTime = new Date(alertTime);
+                        reminderTime.setMinutes(reminderTime.getMinutes() - reminderMinutes);
+
+                        if (reminderTime.getTime() > Date.now()) {
+                            batchItems.push({
+                                id: prayerInfo.id + dayOffset,
+                                title: `Ezan Vakti Yaklaşıyor: ${prayerInfo.title}`,
+                                body: `${prayerInfo.title} vaktine ${reminderMinutes} dakika kaldı. Hazırlanmaya ne dersiniz?`,
+                                scheduledTime: reminderTime,
+                                channel: 'ezan',
+                            });
+                        }
+                    }
+                }
+            }
+
+            if (batchItems.length > 0) {
+                await this.scheduleBatch(batchItems);
+            }
+        } catch (error) {
+            console.error('Namaz vakitleri otomatik senkronizasyon hatasi:', error);
+        }
+    }
+
     static async cancelAll(): Promise<void> {
         if (!Capacitor.isNativePlatform()) return;
         try {
@@ -469,3 +647,5 @@ export class NotificationService {
 }
 
 export const notificationService = NotificationService;
+
+
