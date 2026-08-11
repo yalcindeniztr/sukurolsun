@@ -1,5 +1,5 @@
 {
-  "version": "1.38.0",
+  "version": "1.39.0",
   "forceUpdate": false,
-  "releaseNotes": "Edge-to-edge uçtan uca ekran desteği eklendi. R8 kod optimizasyonları ve Play Store onay uyumluluğu artırıldı."
+  "releaseNotes": "Ekran kayması ve başlıkların çakışması düzeltildi. Arayüzün tüm telefon modellerinde hatasız görünmesi sağlandı."
 }

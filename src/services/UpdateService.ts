@@ -1,6 +1,6 @@
 import { Preferences } from '@capacitor/preferences';
 
-const CURRENT_VERSION = '1.38.0';
+const CURRENT_VERSION = '1.39.0';
 const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.yalcin.sukurolsun';
 const UPDATE_CHECK_KEY = 'sukur_olsun_update_check_v1';
 
