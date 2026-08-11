@@ -1,5 +1,5 @@
 {
-  "version": "1.39.0",
+  "version": "1.40.0",
   "forceUpdate": false,
-  "releaseNotes": "Ekran kayması ve başlıkların çakışması düzeltildi. Arayüzün tüm telefon modellerinde hatasız görünmesi sağlandı."
+  "releaseNotes": "Header çakışması ve konum seçici gizlenme sorunu düzeltildi. Ekran düzeni tüm telefon modellerinde kusursuz çalışacak şekilde optimize edildi."
 }
