@@ -1,5 +1,5 @@
 {
-  "version": "1.40.0",
+  "version": "1.41.0",
   "forceUpdate": false,
-  "releaseNotes": "Header çakışması ve konum seçici gizlenme sorunu düzeltildi. Ekran düzeni tüm telefon modellerinde kusursuz çalışacak şekilde optimize edildi."
+  "releaseNotes": "Göz alıcı 3D kabartmalı kart tasarımları, holografik parıltı efektleri, üstün visual UX geliştirmeleri ve master senior seviyesinde mimari temizlik yapıldı."
 }

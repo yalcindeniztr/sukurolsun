@@ -169,10 +169,7 @@ const BanaHatirlatView: React.FC = () => {
       {!showForm && (
         <button
           onClick={() => setShowForm(true)}
-          className={`w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold transition-all active:scale-[0.98]
-            ${theme === 'light'
-              ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-md shadow-emerald-500/20'
-              : 'bg-emerald-600 hover:bg-emerald-500 text-white'}`}
+          className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold embossed-button text-white shadow-lg active:scale-[0.98]"
         >
           <Plus className="w-5 h-5" />
           Yeni Hatırlatıcı Ekle
@@ -299,7 +296,7 @@ const BanaHatirlatView: React.FC = () => {
           reminders.map(reminder => (
             <div
               key={reminder.id}
-              className={`p-4 rounded-2xl border transition-all
+              className={`p-4 rounded-2xl border transition-all card-3d-embossed
                 ${reminder.enabled
                   ? theme === 'light'
                     ? 'bg-white border-emerald-200 shadow-sm'

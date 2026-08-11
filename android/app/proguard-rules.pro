@@ -1,19 +1,6 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# ProGuard & R8 Optimization Rules for Şükür Olsun App
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
-
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
+# Preserve stack trace line numbers for crash reporting while obfuscating class/method names
 -keepattributes SourceFile,LineNumberTable,Signature,*Annotation*,InnerClasses,EnclosingMethod
 
 # Keep Capacitor Bridge & Plugins for R8 Full Mode
@@ -24,7 +11,23 @@
     @com.getcapacitor.annotation.CapacitorPlugin <methods>;
 }
 
-# Keep Google AdMob SDK
+# Keep Custom App Classes, Plugins & Widget Providers
+-keep class com.yalcin.sukurolsun.** { *; }
+
+# Keep Google AdMob & Play Services
 -keep class com.google.android.gms.ads.** { *; }
 -keep class com.google.ads.** { *; }
+-keep class com.google.android.gms.common.** { *; }
 
+# AndroidX & WebView Keep Rules
+-keepclassmembers class * extends android.webkit.WebChromeClient {
+    public void openFileChooser(...);
+}
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+# R8 Optimization Pass Settings
+-optimizationpasses 5
+-repackageclasses ''
+-allowaccessmodification

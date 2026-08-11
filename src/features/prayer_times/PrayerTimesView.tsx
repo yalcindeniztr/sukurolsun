@@ -365,11 +365,11 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
         return (
             <div className="relative">
                 <div className={`absolute inset-0 rounded-2xl translate-y-1 opacity-15 ${colorClasses.shadow}`} />
-                <div className={`relative min-h-[76px] rounded-2xl border px-3 py-2 flex flex-col justify-between overflow-hidden
+                <div className={`relative min-h-[76px] rounded-2xl border px-3 py-2 flex flex-col justify-between overflow-hidden card-3d-embossed
                     ${theme === 'light'
-                        ? isNext ? colorClasses.bg : 'bg-white border-slate-100'
-                        : isNext ? colorClasses.darkBg : 'bg-slate-900/40 border-white/5'}
-                    ${isNext ? 'shadow-lg' : 'shadow-sm'}`}
+                        ? isNext ? `${colorClasses.bg} hologram-shimmer gold-hologram-border` : 'bg-white border-slate-100'
+                        : isNext ? `${colorClasses.darkBg} hologram-shimmer` : 'bg-slate-900/40 border-white/5'}
+                    ${isNext ? 'shadow-lg scale-[1.02] z-10' : 'shadow-sm'}`}
                 >
                     <div className="flex items-center justify-between gap-2">
                         <div className={`w-7 h-7 rounded-xl flex items-center justify-center ${theme === 'light' ? 'bg-slate-50' : 'bg-white/5'}`}>
@@ -433,7 +433,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
                     </div>
                 </div>
             )}
-            <div className={`px-3 py-2 rounded-2xl border backdrop-blur-3xl relative overflow-hidden
+            <div className={`px-3 py-2 rounded-2xl border backdrop-blur-3xl relative overflow-hidden card-3d-embossed
                 ${theme === 'light' ? 'bg-white/80 border-slate-100 shadow-md shadow-slate-200/30' : 'bg-slate-900/60 border-white/5 shadow-xl'}`}
             >
                 <div className="absolute top-0 right-0 p-4 opacity-5">
@@ -491,7 +491,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
                 ))}
             </div>
 
-            <div className={`px-3 py-2.5 rounded-2xl border relative overflow-hidden
+            <div className={`px-3 py-2.5 rounded-2xl border relative overflow-hidden card-3d-embossed
                 ${theme === 'light'
                     ? 'bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-100 shadow-sm'
                     : 'bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border-emerald-500/20'}`}
@@ -526,7 +526,7 @@ const PrayerTimesView: React.FC<PrayerTimesViewProps> = ({ profile }) => {
                     <button
                         onClick={saveReminderMinutes}
                         disabled={isReminderSaving}
-                        className="h-8 px-3 rounded-xl bg-emerald-500 text-white text-xs font-black shadow-sm active:scale-95 disabled:opacity-60"
+                        className="h-8 px-3 rounded-xl embossed-button text-white text-xs font-black shadow-sm active:scale-95 disabled:opacity-60"
                     >
                         {isReminderSaving ? '...' : 'Kaydet'}
                     </button>
