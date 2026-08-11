@@ -57,7 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                     bg-white/90 dark:bg-slate-900/90 backdrop-blur-3xl border-r border-slate-200/50 dark:border-white/10`}
             >
                 {/* Header */}
-                <div className="pt-10 pb-6 px-6">
+                <div className="pt-10 pt-safe-top pb-6 px-6">
                     <h2 className="text-2xl font-serif font-black bg-gradient-to-br from-emerald-600 to-teal-800 dark:from-emerald-400 dark:to-teal-600 bg-clip-text text-transparent">
                         {t('common.appName')}
                     </h2>
@@ -163,10 +163,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeTab, onTabChan
                 </nav>
 
                 {/* Footer */}
-                <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-white via-white dark:from-slate-900 dark:via-slate-900 to-transparent">
+                <div className="absolute bottom-0 left-0 right-0 p-5 pb-safe-bottom bg-gradient-to-t from-white via-white dark:from-slate-900 dark:via-slate-900 to-transparent">
                     <div className="flex flex-col items-center justify-center">
                         <p className="text-[10px] font-bold tracking-widest uppercase text-emerald-600 dark:text-emerald-500 mb-0.5">by ziberkan</p>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.37.0</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500">v1.38.0</p>
                     </div>
                 </div>
             </div>

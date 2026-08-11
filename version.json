@@ -1,5 +1,5 @@
 {
-  "version": "1.37.0",
+  "version": "1.38.0",
   "forceUpdate": false,
-  "releaseNotes": "Namaz vakitleri 25 dk önce uyarısı ve Kuran Meali geliştirmeleri eklendi. Performans artırıldı."
+  "releaseNotes": "Edge-to-edge uçtan uca ekran desteği eklendi. R8 kod optimizasyonları ve Play Store onay uyumluluğu artırıldı."
 }

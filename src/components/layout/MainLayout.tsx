@@ -150,7 +150,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
             />
 
             {/* İçerik - Banner için alt boşluk artırıldı (pb-28) */}
-            <main className="relative z-10 px-3 md:px-8 lg:px-12 pt-[132px] pb-28 max-w-4xl mx-auto">
+            <main className="relative z-10 px-3 md:px-8 lg:px-12 pt-[132px] pt-safe-top pb-28 pb-safe-bottom max-w-4xl mx-auto">
                 {children}
             </main>
         </div>
