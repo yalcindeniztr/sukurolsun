@@ -1,5 +1,5 @@
 {
-  "version": "1.42.0",
+  "version": "1.43.0",
   "forceUpdate": false,
-  "releaseNotes": "Master Senior mimari güvenlik kontrolleri tamamlandı. R8 Full Mode optimizasyonu ile en stabil ve performanslı sürüme yükseltildi."
+  "releaseNotes": "Android Vitals & Play Console performans skorları optimize edildi. ART AOT ProfileInstaller ve R8 Deobfuscation entegrasyonu tamamlandı."
 }

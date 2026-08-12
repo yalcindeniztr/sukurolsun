@@ -3,6 +3,10 @@
 # Preserve stack trace line numbers for crash reporting while obfuscating class/method names
 -keepattributes SourceFile,LineNumberTable,Signature,*Annotation*,InnerClasses,EnclosingMethod
 
+# Output R8 Obfuscation Mapping for Google Play Console Analysis
+-printmapping mapping.txt
+-printusage usage.txt
+
 # Keep Capacitor Bridge & Plugins for R8 Full Mode
 -keep public class com.getcapacitor.** { *; }
 -keep public class * extends com.getcapacitor.Plugin { *; }
@@ -27,7 +31,8 @@
     @android.webkit.JavascriptInterface <methods>;
 }
 
-# R8 Optimization Pass Settings
+# Advanced R8 Code Shrinking & Aggressive Optimization Passes
 -optimizationpasses 5
 -repackageclasses ''
 -allowaccessmodification
+-overloadaggressively
