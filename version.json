@@ -1,5 +1,5 @@
 {
-  "version": "1.41.0",
+  "version": "1.42.0",
   "forceUpdate": false,
-  "releaseNotes": "Göz alıcı 3D kabartmalı kart tasarımları, holografik parıltı efektleri, üstün visual UX geliştirmeleri ve master senior seviyesinde mimari temizlik yapıldı."
+  "releaseNotes": "Master Senior mimari güvenlik kontrolleri tamamlandı. R8 Full Mode optimizasyonu ile en stabil ve performanslı sürüme yükseltildi."
 }
