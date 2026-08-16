@@ -37,7 +37,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
     return (
         <div className="min-h-screen w-full relative overflow-x-hidden bg-[#f0fdf4] text-slate-800 theme-bg" data-theme-bg={bgImage}>
 
-            {/* Dekoratif Arka Plan (Sadece Default temada belirgin) */}
+            {/* Dekoratif Arka Plan (Default ve Yeni Temalar İçin) */}
             {bgImage === 'default' && (
                 <div className="fixed inset-0 pointer-events-none">
                     <div className="absolute top-20 right-[-50px] w-[300px] h-[300px] rounded-full blur-[120px] bg-emerald-300/20" />
@@ -46,8 +46,30 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, activeTab, onTabChang
                 </div>
             )}
 
+            {bgImage === 'gold' && (
+                <div className="fixed inset-0 pointer-events-none bg-gradient-to-br from-amber-50/60 via-emerald-50/30 to-amber-100/40">
+                    <div className="absolute top-10 right-[-40px] w-[350px] h-[350px] rounded-full blur-[130px] bg-amber-300/30" />
+                    <div className="absolute bottom-32 left-[-60px] w-[350px] h-[350px] rounded-full blur-[130px] bg-emerald-300/20" />
+                    <div className="absolute top-1/2 left-1/3 w-[250px] h-[250px] rounded-full blur-[100px] bg-amber-200/20" />
+                </div>
+            )}
+
+            {bgImage === 'aksa' && (
+                <div className="fixed inset-0 pointer-events-none bg-gradient-to-br from-cyan-50/50 via-emerald-50/30 to-slate-100/50">
+                    <div className="absolute top-10 right-[-40px] w-[350px] h-[350px] rounded-full blur-[130px] bg-cyan-300/25" />
+                    <div className="absolute bottom-32 left-[-60px] w-[350px] h-[350px] rounded-full blur-[130px] bg-emerald-400/20" />
+                </div>
+            )}
+
+            {bgImage === 'rose' && (
+                <div className="fixed inset-0 pointer-events-none bg-gradient-to-br from-rose-50/50 via-emerald-50/30 to-rose-100/40">
+                    <div className="absolute top-10 right-[-40px] w-[350px] h-[350px] rounded-full blur-[130px] bg-rose-300/25" />
+                    <div className="absolute bottom-32 left-[-60px] w-[350px] h-[350px] rounded-full blur-[130px] bg-emerald-300/20" />
+                </div>
+            )}
+
             {/* Koyulaştırıcı / Karartıcı Overlay (Resim seçiliyse yazılar okunsun diye) */}
-            {bgImage !== 'default' && (
+            {['kabe', 'nebevi', 'nature'].includes(bgImage) && (
                 <div className="fixed inset-0 pointer-events-none bg-white/60 backdrop-blur-[2px]" />
             )}
 

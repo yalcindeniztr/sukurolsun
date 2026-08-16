@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type Theme = 'light' | 'dark';
-export type BgImage = 'default' | 'kabe' | 'nebevi' | 'nature';
+export type BgImage = 'default' | 'kabe' | 'nebevi' | 'nature' | 'gold' | 'aksa' | 'rose';
 
 interface ThemeContextType {
     theme: Theme;
@@ -26,7 +26,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     useEffect(() => {
         const savedBg = localStorage.getItem('sukurolsun_theme_bg') as BgImage;
-        if (savedBg && ['default', 'kabe', 'nebevi', 'nature'].includes(savedBg)) {
+        if (savedBg && ['default', 'kabe', 'nebevi', 'nature', 'gold', 'aksa', 'rose'].includes(savedBg)) {
             setBgImageState(savedBg);
         }
     }, []);

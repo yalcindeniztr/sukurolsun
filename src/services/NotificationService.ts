@@ -457,12 +457,13 @@ export class NotificationService {
         try {
             await LocalNotifications.addListener('localNotificationActionPerformed', (notificationAction) => {
                 const extra = notificationAction.notification.extra;
-                const title = notificationAction.notification.title || '';
+                const title = (notificationAction.notification.title || '').toLowerCase();
+                const body = (notificationAction.notification.body || '').toLowerCase();
                 let targetTab = extra?.targetTab || 'sukur_vakti';
 
-                if (title.toLowerCase().includes('ezan') || title.toLowerCase().includes('vakti')) {
+                if (title.includes('ezan') || title.includes('vakti') || title.includes('namaz') || body.includes('vakti')) {
                     targetTab = 'prayer_times';
-                } else if (title.toLowerCase().includes('şükür') || title.toLowerCase().includes('sukur')) {
+                } else if (title.includes('şükür') || title.includes('sukur') || title.includes('nimet') || title.includes('günlük') || body.includes('şükür') || body.includes('sukur')) {
                     targetTab = 'sukur_vakti';
                 }
 

@@ -408,7 +408,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                 };
 
                                 return Object.entries(moodCounts)
-                                    .sort((a, b) => b[1] - a[1]) // En çoktan aza
+                                    .sort((a, b) => b[1] - a[1])
                                     .map(([mood, count]) => {
                                         const percent = Math.round((count / total) * 100);
                                         const config = moodLabels[mood] || { emoji: mood, color: 'bg-gray-400' };
@@ -457,7 +457,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
                                     </div>
                                     <span className="font-bold text-sm text-center">{t(`profile.badges.${badgeId}` as any)}</span>
                                 </div>
-                            )
+                            );
                         })}
                     </div>
                 )}
@@ -467,7 +467,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
             <div className={`glass-card p-8
                 ${theme === 'light' ? 'bg-white/80 border-slate-200/50 shadow-depth-light' : ''}`}>
                 <div className="flex items-center gap-3 mb-6">
-                    <div className={`w-6 h-6 rounded flex items-center justify-center bg-gradient-to-r from-emerald-400 to-emerald-600 text-white`}>
+                    <div className="w-6 h-6 rounded flex items-center justify-center bg-gradient-to-r from-emerald-400 to-emerald-600 text-white shadow-sm">
                         <Award className="w-4 h-4" />
                     </div>
                     <h3 className={`text-xl font-serif ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{t('profile.theme')}</h3>
@@ -479,26 +479,30 @@ const ProfileView: React.FC<ProfileViewProps> = ({ profile, entries, onUpdatePro
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     {[
-                        { id: 'default', label: t('profile.themes.default'), src: null },
-                        { id: 'kabe', label: t('profile.themes.kabe'), src: '/assets/themes/kabe.png' },
-                        { id: 'nebevi', label: t('profile.themes.nebevi'), src: '/assets/themes/nebevi.png' },
-                        { id: 'nature', label: t('profile.themes.nature'), src: '/assets/themes/nature.png' }
-                    ].map(t => (
+                        { id: 'default', label: t('profile.themes.default'), src: null, bgClass: 'bg-emerald-50 border-emerald-200' },
+                        { id: 'gold', label: t('profile.themes.gold'), src: null, bgClass: 'bg-gradient-to-br from-amber-100 to-amber-200 border-amber-300' },
+                        { id: 'aksa', label: t('profile.themes.aksa'), src: null, bgClass: 'bg-gradient-to-br from-cyan-100 to-emerald-200 border-cyan-300' },
+                        { id: 'rose', label: t('profile.themes.rose'), src: null, bgClass: 'bg-gradient-to-br from-rose-100 to-emerald-100 border-rose-200' },
+                        { id: 'kabe', label: t('profile.themes.kabe'), src: '/assets/themes/kabe.png', bgClass: '' },
+                        { id: 'nebevi', label: t('profile.themes.nebevi'), src: '/assets/themes/nebevi.png', bgClass: '' },
+                        { id: 'nature', label: t('profile.themes.nature'), src: '/assets/themes/nature.png', bgClass: '' }
+                    ].map(themeItem => (
                         <button
-                            key={t.id}
-                            onClick={() => setBgImage(t.id as any)}
-                            className={`relative rounded-2xl overflow-hidden aspect-[4/3] transition-all border-4 flex flex-col
-                                ${bgImage === t.id ? 'border-amber-400 scale-105 shadow-xl shadow-amber-500/20' : 'border-transparent opacity-80 hover:opacity-100 hover:scale-105'}`}
+                            key={themeItem.id}
+                            onClick={() => setBgImage(themeItem.id as any)}
+                            className={`relative rounded-2xl overflow-hidden aspect-[4/3] transition-all border-4 flex flex-col card-3d-embossed
+                                ${bgImage === themeItem.id ? 'border-amber-400 scale-105 shadow-xl shadow-amber-500/20 ring-2 ring-amber-400/50' : 'border-transparent opacity-85 hover:opacity-100 hover:scale-105'}`}
                         >
-                            {t.src ? (
-                                <img src={t.src} alt={t.label} className="w-full h-full object-cover" />
+                            {themeItem.src ? (
+                                <img src={themeItem.src} alt={themeItem.label} className="w-full h-full object-cover" />
                             ) : (
-                                <div className="w-full h-full bg-[#f0fdf4] flex items-center justify-center">
-                                    <div className="w-16 h-16 rounded-full blur-xl bg-emerald-300/50" />
+                                <div className={`w-full h-full ${themeItem.bgClass} flex items-center justify-center relative overflow-hidden`}>
+                                    <div className="w-16 h-16 rounded-full blur-xl bg-amber-400/40" />
+                                    <span className="text-xl relative z-10">✨</span>
                                 </div>
                             )}
-                            <div className="absolute inset-x-0 bottom-0 bg-white/90 backdrop-blur text-xs font-bold py-2 text-center text-slate-800">
-                                {t.label}
+                            <div className="absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur text-xs font-bold py-2 text-center text-slate-800 border-t border-slate-100">
+                                {themeItem.label}
                             </div>
                         </button>
                     ))}

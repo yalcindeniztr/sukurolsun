@@ -47,6 +47,9 @@ const resources = {
       "themes.kabe": "Kabe-i Muazzama",
       "themes.mescid": "Mescid-i Nebevi",
       "themes.nature": "Huzurlu Doğa",
+      "themes.gold": "Altın Nur 3D",
+      "themes.aksa": "Kudüs & Gece",
+      "themes.rose": "Gül-i Muhammedî",
       "delete.warning": "Tüm Verilerimi Sil",
       "prayer.title": "Namaz ve Oruç Vakitleri",
       "prayer.auto": "Otomatik Konum Bul"
@@ -96,6 +99,9 @@ const resources = {
       "themes.kabe": "Holy Kaaba",
       "themes.mescid": "Al-Masjid an-Nabawi",
       "themes.nature": "Peaceful Nature",
+      "themes.gold": "Golden Radiance 3D",
+      "themes.aksa": "Al-Aqsa & Night",
+      "themes.rose": "Rose of Prophet",
       "delete.warning": "Delete All My Data",
       "prayer.title": "Prayer and Fasting Times",
       "prayer.auto": "Find Location Automatically"

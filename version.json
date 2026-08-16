@@ -1,5 +1,5 @@
 {
-  "version": "1.44.0",
+  "version": "1.45.0",
   "forceUpdate": false,
-  "releaseNotes": "Android 15 / SDK 36 (Son Hedef API Düzeyi) tam uyumluluk güncellemesi yapıldı."
+  "releaseNotes": "Ezan vakti ve şükür bildirim senkronizasyonu geliştirildi. Yeni 3D hologram ve manevi temalar eklendi."
 }
